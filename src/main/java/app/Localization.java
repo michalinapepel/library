@@ -6,7 +6,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 //klasa do zmiany "lokalizacji" - czyli de facto języka
-public class Localization {
+public final class Localization {
 
     private static Locale currentLocale = Locale.forLanguageTag("pl");
     private static ResourceBundle bundle = loadBundle(currentLocale);

@@ -1,38 +1,37 @@
 package app;
 
-import app.panels.ToolBar;
+import app.dialogs.BorrowerDialog;
+import app.dialogs.EmployeeDialog;
+import app.dialogs.StartDialog;
 
 import javax.swing.*;
-import java.awt.*;
 
-public class LibraryApp implements LanguageChangeListener {
-
-    private JFrame frame;
+public class LibraryApp {
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(LibraryApp::new);
-    }
+        SwingUtilities.invokeLater(() -> {
+            StartDialog start = new StartDialog(null);
+            UserType result = start.showDialog();
 
-    public LibraryApp() {
-        initUI();
-        Localization.addLanguageChangeListener(this);
-    }
+            if (result == UserType.BORROWER) {
+                BorrowerDialog b = new BorrowerDialog(null);
+                String id = b.showDialog();
+                if (id == null) return; // anulowano
+            }
 
-    private void initUI() {
-        frame = new JFrame(Localization.get("app.title"));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new BorderLayout());
+            if (result == UserType.EMPLOYEE) {
+                EmployeeDialog e = new EmployeeDialog(null);
+                String code = e.showDialog();
+                if (code == null) return; // anulowano
+                MainWindowEmployee window = new MainWindowEmployee();
+                window.setVisible(true);
+            }
 
-        ToolBar toolbar = new ToolBar();
-        frame.add(toolbar, BorderLayout.NORTH);
+            if (result == UserType.CANCEL) {
+                return;
+            }
 
-        frame.setSize(800, 600);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-    }
 
-    @Override
-    public void onLanguageChanged() {
-        frame.setTitle(Localization.get("app.title"));
+        });
     }
 }
