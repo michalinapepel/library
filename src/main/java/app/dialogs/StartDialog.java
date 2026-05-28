@@ -17,7 +17,7 @@ public class StartDialog extends JDialog implements LanguageChangeListener {
     private final JButton cancel;
 
     public StartDialog(JFrame parent) {
-        super(parent, Localization.get("start.dialog.title"), true);
+        super(parent, Localization.get("dialog.start.title"), true);
         Localization.addLanguageChangeListener(this);
 
         setLayout(new GridLayout(4, 1, 10, 10));
@@ -57,7 +57,7 @@ public class StartDialog extends JDialog implements LanguageChangeListener {
 
     @Override
     public void onLanguageChanged() {
-        setTitle(Localization.get("start.dialog.title"));
+        setTitle(Localization.get("dialog.start.title"));
         borrower.setText(Localization.get("button.borrower"));
         employee.setText(Localization.get("button.employee"));
         cancel.setText(Localization.get("button.cancel"));
