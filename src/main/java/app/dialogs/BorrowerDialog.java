@@ -13,7 +13,7 @@ public class BorrowerDialog extends JDialog implements LanguageChangeListener {
     private JButton cancel;
 
     public BorrowerDialog(JFrame parent) {
-        super(parent, Localization.get("borrower.dialog.title"), true);
+        super(parent, Localization.get("dialog.borrower.title"), true);
 
         setLayout(new BorderLayout(10, 10));
 
@@ -49,7 +49,7 @@ public class BorrowerDialog extends JDialog implements LanguageChangeListener {
 
     @Override
     public void onLanguageChanged() {
-        setTitle(Localization.get("start.dialog.title"));
+        setTitle(Localization.get("dialog.borrower.title"));
         ok.setText(Localization.get("button.ok"));
         cancel.setText(Localization.get("button.cancel"));
         revalidate();

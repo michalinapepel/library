@@ -13,7 +13,7 @@ public class EmployeeDialog extends JDialog implements LanguageChangeListener {
     private JButton cancel;
 
     public EmployeeDialog(JFrame parent) {
-        super(parent, Localization.get("employee.dialog.title"), true);
+        super(parent, Localization.get("dialog.employee.title"), true);
 
         setLayout(new BorderLayout(10, 10));
 
@@ -47,9 +47,10 @@ public class EmployeeDialog extends JDialog implements LanguageChangeListener {
         return code;
     }
 
+
     @Override
     public void onLanguageChanged() {
-        setTitle(Localization.get("start.dialog.title"));
+        setTitle(Localization.get("dialog.employee.title"));
         ok.setText(Localization.get("button.ok"));
         cancel.setText(Localization.get("button.cancel"));
         revalidate();
