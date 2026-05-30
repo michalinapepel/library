@@ -11,7 +11,7 @@ import java.awt.*;
 public class StartDialog extends JDialog implements LanguageChangeListener {
 
     private UserType result = UserType.CANCEL;
-    private final ToolBar toolBar = new ToolBar();
+    private final ToolBar toolBar = new ToolBar(false);
     private final JButton borrower;
     private final JButton employee;
     private final JButton cancel;
