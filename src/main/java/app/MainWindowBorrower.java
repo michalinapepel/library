@@ -32,7 +32,7 @@ public class MainWindowBorrower extends JFrame implements LanguageChangeListener
 
         //lista scroll wypozyczen (do maks 5)
         //przycisk wypożycz i wyszukiwarka książek z pomocą tytułu lub autora
-        setSize(500, 300);
+        setSize(600, 300);
         setLocationRelativeTo(null);
 
     }

@@ -99,7 +99,7 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
         add(centerPanel);
         add(southPanel);
 
-        setSize(500, 300);
+        setSize(600, 300);
         setLocationRelativeTo(null);
 
     }
