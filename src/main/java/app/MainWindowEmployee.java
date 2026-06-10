@@ -1,6 +1,8 @@
 package app;
 
 import app.panels.ToolBar;
+import domain.Book;
+import management.DataBaseBooks;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,10 +30,17 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
 
         setTitle(Localization.get("app.title"));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridLayout(5, 1, 50, 10));
+        setLayout(new GridLayout(5, 1, 400, 20));
 
         booksButton = new JButton(Localization.get("button.books"));
-        booksButton.addActionListener(e -> {});
+        booksButton.addActionListener(e -> {
+        	
+        	DataBaseBooks booksDB = new DataBaseBooks();
+        	
+        	for (Book book : booksDB.getAllBooks()) {
+        		System.out.println(book.getTitle());
+        	}
+        });
         booksButton.setPreferredSize(new Dimension(300, 50));
         addBookButton = new JButton(Localization.get("button.book.add"));
         addBookButton.addActionListener(e -> {});
