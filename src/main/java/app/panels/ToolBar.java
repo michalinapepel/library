@@ -8,9 +8,21 @@ import java.awt.*;
 import java.util.Locale;
 import java.util.Objects;
 
+/**
+ * Pasek narzędziowy z przyciskami zmiany języka aplikacji.
+ * Klasa implementuje {@code LanguageChangeListener}, aby aktualizować napisy
+ * po zmianie lokalizacji.
+ */
 public class ToolBar extends JPanel implements LanguageChangeListener {
 
+    /**
+     * Przycisk zmieniający język aplikacji na polski.
+     */
     private final JButton plButton;
+
+    /**
+     * Przycisk zmieniający język aplikacji na angielski.
+     */
     private final JButton enButton;
 
     public ToolBar() {

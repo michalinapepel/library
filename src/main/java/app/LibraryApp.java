@@ -5,8 +5,15 @@ import app.panels.ToolBar;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Główna klasa uruchamiająca aplikację biblioteczną.
+ * Inicjalizuje interfejs użytkownika i rejestruje się jako obserwator zmian języka.
+ */
 public class LibraryApp implements LanguageChangeListener {
 
+    /**
+     * Główne okno aplikacji.
+     */
     private JFrame frame;
 
     public static void main(String[] args) {

@@ -5,12 +5,26 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-//klasa do zmiany "lokalizacji" - czyli de facto języka
+/**
+ * Pomocnicza klasa do zarządzania lokalizacją (językiem) aplikacji.
+ * Umożliwia ustawienie bieżącego {@link Locale}, ładowanie odpowiedniego
+ * {@link ResourceBundle} oraz powiadamianie zarejestrowanych słuchaczy o zmianie języka.
+ */
 public class Localization {
 
+    /**
+     * Aktualnie wybrany język aplikacji (locale).
+     */
     private static Locale currentLocale = Locale.forLanguageTag("pl");
+
+    /**
+     * Zestaw zasobów (bundle) zawierający tłumaczenia dla aktualnego locale.
+     */
     private static ResourceBundle bundle = loadBundle(currentLocale);
 
+    /**
+     * Lista obserwatorów, które zostaną powiadomione przy zmianie języka.
+     */
     private static final List<LanguageChangeListener> listeners = new ArrayList<>();
 
     private static ResourceBundle loadBundle(Locale locale) {

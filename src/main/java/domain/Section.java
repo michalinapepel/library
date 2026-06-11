@@ -2,9 +2,21 @@ package domain;
 
 import app.Localization;
 
-//działy w bibliotece
+/**
+ * Reprezentuje dział w bibliotece (np. literatura piękna, naukowa).
+ * Nazwa działu jest przechowywana jako klucz lokalizacyjny i pobierana
+ * przez klasę {@code Localization} zgodnie z aktualnym językiem.
+ */
 public class Section{
+    /**
+     * Unikalny identyfikator działu.
+     */
     private final int id;
+
+    /**
+     * Klucz służący do pobrania nazwy działu z zasobów lokalizacyjnych.
+     * Nazwa jest zależna od aktualnego języka i pobierana przez klasę {@code Localization}.
+     */
     private final String key; //nazwa zgodnie z językiem przekazanym przez obiekt Localization
 
     public Section(int id, String key) {
