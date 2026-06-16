@@ -4,18 +4,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-import domain.Borrower;
+import domain.Section;
 
-public class DataBaseBorrowers {
-	public void addBorrower(Borrower borrower) {
+public class DataBaseSections {
+	public void addSection(Section section) {
 		// Komenda SQLowska do dodania do bazy;
 		String sql = """
-				INSERT INTO borrowers(first_name, last_name, addresscity,addressstreet,addressnumber,addresszip,card_number)
-				VALUES (?, ?, ?, ?, ?, ?, ?)
+				INSERT INTO section(key)
+				VALUES (?)
 				""";
 
 		// proba polaczenia sie z baza danych
@@ -24,13 +23,7 @@ public class DataBaseBorrowers {
 
 			// ustawiamy pola dla VALUES z sql'a, kolejnosc zgodna z kolejnoscia w insert into
 			
-			statement.setString(1, borrower.getFirstName());
-			statement.setString(2, borrower.getLastName());
-			statement.setString(3, borrower.getAddressCity());
-			statement.setString(4, borrower.getAddressStreet());
-			statement.setInt(5, borrower.getAddressNumber());
-			statement.setInt(6, borrower.getAddressZip());
-			statement.setInt(7, borrower.getCardNumber());
+			statement.setString(1, section.getKey());
 
 
 			// execujemy sql
@@ -41,13 +34,13 @@ public class DataBaseBorrowers {
 		}
 	}
 
-	public List<Borrower> getAllBorrowers() {
+	public List<Section> getAllSections() {
 		//lista do zwrotki
-		List<Borrower> borrowers = new ArrayList<>();
+		List<Section> sections = new ArrayList<>();
 		
 		//sql query
 		String sql = """
-				SELECT id, first_name, last_name, addresscity,addressstreet,addressnumber,addresszip,card_number
+				SELECT id, key
 				FROM borrowers
 				ORDER BY id
 				""";
@@ -57,34 +50,28 @@ public class DataBaseBorrowers {
 				ResultSet resultSet = statement.executeQuery()) {
 			//pobieranie ksiazka po ksiazce
 			while (resultSet.next()) {
-				Borrower borrower = new Borrower(
+				Section section = new Section(
 						resultSet.getInt("id"), 
-						resultSet.getString("first_name"),
-						resultSet.getString("last_name"), 
-						resultSet.getString("addresscity"),
-						resultSet.getString("addressstreet"),
-						resultSet.getInt("addressnumber"),
-						resultSet.getInt("addresszip"),
-						resultSet.getInt("card_number"));
-
-				borrowers.add(borrower);
+						resultSet.getString("key"));
+				sections.add(section);
+				
 			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-		return borrowers;
+		return sections;
 	}
 	
-	 public void deleteBorrower(int borrowerId) {
+	 public void deleteSection(int sectionId) {
 		 	//usuwanie po ID
-	        String sql = "DELETE FROM borrowers WHERE id = ?";
+	        String sql = "DELETE FROM sections WHERE id = ?";
 	        //laczenie do bazy
 	        try (Connection connection = DatabaseConnection.getConnection();
 	             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-	            statement.setInt(1, borrowerId);
+	            statement.setInt(1, sectionId);
 	            statement.executeUpdate();
 
 	        } catch (SQLException e) {
