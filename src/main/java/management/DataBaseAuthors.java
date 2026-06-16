@@ -42,7 +42,7 @@ public class DataBaseAuthors {
 		
 		//sql query
 		String sql = """
-				SELECT id, first_name, last_name, addresscity,addressstreet,addressnumber,addresszip,card_number
+				SELECT id, first_name, last_name, pseudonym, nationality
 				FROM authors
 				ORDER BY id
 				""";
