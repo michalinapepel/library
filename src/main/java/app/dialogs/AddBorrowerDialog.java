@@ -102,14 +102,57 @@ public class AddBorrowerDialog extends JDialog implements LanguageChangeListener
         cancel = new JButton(Localization.get("button.cancel"));
 
         ok.addActionListener(e -> {
+            // Walidacja
+            String firstName = firstNameField.getText().trim();
+            String lastName = lastNameField.getText().trim();
+            String city = addressCityField.getText().trim();
+            String street = addressStreetField.getText().trim();
+            String zip = addressZipField.getText().trim();
+            Integer cardNumber = (Integer) cardNumberSpinner.getValue();
+
+            if (firstName.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Imię jest wymagane!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (lastName.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Nazwisko jest wymagane!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (city.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Miasto jest wymagane!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (street.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Ulica jest wymagana!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (zip.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Kod pocztowy jest wymagany!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (!zip.matches("\\d{2}-\\d{3}|\\d{5}")) {
+                JOptionPane.showMessageDialog(this, "Kod pocztowy musi być w formacie XX-XXX!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (cardNumber <= 0) {
+                JOptionPane.showMessageDialog(this, "Numer karty bibliotecznej musi być dodatni!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             result = new Borrower();
-            result.setFirstName(firstNameField.getText().trim());
-            result.setLastName(lastNameField.getText().trim());
-            result.setAddressCity(addressCityField.getText().trim());
-            result.setAddressStreet(addressStreetField.getText().trim());
+            result.setFirstName(firstName);
+            result.setLastName(lastName);
+            result.setAddressCity(city);
+            result.setAddressStreet(street);
             result.setAddressNumber(((Integer) addressNumberSpinner.getValue()));
-            result.setAddressZip(addressZipField.getText().trim());
-            result.setCardNumber((Integer) cardNumberSpinner.getValue());
+            result.setAddressZip(zip);
+            result.setCardNumber(cardNumber);
             dispose();
         });
 

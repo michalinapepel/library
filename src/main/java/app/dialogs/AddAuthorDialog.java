@@ -75,9 +75,33 @@ public class AddAuthorDialog extends JDialog implements LanguageChangeListener {
         cancel = new JButton(Localization.get("button.cancel"));
 
         ok.addActionListener(e -> {
+            // Walidacja
+            String firstName = firstNameField.getText().trim();
+            String lastName = lastNameField.getText().trim();
+
+            if (firstName.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Imię jest wymagane!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (firstName.length() > 100) {
+                JOptionPane.showMessageDialog(this, "Imię nie może być dłuższe niż 100 znaków!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (lastName.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Nazwisko jest wymagane!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (lastName.length() > 100) {
+                JOptionPane.showMessageDialog(this, "Nazwisko nie może być dłuższe niż 100 znaków!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             result = new Author();
-            result.setFirstName(firstNameField.getText().trim());
-            result.setLastName(lastNameField.getText().trim());
+            result.setFirstName(firstName);
+            result.setLastName(lastName);
             result.setPseudonym(pseudonymField.getText().trim());
             result.setNationality(nationalityField.getText().trim());
             dispose();

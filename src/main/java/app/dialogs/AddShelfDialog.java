@@ -48,8 +48,20 @@ public class AddShelfDialog extends JDialog implements LanguageChangeListener {
         cancel = new JButton(Localization.get("button.cancel"));
 
         ok.addActionListener(e -> {
+            String name = nameField.getText().trim();
+
+            if (name.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Nazwa półki jest wymagana!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (name.length() > 100) {
+                JOptionPane.showMessageDialog(this, "Nazwa półki nie może być dłuższa niż 100 znaków!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             result = new Shelf();
-            result.setName(nameField.getText().trim());
+            result.setName(name);
             dispose();
         });
 

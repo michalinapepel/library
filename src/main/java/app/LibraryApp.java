@@ -23,7 +23,7 @@ public class LibraryApp {
                 if (id.length() == 8) {
                     MainWindowBorrower window = new MainWindowBorrower();
                     window.setVisible(true);
-                };
+                }
             }
 
             if (result == UserType.EMPLOYEE) {

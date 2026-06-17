@@ -4,6 +4,12 @@ import app.dialogs.*;
 import app.panels.ToolBar;
 import domain.Author;
 import domain.Book;
+import domain.Borrower;
+import domain.Loan;
+import management.DataBaseBooks;
+import management.DataBaseAuthors;
+import management.DataBaseBorrowers;
+import management.DataBaseLoans;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +18,10 @@ import java.util.ArrayList;
 public class MainWindowEmployee extends JFrame implements LanguageChangeListener {
 
     private final ToolBar toolbar;
+    private final DataBaseBooks dbBooks;
+    private final DataBaseAuthors dbAuthors;
+    private final DataBaseBorrowers dbBorrowers;
+    private final DataBaseLoans dbLoans;
     private final JButton booksButton;
     private final JButton addBookButton;
     private final JButton authorsButton;
@@ -29,6 +39,12 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
 
     public MainWindowEmployee() {
         Localization.addLanguageChangeListener(this);
+
+        // Inicjalizacja klasy do obsługi bazy danych
+        dbBooks = new DataBaseBooks();
+        dbAuthors = new DataBaseAuthors();
+        dbBorrowers = new DataBaseBorrowers();
+        dbLoans = new DataBaseLoans();
 
         setTitle(Localization.get("app.title"));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -122,54 +138,75 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
 
     private void showListBooksDialog() {
         ListBooksDialog dialog = new ListBooksDialog(this);
-        ArrayList<Book> books = new ArrayList<>();
-
-        Book book1 = new Book();
-        book1.setTitle("The Great Gatsby");
-        book1.setAuthors(new Author[] {new Author()});
-        book1.setPublisher("HarperCollins");
-
-        books.add(book1);
-
-        dialog.setBooks(books);
+        // Pobierz wszystkie książki z bazy danych
+        dialog.setBooks(dbBooks.getAllBooks());
         dialog.showDialog();
     }
 
     private void showAddBookDialog() {
         AddBookDialog dialog = new AddBookDialog(this);
-        dialog.showDialog();
+        Book newBook = dialog.showDialog();
+
+        if (newBook != null) {
+            // Pobierz ID półki jeśli jest dostępna
+            if (newBook.getShelfId() != null && newBook.getShelfId() > 0) {
+                dbBooks.addBook(newBook);
+                JOptionPane.showMessageDialog(this, "Książka dodana pomyślnie!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Proszę wybrać półkę!", "Błąd", JOptionPane.WARNING_MESSAGE);
+            }
+        }
     }
 
     private void showAddAuthorDialog() {
         AddAuthorDialog dialog = new AddAuthorDialog(this);
-        dialog.showDialog();
+        Author newAuthor = dialog.showDialog();
+
+        if (newAuthor != null) {
+            dbAuthors.addAuthor(newAuthor);
+            JOptionPane.showMessageDialog(this, "Autor dodany pomyślnie!");
+        }
     }
 
     private void showAuthorsDialog() {
         ListAuthorsDialog dialog = new ListAuthorsDialog(this);
+        // Pobierz wszystkich autorów z bazy danych
+        dialog.setAuthors(dbAuthors.getAllAuthors());
         dialog.showDialog();
     }
 
     private void showListBorrowersDialog() {
         ListBorrowersDialog dialog = new ListBorrowersDialog(this);
-        dialog.setBorrowers(new ArrayList<>());
+        // Pobierz wszystkich czytelników z bazy danych
+        dialog.setBorrowers(dbBorrowers.getAllBorrowers());
         dialog.showDialog();
     }
 
     private void showAddBorrowerDialog() {
         AddBorrowerDialog dialog = new AddBorrowerDialog(this);
-        dialog.showDialog();
+        Borrower newBorrower = dialog.showDialog();
+
+        if (newBorrower != null) {
+            dbBorrowers.addBorrower(newBorrower);
+            JOptionPane.showMessageDialog(this, "Czytelnik dodany pomyślnie!");
+        }
     }
 
     private void showListLoansDialog() {
         ListLoansDialog dialog = new ListLoansDialog(this);
-        dialog.setLoans(new ArrayList<>());
+        // Pobierz wszystkie wypożyczenia z bazy danych
+        dialog.setLoans(dbLoans.getAllLoans());
         dialog.showDialog();
     }
 
     private void showAddLoanDialog() {
         AddLoanDialog dialog = new AddLoanDialog(this);
-        dialog.showDialog();
+        Loan newLoan = dialog.showDialog();
+
+        if (newLoan != null) {
+            dbLoans.addLoan(newLoan);
+            JOptionPane.showMessageDialog(this, "Wypożyczenie dodane pomyślnie!");
+        }
     }
 
     @Override

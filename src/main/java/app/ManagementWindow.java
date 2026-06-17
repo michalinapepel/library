@@ -2,6 +2,12 @@ package app;
 
 import app.dialogs.*;
 import app.panels.ToolBar;
+import domain.Bookcase;
+import domain.Shelf;
+import domain.Section;
+import management.DataBaseBookcase;
+import management.DataBaseSections;
+import management.DataBaseShelfs;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,6 +15,9 @@ import java.util.ArrayList;
 
 public class ManagementWindow extends JFrame implements LanguageChangeListener{
     private final ToolBar toolbar;
+    private final DataBaseSections dbSections;
+    private final DataBaseBookcase dbBookcases;
+    private final DataBaseShelfs dbShelves;
     private final JButton sectionsButton;
     private final JButton addSectionButton;
     private final JButton bookcasesButton;
@@ -22,6 +31,11 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
     private final JPanel southPanel;
     public ManagementWindow() {
         Localization.addLanguageChangeListener(this);
+
+        // Inicjalizacja klasy do obsługi bazy danych
+        dbSections = new DataBaseSections();
+        dbBookcases = new DataBaseBookcase();
+        dbShelves = new DataBaseShelfs();
 
         setTitle(Localization.get("app.title"));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -93,35 +107,53 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
 
     private void showListSectionsDialog() {
         ListSectionsDialog dialog = new ListSectionsDialog(this);
-        dialog.setSections(new ArrayList<>());
+        // Pobierz wszystkie sekcje z bazy danych
+        dialog.setSections(dbSections.getAllSections());
         dialog.showDialog();
     }
 
     private void showAddSectionDialog() {
         AddSectionDialog dialog = new AddSectionDialog(this);
-        dialog.showDialog();
+        Section newSection = dialog.showDialog();
+
+        if (newSection != null) {
+            dbSections.addSection(newSection);
+            JOptionPane.showMessageDialog(this, "Sekcja dodana pomyślnie!");
+        }
     }
 
     private void showListBookcasesDialog() {
         ListBookcasesDialog dialog = new ListBookcasesDialog(this);
-        dialog.setBookcases(new ArrayList<>());
+        // Pobierz wszystkie regały z bazy danych
+        dialog.setBookcases(dbBookcases.getAllBookcases());
         dialog.showDialog();
     }
 
     private void showAddBookcaseDialog() {
         AddBookcaseDialog dialog = new AddBookcaseDialog(this);
-        dialog.showDialog();
+        Bookcase newBookcase = dialog.showDialog();
+
+        if (newBookcase != null) {
+            dbBookcases.addBookcase(newBookcase);
+            JOptionPane.showMessageDialog(this, "Regał dodany pomyślnie!");
+        }
     }
 
     private void showListShelvesDialog() {
         ListShelvesDialog dialog = new ListShelvesDialog(this);
-        dialog.setShelves(new ArrayList<>());
+        // Pobierz wszystkie półki z bazy danych
+        dialog.setShelves(dbShelves.getAllShelves());
         dialog.showDialog();
     }
 
     private void showAddShelfDialog() {
         AddShelfDialog dialog = new AddShelfDialog(this);
-        dialog.showDialog();
+        Shelf newShelf = dialog.showDialog();
+
+        if (newShelf != null) {
+            dbShelves.addShelf(newShelf);
+            JOptionPane.showMessageDialog(this, "Półka dodana pomyślnie!");
+        }
     }
 
     @Override

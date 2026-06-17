@@ -93,11 +93,56 @@ public class AddBookDialog extends JDialog implements LanguageChangeListener {
         cancel = new JButton(Localization.get("button.cancel"));
 
         ok.addActionListener(e -> {
+            // Walidacja
+            String title = titleField.getText().trim();
+            String publisher = publisherField.getText().trim();
+            String isbn = isbnField.getText().trim();
+
+            if (title.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Tytuł jest wymagany!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (title.length() > 255) {
+                JOptionPane.showMessageDialog(this, "Tytuł nie może być dłuższy niż 255 znaków!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (publisher.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Wydawca jest wymagany!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (publisher.length() > 255) {
+                JOptionPane.showMessageDialog(this, "Wydawca nie może być dłuższy niż 255 znaków!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (isbn.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "ISBN jest wymagany!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (!isbn.matches("\\d{10}|\\d{13}")) {
+                JOptionPane.showMessageDialog(this, "ISBN musi mieć 10 lub 13 cyfr!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             result = new Book();
-            result.setTitle(titleField.getText().trim());
-            result.setPublisher(publisherField.getText().trim());
+            result.setTitle(title);
+            result.setPublisher(publisher);
             result.setYearOfPublishing((Integer) yearSpinner.getValue());
-            result.setIsbn(isbnField.getText().trim());
+            result.setIsbn(isbn);
+
+            try {
+                String shelfStr = shelfField.getText().trim();
+                if (!shelfStr.isEmpty()) {
+                    result.setShelfId(Integer.parseInt(shelfStr));
+                }
+            } catch (NumberFormatException ex) {
+                // Ignoruj jeśli shelf ID nie jest liczbą
+            }
+
             dispose();
         });
 

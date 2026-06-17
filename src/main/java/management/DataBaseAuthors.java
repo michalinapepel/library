@@ -80,4 +80,26 @@ public class DataBaseAuthors {
 	            e.printStackTrace();
 	        }
 	    }
+
+	public void updateAuthor(Author author) {
+		String sql = """
+				UPDATE authors
+				SET first_name = ?, last_name = ?, pseudonym = ?, nationality = ?
+				WHERE id = ?
+				""";
+
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+
+			statement.setString(1, author.getFirstName());
+			statement.setString(2, author.getLastName());
+			statement.setString(3, author.getPseudonym());
+			statement.setString(4, author.getNationality());
+			statement.setInt(5, author.getId());
+			statement.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

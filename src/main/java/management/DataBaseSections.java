@@ -65,17 +65,36 @@ public class DataBaseSections {
 	}
 	
 	 public void deleteSection(int sectionId) {
-		 	//usuwanie po ID
-	        String sql = "DELETE FROM sections WHERE id = ?";
-	        //laczenie do bazy
-	        try (Connection connection = DatabaseConnection.getConnection();
-	             PreparedStatement statement = connection.prepareStatement(sql)) {
+	 	//usuwanie po ID
+        String sql = "DELETE FROM section WHERE id = ?";
+        //laczenie do bazy
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-	            statement.setInt(1, sectionId);
-	            statement.executeUpdate();
+            statement.setInt(1, sectionId);
+            statement.executeUpdate();
 
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        }
-	    }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+	public void updateSection(Section section) {
+		String sql = """
+				UPDATE section
+				SET key = ?
+				WHERE id = ?
+				""";
+
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+
+			statement.setString(1, section.getKey());
+			statement.setInt(2, section.getId());
+			statement.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

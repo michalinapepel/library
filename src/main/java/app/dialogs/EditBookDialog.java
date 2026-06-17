@@ -3,7 +3,9 @@ package app.dialogs;
 import app.LanguageChangeListener;
 import app.Localization;
 import domain.Book;
+import domain.Author;
 import domain.Shelf;
+import management.DataBaseBooks;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,10 +24,12 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
     private JButton cancel;
     private JButton delete;
     private boolean deleted = false;
+    private final DataBaseBooks dbBooks;
 
     public EditBookDialog(JFrame parent, Book book) {
         super(parent, Localization.get("dialog.edit.book.title"), true);
         this.originalBook = book;
+        this.dbBooks = new DataBaseBooks();
         Localization.addLanguageChangeListener(this);
         initComponents();
         loadBookData();
@@ -47,12 +51,14 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
         titleField = new JTextField(20);
         add(titleField, gbc);
 
-        // Authors
+        // Authors (read-only - pokazuje autorów z bazy)
         gbc.gridx = 0;
         gbc.gridy = 1;
         add(new JLabel(Localization.get("label.author")), gbc);
         gbc.gridx = 1;
         authorField = new JTextField(20);
+        authorField.setEditable(false);
+        authorField.setBackground(Color.LIGHT_GRAY);
         add(authorField, gbc);
 
         // Publisher
@@ -101,12 +107,26 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
         delete.setForeground(Color.RED);
 
         ok.addActionListener(e -> {
+            // Walidacja
+            String title = titleField.getText().trim();
+            String publisher = publisherField.getText().trim();
+            String isbn = isbnField.getText().trim();
+
+            if (title.isEmpty() || publisher.isEmpty() || isbn.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Wszystkie pola są wymagane!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (!isbn.matches("\\d{10}|\\d{13}")) {
+                JOptionPane.showMessageDialog(this, "ISBN musi mieć 10 lub 13 cyfr!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             result = originalBook;
-            result.setTitle(titleField.getText().trim());
-            result.setPublisher(publisherField.getText().trim());
+            result.setTitle(title);
+            result.setPublisher(publisher);
             result.setYearOfPublishing((Integer) yearSpinner.getValue());
-            result.setIsbn(isbnField.getText().trim());
-            //result.setShelf();
+            result.setIsbn(isbn);
             dispose();
         });
 
@@ -135,6 +155,21 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
             publisherField.setText(originalBook.getPublisher() != null ? originalBook.getPublisher() : "");
             yearSpinner.setValue(originalBook.getPublicationYear());
             isbnField.setText(originalBook.getIsbn() != null ? originalBook.getIsbn() : "");
+
+            // Pobierz i wyświetl autorów z bazy danych
+            if (originalBook.getId() > 0) {
+                java.util.List<Author> authors = dbBooks.getAuthorsForBook(originalBook.getId());
+                if (!authors.isEmpty()) {
+                    StringBuilder authorsStr = new StringBuilder();
+                    for (Author author : authors) {
+                        if (authorsStr.length() > 0) authorsStr.append("; ");
+                        authorsStr.append(author.getFirstName()).append(" ").append(author.getLastName());
+                    }
+                    authorField.setText(authorsStr.toString());
+                } else {
+                    authorField.setText("Brak przypisanych autorów");
+                }
+            }
         }
     }
 
@@ -157,3 +192,5 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
         repaint();
     }
 }
+
+

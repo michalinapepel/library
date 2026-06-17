@@ -62,16 +62,35 @@ public class DataBaseBookcase {
 		return bookcases;
 	}
 	
-	 public void deleteBookcase(int bookcaseId) {
-	        String sql = "DELETE FROM bookcase WHERE id = ?";
-	        try (Connection connection = DatabaseConnection.getConnection();
-	             PreparedStatement statement = connection.prepareStatement(sql)) {
+	public void deleteBookcase(int bookcaseId) {
+		String sql = "DELETE FROM bookcase WHERE id = ?";
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
 
-	            statement.setInt(1, bookcaseId);
-	            statement.executeUpdate();
+			statement.setInt(1, bookcaseId);
+			statement.executeUpdate();
 
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        }
-	    }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void updateBookcase(Bookcase bookcase) {
+		String sql = """
+				UPDATE bookcase
+				SET name = ?
+				WHERE id = ?
+				""";
+
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+
+			statement.setString(1, bookcase.getName());
+			statement.setInt(2, bookcase.getId());
+			statement.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

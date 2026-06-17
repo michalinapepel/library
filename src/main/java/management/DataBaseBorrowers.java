@@ -91,4 +91,29 @@ public class DataBaseBorrowers {
 	            e.printStackTrace();
 	        }
 	    }
+
+	public void updateBorrower(Borrower borrower) {
+		String sql = """
+				UPDATE borrower
+				SET first_name = ?, last_name = ?, addresscity = ?, addressstreet = ?, addressnumber = ?, addresszip = ?, card_number = ?
+				WHERE id = ?
+				""";
+
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+
+			statement.setString(1, borrower.getFirstName());
+			statement.setString(2, borrower.getLastName());
+			statement.setString(3, borrower.getAddressCity());
+			statement.setString(4, borrower.getAddressStreet());
+			statement.setInt(5, borrower.getAddressNumber());
+			statement.setString(6, borrower.getAddressZip());
+			statement.setInt(7, borrower.getCardNumber());
+			statement.setInt(8, borrower.getId());
+			statement.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

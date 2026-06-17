@@ -39,4 +39,12 @@ abstract public class AbstractPerson {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }
