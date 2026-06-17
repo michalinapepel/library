@@ -3,6 +3,7 @@ package app.dialogs;
 import app.LanguageChangeListener;
 import app.Localization;
 import domain.Book;
+import domain.Shelf;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,6 +17,7 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
     private JTextField publisherField;
     private JSpinner yearSpinner;
     private JTextField isbnField;
+    private JSpinner shelfField;
     private JButton ok;
     private JButton cancel;
     private JButton delete;
@@ -77,9 +79,17 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
         isbnField = new JTextField(20);
         add(isbnField, gbc);
 
-        // Buttons
+        // Shelf
         gbc.gridx = 0;
         gbc.gridy = 5;
+        add(new JLabel(Localization.get("label.shelf")), gbc);
+        gbc.gridx = 1;
+        shelfField = new JSpinner(new SpinnerNumberModel(0, 0, 20, 1));
+        add(shelfField, gbc);
+
+        // Buttons
+        gbc.gridx = 0;
+        gbc.gridy = 6;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -96,6 +106,7 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
             result.setPublisher(publisherField.getText().trim());
             result.setYearOfPublishing((Integer) yearSpinner.getValue());
             result.setIsbn(isbnField.getText().trim());
+            //result.setShelf();
             dispose();
         });
 
