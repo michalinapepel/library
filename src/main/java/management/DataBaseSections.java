@@ -1,16 +1,20 @@
 package management;
 
-import domain.Book;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataBaseBooks {
-	public void addBook(Book book) {
+import domain.Section;
+
+public class DataBaseSections {
+	public void addSection(Section section) {
 		// Komenda SQLowska do dodania do bazy;
 		String sql = """
-				INSERT INTO book(title, publisher, publication_year,isbn,shelf_id)
-				VALUES (?, ?, ?, ?, ?)
+				INSERT INTO section(key)
+				VALUES (?)
 				""";
 
 		// proba polaczenia sie z baza danych
@@ -19,17 +23,8 @@ public class DataBaseBooks {
 
 			// ustawiamy pola dla VALUES z sql'a, kolejnosc zgodna z kolejnoscia w insert into
 			
-			statement.setString(1, book.getTitle());
-			statement.setString(2, book.getPublisher());
-			statement.setInt(3, book.getPublicationYear());
-			statement.setString(4, book.getIsbn());
+			statement.setString(1, section.getKey());
 
-			// jesli nie ma podanego id to wrzucilem nulla, ale ngl i tak sra wtedy bledem XD
-			if (book.getShelfId() == null) {
-				statement.setNull(5, Types.INTEGER);
-			} else {
-				statement.setInt(5, book.getShelfId());
-			}
 
 			// execujemy sql
 			statement.executeUpdate();
@@ -39,14 +34,14 @@ public class DataBaseBooks {
 		}
 	}
 
-	public List<Book> getAllBooks() {
+	public List<Section> getAllSections() {
 		//lista do zwrotki
-		List<Book> books = new ArrayList<>();
+		List<Section> sections = new ArrayList<>();
 		
 		//sql query
 		String sql = """
-				SELECT id, title, publisher, publication_year, isbn, shelf_id
-				FROM book
+				SELECT id, key
+				FROM borrowers
 				ORDER BY id
 				""";
 		//proba polaczenia z baza
@@ -55,29 +50,28 @@ public class DataBaseBooks {
 				ResultSet resultSet = statement.executeQuery()) {
 			//pobieranie ksiazka po ksiazce
 			while (resultSet.next()) {
-				Book book = new Book(resultSet.getInt("id"), resultSet.getString("title"),
-						resultSet.getString("publisher"), resultSet.getInt("publication_year"),
-						resultSet.getString("isbn"),
-						resultSet.getObject("shelf_id") == null ? null : resultSet.getInt("shelf_id"));
-
-				books.add(book);
+				Section section = new Section(
+						resultSet.getInt("id"), 
+						resultSet.getString("key"));
+				sections.add(section);
+				
 			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-		return books;
+		return sections;
 	}
 	
-	 public void deleteBook(int bookId) {
+	 public void deleteSection(int sectionId) {
 		 	//usuwanie po ID
-	        String sql = "DELETE FROM book WHERE id = ?";
+	        String sql = "DELETE FROM sections WHERE id = ?";
 	        //laczenie do bazy
 	        try (Connection connection = DatabaseConnection.getConnection();
 	             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-	            statement.setInt(1, bookId);
+	            statement.setInt(1, sectionId);
 	            statement.executeUpdate();
 
 	        } catch (SQLException e) {

@@ -8,4 +8,8 @@ import domain.base.AbstractLocation;
  * książek do konkretnej pozycji w regale.
  */
 public class Shelf extends AbstractLocation {
+	public Shelf() {};
+	public Shelf(Integer id, Integer bookcaseId, String name) {
+		super.init(id, bookcaseId, name);
+	};
 }

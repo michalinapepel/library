@@ -27,6 +27,17 @@ public class Section extends AbstractLocation {
     public String getName() {
         return Localization.get(key);
     }
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setName(String name) {
+        
+    }
 
     @Override
     public String toString() {

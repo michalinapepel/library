@@ -7,4 +7,7 @@ import domain.base.AbstractLocation;
  * i może zawierać dodatkowe informacje specyficzne dla regałów.
  */
 public class Bookcase extends AbstractLocation {
+	public Bookcase(Integer id, String name) {
+		super.init(id, name);
+	}
 }

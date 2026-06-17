@@ -4,18 +4,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-import domain.Borrower;
+import domain.Author;
 
-public class DataBaseBorrowers {
-	public void addBorrower(Borrower borrower) {
+public class DataBaseAuthors {
+	public void addAuthor(Author author) {
 		// Komenda SQLowska do dodania do bazy;
 		String sql = """
-				INSERT INTO borrower(first_name, last_name, addresscity,addressstreet,addressnumber,addresszip,card_number)
-				VALUES (?, ?, ?, ?, ?, ?, ?)
+				INSERT INTO authors(first_name, last_name, pseudonym,nationality)
+				VALUES (?, ?, ?, ?)
 				""";
 
 		// proba polaczenia sie z baza danych
@@ -24,14 +23,10 @@ public class DataBaseBorrowers {
 
 			// ustawiamy pola dla VALUES z sql'a, kolejnosc zgodna z kolejnoscia w insert into
 			
-			statement.setString(1, borrower.getFirstName());
-			statement.setString(2, borrower.getLastName());
-			statement.setString(3, borrower.getAddressCity());
-			statement.setString(4, borrower.getAddressStreet());
-			statement.setInt(5, borrower.getAddressNumber());
-			statement.setInt(6, borrower.getAddressZip());
-			statement.setInt(7, borrower.getCardNumber());
-
+			statement.setString(1, author.getFirstName());
+			statement.setString(2, author.getLastName());
+			statement.setString(3, author.getPseudonym());
+			statement.setString(4, author.getNationality());
 
 			// execujemy sql
 			statement.executeUpdate();
@@ -41,14 +36,14 @@ public class DataBaseBorrowers {
 		}
 	}
 
-	public List<Borrower> getAllBorrowers() {
+	public List<Author> getAllAuthors() {
 		//lista do zwrotki
-		List<Borrower> borrowers = new ArrayList<>();
+		List<Author> authors = new ArrayList<>();
 		
 		//sql query
 		String sql = """
-				SELECT id, first_name, last_name, addresscity,addressstreet,addressnumber,addresszip,card_number
-				FROM borrower
+				SELECT id, first_name, last_name, pseudonym, nationality
+				FROM authors
 				ORDER BY id
 				""";
 		//proba polaczenia z baza
@@ -57,34 +52,28 @@ public class DataBaseBorrowers {
 				ResultSet resultSet = statement.executeQuery()) {
 			//pobieranie ksiazka po ksiazce
 			while (resultSet.next()) {
-				Borrower borrower = new Borrower(
+				Author author = new Author(
 						resultSet.getInt("id"), 
 						resultSet.getString("first_name"),
 						resultSet.getString("last_name"), 
-						resultSet.getString("addresscity"),
-						resultSet.getString("addressstreet"),
-						resultSet.getInt("addressnumber"),
-						resultSet.getInt("addresszip"),
-						resultSet.getInt("card_number"));
-
-				borrowers.add(borrower);
+						resultSet.getString("pseudonym"),
+						resultSet.getString("nationality"));	
+				authors.add(author);
 			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-		return borrowers;
+		return authors;
 	}
 	
-	 public void deleteBorrower(int borrowerId) {
-		 	//usuwanie po ID
-	        String sql = "DELETE FROM borrower WHERE id = ?";
-	        //laczenie do bazy
+	 public void deleteAuthor(int authorId) {
+	        String sql = "DELETE FROM authors WHERE id = ?";
 	        try (Connection connection = DatabaseConnection.getConnection();
 	             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-	            statement.setInt(1, borrowerId);
+	            statement.setInt(1, authorId);
 	            statement.executeUpdate();
 
 	        } catch (SQLException e) {

@@ -6,6 +6,10 @@ package domain;
  * rok wydania i numer ISBN.
  */
 public class Book {
+	
+    private int id;
+    private int shelfId;
+  
     /**
      * Tytuł książki.
      * Domyślnie pusty łańcuch, może być {@code null} jeśli zmienione.
@@ -34,19 +38,74 @@ public class Book {
      */
     private String isbn = "";
 
-    /**
-     * Półka, na której przechowywana jest książka.
-     */
-    private Shelf shelf;
+	public Book() {
+	};
 
-    public String getTitle() {
-        return title;
-    }
+	public Book(String title, String publisher, int publicationYear, String isbn, Integer shelfId) {
+		this.title = title;
+		this.publisher = publisher;
+		this.yearOfPublishing = publicationYear;
+		this.isbn = isbn;
+		this.shelfId = shelfId;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public Book(int id, String title, String publisher, int publicationYear, String isbn, Integer shelfId) {
+		this.id = id;
+		this.title = title;
+		this.publisher = publisher;
+		this.yearOfPublishing = publicationYear;
+		this.isbn = isbn;
+		this.shelfId = shelfId;
+	}
 
+	public int getId() {
+		return id;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public String getPublisher() {
+		return publisher;
+	}
+
+	public int getPublicationYear() {
+		return yearOfPublishing;
+	}
+
+	public String getIsbn() {
+		return isbn;
+	}
+
+	public Integer getShelfId() {
+		return shelfId;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public void setPublisher(String publisher) {
+		this.publisher = publisher;
+	}
+
+	public void setPublicationYear(int publicationYear) {
+		this.yearOfPublishing = publicationYear;
+	}
+
+	public void setIsbn(String isbn) {
+		this.isbn = isbn;
+	}
+
+	public void setShelfId(Integer shelfId) {
+		this.shelfId = shelfId;
+	}
+  
     public Author[] getAuthors() {
         return authors;
     }
@@ -65,35 +124,4 @@ public class Book {
         this.authors = authors;
     }
 
-    public String getPublisher() {
-        return publisher;
-    }
-
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
-    }
-
-    public int getYearOfPublishing() {
-        return yearOfPublishing;
-    }
-
-    public void setYearOfPublishing(int yearOfPublishing) {
-        this.yearOfPublishing = yearOfPublishing;
-    }
-
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
-
-    public Shelf getShelf() {
-        return shelf;
-    }
-
-    public void setShelf(Shelf shelf) {
-        this.shelf = shelf;
-    }
 }

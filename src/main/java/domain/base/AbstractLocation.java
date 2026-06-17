@@ -1,5 +1,6 @@
 package domain.base;
 
+public class AbstractLocation {
 /**
  * Klasa reprezentująca ogólną lokalizację w bibliotece.
  * Może być używana jako klasa bazowa dla bardziej konkretnych typów lokalizacji,
@@ -17,6 +18,8 @@ abstract public class AbstractLocation {
      * Służy do odróżniania obiektów w kolekcjach/ bazie danych.
      */
     protected int id;
+    
+    protected int bookcaseId;
 
     public String getName() {
         return name;
@@ -33,4 +36,23 @@ abstract public class AbstractLocation {
     public void setId(int id) {
         this.id = id;
     }
+    
+    	public int getBookcaseId() {
+		return bookcaseId;
+	}
+	public void setBookcaseId(int bookcaseId) {
+		this.bookcaseId = bookcaseId;
+	}
+  
+	public void init(Integer id, Integer bookcaseId, String name) {
+		this.id = id;
+		this.bookcaseId = bookcaseId;
+		this.name = name;
+		
+	}
+	public void init(Integer id, String name) {
+		this.id = id;
+		this.name = name;
+		
+	}
 }

@@ -12,6 +12,8 @@ package domain.base;
  */
 
 abstract public class AbstractPerson {
+    
+  protected Integer id;
     /**
      * Imię osoby.
      */
