@@ -1,45 +1,51 @@
 package app;
 
-import app.panels.ToolBar;
+import app.dialogs.BorrowerDialog;
+import app.dialogs.EmployeeDialog;
+import app.dialogs.StartDialog;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * Główna klasa uruchamiająca aplikację biblioteczną.
- * Inicjalizuje interfejs użytkownika i rejestruje się jako obserwator zmian języka.
  */
-public class LibraryApp implements LanguageChangeListener {
+public class LibraryApp {
 
-    /**
-     * Główne okno aplikacji.
-     */
-    private JFrame frame;
+    public void startApp(){
+        SwingUtilities.invokeLater(() -> {
+            StartDialog start = new StartDialog(null);
+            UserType result = start.showDialog();
+
+            if (result == UserType.BORROWER) {
+                BorrowerDialog b = new BorrowerDialog(null);
+                String id = b.showDialog();
+                if (id == null) return;
+                if (id.length() == 8) {
+                    MainWindowBorrower window = new MainWindowBorrower();
+                    window.setVisible(true);
+                };
+            }
+
+            if (result == UserType.EMPLOYEE) {
+                EmployeeDialog e = new EmployeeDialog(null);
+                String code = e.showDialog();
+                if (code == null) return;
+                else if (code.equals("15071410")) {
+                    MainWindowEmployee window = new MainWindowEmployee();
+                    window.setVisible(true);
+                }
+                else return;
+            }
+
+            if (result == UserType.CANCEL) {
+                return;
+            }
+
+
+        });
+    }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(LibraryApp::new);
-    }
-
-    public LibraryApp() {
-        initUI();
-        Localization.addLanguageChangeListener(this);
-    }
-
-    private void initUI() {
-        frame = new JFrame(Localization.get("app.title"));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new BorderLayout());
-
-        ToolBar toolbar = new ToolBar();
-        frame.add(toolbar, BorderLayout.NORTH);
-
-        frame.setSize(800, 600);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-    }
-
-    @Override
-    public void onLanguageChanged() {
-        frame.setTitle(Localization.get("app.title"));
+        new LibraryApp().startApp();
     }
 }

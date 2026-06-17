@@ -5,16 +5,32 @@ package domain.base;
  * Może być używana jako klasa bazowa dla bardziej konkretnych typów lokalizacji,
  * takich jak regały czy półki. Zawiera podstawowe pola wspólne dla lokalizacji.
  */
-public class AbstractLocation {
+abstract public class AbstractLocation {
     /**
      * Nazwa lokalizacji (np. nazwa regału lub półki).
      * Może być {@code null}, jeśli nieustawiona.
      */
-    private String name;
+    protected String name;
 
     /**
      * Unikalny identyfikator lokalizacji.
      * Służy do odróżniania obiektów w kolekcjach/ bazie danych.
      */
-    private int id;
+    protected int id;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

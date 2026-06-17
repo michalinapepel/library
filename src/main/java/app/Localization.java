@@ -10,7 +10,7 @@ import java.util.ResourceBundle;
  * Umożliwia ustawienie bieżącego {@link Locale}, ładowanie odpowiedniego
  * {@link ResourceBundle} oraz powiadamianie zarejestrowanych słuchaczy o zmianie języka.
  */
-public class Localization {
+public final class Localization {
 
     /**
      * Aktualnie wybrany język aplikacji (locale).

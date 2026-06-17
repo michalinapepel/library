@@ -1,7 +1,8 @@
 package app.panels;
 
-import app.LanguageChangeListener;
-import app.Localization;
+import app.*;
+import app.dialogs.StartDialog;
+import com.sun.java.accessibility.util.SwingEventMonitor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,15 +25,30 @@ public class ToolBar extends JPanel implements LanguageChangeListener {
      * Przycisk zmieniający język aplikacji na angielski.
      */
     private final JButton enButton;
+    private final JButton logoutButton;
+    private final boolean canLogout;
 
-    public ToolBar() {
-        setLayout(new FlowLayout(FlowLayout.LEFT));
+    public ToolBar(boolean canLogout) {
+        this.canLogout = canLogout;
+        setLayout(new FlowLayout(FlowLayout.RIGHT));
+
 
         plButton = new JButton(loadIcon("/icons/pl.png"));
         enButton = new JButton(loadIcon("/icons/en.png"));
 
         add(plButton);
         add(enButton);
+
+        logoutButton = new JButton(Localization.get("button.logout"));
+        logoutButton.addActionListener(e -> {
+            Window parent = SwingUtilities.getWindowAncestor(this);
+            if (parent instanceof JFrame frame) {
+                frame.dispose();
+                new LibraryApp().startApp();
+            }
+
+        });
+        if (canLogout) add(logoutButton);
 
         plButton.addActionListener(e -> Localization.setLanguage(Locale.forLanguageTag("pl")));
         enButton.addActionListener(e -> Localization.setLanguage(Locale.forLanguageTag("en")));
@@ -51,6 +67,7 @@ public class ToolBar extends JPanel implements LanguageChangeListener {
     private void updateTexts() {
         plButton.setToolTipText(Localization.get("lang.polish"));
         enButton.setToolTipText(Localization.get("lang.english"));
+        logoutButton.setText(Localization.get("button.logout"));
     }
 
     @Override
