@@ -31,5 +31,45 @@ public class Borrower extends AbstractPerson {
     /**
      * Numer karty bibliotecznej (lub numer legitymacji).
      */
-    private int cardNumber; //numer karty bibliotecznej albo legimki jak on chcial
+    private int cardNumber;
+
+    public String getAddressCity() {
+        return addressCity;
+    }
+
+    public void setAddressCity(String addressCity) {
+        this.addressCity = addressCity;
+    }
+
+    public String getAddressStreet() {
+        return addressStreet;
+    }
+
+    public void setAddressStreet(String addressStreet) {
+        this.addressStreet = addressStreet;
+    }
+
+    public Byte getAddressNumber() {
+        return addressNumber;
+    }
+
+    public void setAddressNumber(Byte addressNumber) {
+        this.addressNumber = addressNumber;
+    }
+
+    public String getAddressZip() {
+        return addressZip;
+    }
+
+    public void setAddressZip(String addressZip) {
+        this.addressZip = addressZip;
+    }
+
+    public int getCardNumber() {
+        return cardNumber;
+    }
+
+    public void setCardNumber(int cardNumber) {
+        this.cardNumber = cardNumber;
+    }
 }
