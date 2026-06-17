@@ -14,7 +14,7 @@ public class DataBaseBorrowers {
 	public void addBorrower(Borrower borrower) {
 		// Komenda SQLowska do dodania do bazy;
 		String sql = """
-				INSERT INTO borrowers(first_name, last_name, addresscity,addressstreet,addressnumber,addresszip,card_number)
+				INSERT INTO borrower(first_name, last_name, addresscity,addressstreet,addressnumber,addresszip,card_number)
 				VALUES (?, ?, ?, ?, ?, ?, ?)
 				""";
 
@@ -48,7 +48,7 @@ public class DataBaseBorrowers {
 		//sql query
 		String sql = """
 				SELECT id, first_name, last_name, addresscity,addressstreet,addressnumber,addresszip,card_number
-				FROM borrowers
+				FROM borrower
 				ORDER BY id
 				""";
 		//proba polaczenia z baza
@@ -79,7 +79,7 @@ public class DataBaseBorrowers {
 	
 	 public void deleteBorrower(int borrowerId) {
 		 	//usuwanie po ID
-	        String sql = "DELETE FROM borrowers WHERE id = ?";
+	        String sql = "DELETE FROM borrower WHERE id = ?";
 	        //laczenie do bazy
 	        try (Connection connection = DatabaseConnection.getConnection();
 	             PreparedStatement statement = connection.prepareStatement(sql)) {

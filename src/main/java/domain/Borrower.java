@@ -2,19 +2,42 @@ package domain;
 
 import domain.base.AbstractPerson;
 
+/**
+ * Reprezentuje osobę wypożyczającą książki (czytelnika).
+ * Zawiera dane kontaktowe (adres) oraz numer karty bibliotecznej.
+ */
 public class Borrower extends AbstractPerson {
-    private String addressCity;
-    private String addressStreet;
+  /**
+     * Numer domu/mieszkania (może być {@link Byte} w projekcie).
+     * Może być {@code null}, jeśli niepodany.
+     */
     private Integer addressNumber;
-    private Integer addressZip;
-    
+
+    /**
+     * Kod pocztowy zamieszkania.
+     */
+    private String addressZip;
+
+    /**
+     * Numer karty bibliotecznej (lub numer legitymacji).
+     */
     private int cardNumber;
+  
+    /**
+     * Miasto zamieszkania wypożyczającego.
+     */
+    private String addressCity;
+
+    /**
+     * Ulica zamieszkania wypożyczającego.
+     */
+    private String addressStreet;
     
     
     public Borrower() {
 	};
 	
-	public Borrower(String first_name, String last_name, String addresscity, String addressstreet, Integer addressnumber, Integer addresszip, Integer card_number) {
+	public Borrower(String first_name, String last_name, String addresscity, String addressstreet, Integer addressnumber, String addresszip, Integer card_number) {
 		this.firstName = first_name;
 		this.lastName = last_name;
 		this.addressCity = addresscity;
@@ -24,7 +47,7 @@ public class Borrower extends AbstractPerson {
 		this.cardNumber = card_number;
 	}
 
-	public Borrower(Integer id, String first_name, String last_name, String addresscity, String addressstreet, Integer addressnumber, Integer addresszip, Integer card_number) {
+	public Borrower(Integer id, String first_name, String last_name, String addresscity, String addressstreet, Integer addressnumber, String addresszip, Integer card_number) {
 		this.id = id;
 		this.firstName = first_name;
 		this.lastName = last_name;
@@ -66,5 +89,9 @@ public class Borrower extends AbstractPerson {
 	public void setCardNumber(int cardNumber) {
 		this.cardNumber = cardNumber;
 	}
+
+
+    
+
 
 }

@@ -1,19 +1,23 @@
 package domain;
 
 import app.Localization;
+import domain.base.AbstractLocation;
 
-//działy w bibliotece
-public class Section{
-    private int id;
-    private String key; //nazwa zgodnie z językiem przekazanym przez obiekt Localization
+/**
+ * Reprezentuje dział w bibliotece (np. literatura piękna, naukowa).
+ * Nazwa działu jest przechowywana jako klucz lokalizacyjny i pobierana
+ * przez klasę {@code Localization} zgodnie z aktualnym językiem.
+ */
+public class Section extends AbstractLocation {
+    /**
+     * Klucz służący do pobrania nazwy działu z zasobów lokalizacyjnych.
+     * Nazwa jest zależna od aktualnego języka i pobierana przez klasę {@code Localization}.
+     */
+    private final String key; //nazwa zgodnie z językiem przekazanym przez obiekt Localization
 
     public Section(int id, String key) {
         this.id = id;
         this.key = key;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getKey() {

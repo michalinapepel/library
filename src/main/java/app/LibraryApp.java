@@ -6,6 +6,9 @@ import app.dialogs.StartDialog;
 
 import javax.swing.*;
 
+/**
+ * Główna klasa uruchamiająca aplikację biblioteczną.
+ */
 public class LibraryApp {
 
     public void startApp(){

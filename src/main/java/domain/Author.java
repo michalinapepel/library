@@ -2,10 +2,20 @@ package domain;
 
 import domain.base.AbstractPerson;
 
+/**
+ * Reprezentuje autora książek.
+ * Dziedziczy po {@code AbstractPerson} i zawiera dodatkowe informacje o autorze.
+ */
 public class Author extends AbstractPerson {
-	private String pseudonym;
-	private String nationality;
-    //moze napisane przez niego ksiazki w tablicy?
+  /**
+  * Pseudonim autora.
+  */
+	private String pseudonym = "";
+  
+  /**
+  * Narodowość autora.
+  */
+	private String nationality = "";
 	
 	public Author() {};
 	public Author(Integer id, String firstName, String lastName, String pseudonym, String nationality) {

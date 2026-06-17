@@ -1,15 +1,43 @@
 package domain;
 
+/**
+ * Reprezentuje książkę w systemie bibliotecznym.
+ * Zawiera podstawowe metadane książki takie jak tytuł, autorzy, wydawca,
+ * rok wydania i numer ISBN.
+ */
 public class Book {
-	static private int id;
-	static private String title = "";//
-	static private Author[] authors = null;
-	static private String publisher = "";//
-	static private int yearOfPublishing = 0;//
-	static private String isbn = "";//
-	static private int shelfId;
+	
+    private int id;
+    private int shelfId;
+  
+    /**
+     * Tytuł książki.
+     * Domyślnie pusty łańcuch, może być {@code null} jeśli zmienione.
+     */
+    private String title = "";
 
-	// przechowywanie jak???
+    /**
+     * Tablica autorów książki.
+     * Może być {@code null} lub pusta, jeśli autorzy nie są przypisani.
+     */
+    private Author[] authors = null;
+
+    /**
+     * Nazwa wydawcy książki.
+     */
+    private String publisher = "";
+
+    /**
+     * Rok wydania książki.
+     * Wartość domyślna to 0 jeśli rok nie został podany.
+     */
+    private int yearOfPublishing = 0;
+
+    /**
+     * Numer ISBN książki.
+     */
+    private String isbn = "";
+
 	public Book() {
 	};
 
@@ -77,5 +105,23 @@ public class Book {
 	public void setShelfId(Integer shelfId) {
 		this.shelfId = shelfId;
 	}
+  
+    public Author[] getAuthors() {
+        return authors;
+    }
+
+    public String getAuthorsAsString() {
+        StringBuilder result = new StringBuilder();
+        if (authors != null) {
+            for (Author author : authors) {
+                result.append(author.getFirstName()).append(" ").append(author.getLastName()).append("; ");
+            }
+        }
+        return result.toString();
+    }
+
+    public void setAuthors(Author[] authors) {
+        this.authors = authors;
+    }
 
 }
