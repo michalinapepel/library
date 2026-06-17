@@ -147,9 +147,9 @@ public class ListBooksDialog extends JDialog implements LanguageChangeListener {
                 book.getTitle(),
                 book.getAuthorsAsString(),
                 book.getPublisher(),
-                book.getYearOfPublishing(),
+                book.getPublicationYear(),
                 book.getIsbn(),
-                    book.getShelf()
+                    book.getShelfId()
             };
             model.addRow(row);
         }

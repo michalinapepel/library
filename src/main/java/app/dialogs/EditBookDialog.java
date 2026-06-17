@@ -133,7 +133,7 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
         if (originalBook != null) {
             titleField.setText(originalBook.getTitle() != null ? originalBook.getTitle() : "");
             publisherField.setText(originalBook.getPublisher() != null ? originalBook.getPublisher() : "");
-            yearSpinner.setValue(originalBook.getYearOfPublishing());
+            yearSpinner.setValue(originalBook.getPublicationYear());
             isbnField.setText(originalBook.getIsbn() != null ? originalBook.getIsbn() : "");
         }
     }

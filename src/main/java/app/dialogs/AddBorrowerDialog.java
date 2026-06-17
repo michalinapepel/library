@@ -107,7 +107,7 @@ public class AddBorrowerDialog extends JDialog implements LanguageChangeListener
             result.setLastName(lastNameField.getText().trim());
             result.setAddressCity(addressCityField.getText().trim());
             result.setAddressStreet(addressStreetField.getText().trim());
-            result.setAddressNumber(((Number) addressNumberSpinner.getValue()).byteValue());
+            result.setAddressNumber(((Integer) addressNumberSpinner.getValue()));
             result.setAddressZip(addressZipField.getText().trim());
             result.setCardNumber((Integer) cardNumberSpinner.getValue());
             dispose();

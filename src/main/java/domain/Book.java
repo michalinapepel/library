@@ -124,4 +124,8 @@ public class Book {
         this.authors = authors;
     }
 
+	public void setYearOfPublishing(Integer value) {
+		this.yearOfPublishing = value;		
+	}
+
 }

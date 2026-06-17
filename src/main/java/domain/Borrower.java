@@ -77,10 +77,10 @@ public class Borrower extends AbstractPerson {
 	public void setAddressNumber(Integer addressNumber) {
 		this.addressNumber = addressNumber;
 	}
-	public Integer getAddressZip() {
+	public String getAddressZip() {
 		return addressZip;
 	}
-	public void setAddressZip(Integer addressZip) {
+	public void setAddressZip(String addressZip) {
 		this.addressZip = addressZip;
 	}
 	public int getCardNumber() {

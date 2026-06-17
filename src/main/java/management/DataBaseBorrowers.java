@@ -29,7 +29,7 @@ public class DataBaseBorrowers {
 			statement.setString(3, borrower.getAddressCity());
 			statement.setString(4, borrower.getAddressStreet());
 			statement.setInt(5, borrower.getAddressNumber());
-			statement.setInt(6, borrower.getAddressZip());
+			statement.setString(6, borrower.getAddressZip());
 			statement.setInt(7, borrower.getCardNumber());
 
 
@@ -64,7 +64,7 @@ public class DataBaseBorrowers {
 						resultSet.getString("addresscity"),
 						resultSet.getString("addressstreet"),
 						resultSet.getInt("addressnumber"),
-						resultSet.getInt("addresszip"),
+						resultSet.getString("addresszip"),
 						resultSet.getInt("card_number"));
 
 				borrowers.add(borrower);

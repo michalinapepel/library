@@ -13,7 +13,7 @@ public class Section extends AbstractLocation {
      * Klucz służący do pobrania nazwy działu z zasobów lokalizacyjnych.
      * Nazwa jest zależna od aktualnego języka i pobierana przez klasę {@code Localization}.
      */
-    private final String key; //nazwa zgodnie z językiem przekazanym przez obiekt Localization
+    private String key; //nazwa zgodnie z językiem przekazanym przez obiekt Localization
 
     public Section(int id, String key) {
         this.id = id;
