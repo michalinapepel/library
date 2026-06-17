@@ -41,7 +41,7 @@ public class DataBaseSections {
 		//sql query
 		String sql = """
 				SELECT id, key
-				FROM borrowers
+				FROM section
 				ORDER BY id
 				""";
 		//proba polaczenia z baza
