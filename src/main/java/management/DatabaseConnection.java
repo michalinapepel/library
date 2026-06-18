@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.util.Properties;
 import java.io.InputStream;
 
-import org.postgresql.ds.PGSimpleDataSource;
-
 public class DatabaseConnection {
 	private static String url;
 	private static String uname;
@@ -23,18 +21,19 @@ public class DatabaseConnection {
 		try (InputStream input = DatabaseConnection.class.getClassLoader().getResourceAsStream("database.properties")) {
 			if (input == null) {
 				System.err.println("Plik database.properties nie znaleziony!");
-				return;
+				throw new RuntimeException("database.properties file not found in resources!");
 			}
 			props.load(input);
-			url = props.getProperty("db.url", "jdbc:postgresql://localhost:5432/java");
-			uname = props.getProperty("db.username", "postgres");
-			pass = props.getProperty("db.password", "12341234");
+			url = props.getProperty("db.url");
+			uname = props.getProperty("db.username");
+			pass = props.getProperty("db.password");
+
+			if (url == null || uname == null || pass == null) {
+				throw new RuntimeException("Brakuje wymaganych właściwości w database.properties: db.url, db.username, db.password");
+			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
-			// Fallback values
-			url = "jdbc:postgresql://localhost:5432/java";
-			uname = "postgres";
-			pass = "12341234";
+			throw new RuntimeException("Błąd podczas ładowania pliku database.properties", ex);
 		}
 	}
 

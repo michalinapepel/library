@@ -25,7 +25,13 @@ public class Section extends AbstractLocation {
     }
 
     public String getName() {
-        return Localization.get(key);
+        try {
+            // Try to get localized name using the key
+            return Localization.get(key);
+        } catch (Exception ex) {
+            // If key is not a localization key, return it as-is (it's a display name)
+            return key;
+        }
     }
     public void setId(int id) {
         this.id = id;

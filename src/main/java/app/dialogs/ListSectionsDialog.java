@@ -97,32 +97,44 @@ public class ListSectionsDialog extends JDialog implements LanguageChangeListene
          refreshTable();
      }
 
-     private void searchSections() {
-        String searchText = searchField.getText().trim().toLowerCase();
-        filteredSections.clear();
+      private void searchSections() {
+         String searchText = searchField.getText().trim();
+         filteredSections.clear();
 
-        for (Section section : sections) {
-            if (searchText.isEmpty() || 
-                (section.getName() != null && section.getName().toLowerCase().contains(searchText))) {
-                filteredSections.add(section);
-            }
-        }
+         try {
+             int searchId = Integer.parseInt(searchText);
+             for (Section section : sections) {
+                 if (section.getId() == searchId) {
+                     filteredSections.add(section);
+                 }
+             }
+         } catch (NumberFormatException e) {
+             if (searchText.isEmpty()) {
+                 filteredSections.addAll(sections);
+             } else {
+                 for (Section section : sections) {
+                     if (section.getName() != null && section.getName().toLowerCase().contains(searchText.toLowerCase())) {
+                         filteredSections.add(section);
+                     }
+                 }
+             }
+         }
 
-        refreshTable();
-    }
+         refreshTable();
+     }
 
-    private void refreshTable() {
-        DefaultTableModel model = (DefaultTableModel) sectionsTable.getModel();
-        model.setRowCount(0);
+     private void refreshTable() {
+         DefaultTableModel model = (DefaultTableModel) sectionsTable.getModel();
+         model.setRowCount(0);
 
-        for (Section section : filteredSections) {
-            Object[] row = {
-                section.getId(),
-                section.getName()
-            };
-            model.addRow(row);
-        }
-    }
+         for (Section section : filteredSections) {
+             Object[] row = {
+                 section.getId(),
+                 section.getName()
+             };
+             model.addRow(row);
+         }
+     }
 
 
 
