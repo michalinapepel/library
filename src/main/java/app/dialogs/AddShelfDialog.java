@@ -10,6 +10,7 @@ import java.awt.*;
 public class AddShelfDialog extends JDialog implements LanguageChangeListener {
 
     private Shelf result = null;
+    private JTextField bookCaseField;
     private JTextField nameField;
     private JButton ok;
     private JButton cancel;
@@ -28,17 +29,25 @@ public class AddShelfDialog extends JDialog implements LanguageChangeListener {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Name
+        // Bookcase
         gbc.gridx = 0;
         gbc.gridy = 0;
-        add(new JLabel(Localization.get("label.name")), gbc);
+        add(new JLabel(Localization.get("label.bookcaseName")), gbc);
+        gbc.gridx = 1;
+        bookCaseField = new JTextField(20);
+        add(bookCaseField, gbc);
+
+        // Name
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        add(new JLabel(Localization.get("label.shelfName")), gbc);
         gbc.gridx = 1;
         nameField = new JTextField(20);
         add(nameField, gbc);
 
         // Buttons
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -49,6 +58,17 @@ public class AddShelfDialog extends JDialog implements LanguageChangeListener {
 
         ok.addActionListener(e -> {
             String name = nameField.getText().trim();
+            String bookCase = bookCaseField.getText().trim();
+
+            if (bookCase.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Nazwa półki jest wymagana!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (bookCase.length() > 100) {
+                JOptionPane.showMessageDialog(this, "Nazwa regału nie może być dłuższa niż 100 znaków!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
             if (name.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Nazwa półki jest wymagana!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
@@ -62,6 +82,7 @@ public class AddShelfDialog extends JDialog implements LanguageChangeListener {
 
             result = new Shelf();
             result.setName(name);
+            result.setBookcaseName(bookCaseField.getText().trim());
             dispose();
         });
 

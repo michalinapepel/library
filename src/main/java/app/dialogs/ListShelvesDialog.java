@@ -43,7 +43,8 @@ public class ListShelvesDialog extends JDialog implements LanguageChangeListener
         // Table
         String[] columnNames = {
             Localization.get("label.id"),
-            Localization.get("label.name")
+            Localization.get("label.name"),
+                Localization.get("label.bookcaseName")
         };
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -118,7 +119,8 @@ public class ListShelvesDialog extends JDialog implements LanguageChangeListener
         for (Shelf shelf : filteredShelves) {
             Object[] row = {
                 shelf.getId(),
-                shelf.getName()
+                shelf.getName(),
+                    shelf.getBookcaseName()
             };
             model.addRow(row);
         }

@@ -11,6 +11,7 @@ public class EditShelfDialog extends JDialog implements LanguageChangeListener {
 
     private Shelf result = null;
     private final Shelf originalShelf;
+    private JTextField bookCaseField;
     private JTextField nameField;
     private JButton ok;
     private JButton cancel;
@@ -33,17 +34,25 @@ public class EditShelfDialog extends JDialog implements LanguageChangeListener {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Name
+        // Bookcase
         gbc.gridx = 0;
         gbc.gridy = 0;
-        add(new JLabel(Localization.get("label.name")), gbc);
+        add(new JLabel(Localization.get("label.bookcaseName")), gbc);
+        gbc.gridx = 1;
+        bookCaseField = new JTextField(20);
+        add(bookCaseField, gbc);
+
+        // Name
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        add(new JLabel(Localization.get("label.shelfName")), gbc);
         gbc.gridx = 1;
         nameField = new JTextField(20);
         add(nameField, gbc);
 
         // Buttons
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -57,6 +66,7 @@ public class EditShelfDialog extends JDialog implements LanguageChangeListener {
         ok.addActionListener(e -> {
             result = originalShelf;
             result.setName(nameField.getText().trim());
+            result.setBookcaseName(bookCaseField.getText().trim());
             dispose();
         });
 
@@ -82,6 +92,7 @@ public class EditShelfDialog extends JDialog implements LanguageChangeListener {
     private void loadShelfData() {
         if (originalShelf != null) {
             nameField.setText(originalShelf.getName() != null ? originalShelf.getName() : "");
+            bookCaseField.setText(originalShelf.getBookcaseName() != null ? originalShelf.getBookcaseName() : "");
         }
     }
 
