@@ -141,7 +141,7 @@ public class ListSectionsDialog extends JDialog implements LanguageChangeListene
     public void setSections(List<Section> sections) {
         this.sections.clear();
         this.sections.addAll(sections);
-        refreshTable();
+        loadAllSections();
     }
 
     public void showDialog() {

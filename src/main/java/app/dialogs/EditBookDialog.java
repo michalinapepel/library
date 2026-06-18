@@ -127,7 +127,11 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
             result.setPublisher(publisher);
             result.setYearOfPublishing((Integer) yearSpinner.getValue());
             result.setIsbn(isbn);
-            result.setAuthors((Author[]) authorField.getSelectedItem());
+            int shelfValue = (Integer) shelfField.getValue();
+            result.setShelfId(shelfValue);
+            Author selectedAuthor = (Author) authorField.getSelectedItem();
+            result.setAuthors(new Author[]{selectedAuthor});
+            dbBooks.updateBook(result);
             dispose();
         });
 
@@ -157,18 +161,18 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
             yearSpinner.setValue(originalBook.getPublicationYear());
             isbnField.setText(originalBook.getIsbn() != null ? originalBook.getIsbn() : "");
 
-            // Pobierz i wyświetl autorów z bazy danych
+            // Ustawienie półki
+            shelfField.setValue(originalBook.getShelfId() != null ? originalBook.getShelfId() : 0);
+
+            // Ustawienie autora
             if (originalBook.getId() > 0) {
                 java.util.List<Author> authors = dbBooks.getAuthorsForBook(originalBook.getId());
                 if (!authors.isEmpty()) {
-                    StringBuilder authorsStr = new StringBuilder();
-                    for (Author author : authors) {
-                        if (authorsStr.length() > 0) authorsStr.append("; ");
-                        authorsStr.append(author.getFirstName()).append(" ").append(author.getLastName());
-                    }
-                    authorField.setSelectedItem(authorsStr.toString());
+                    // Ustawiamy obiekt autora, żeby JComboBox go zaznaczył
+                    authorField.setSelectedItem(authors.get(0));
                 } else {
-                    authorField.setSelectedItem("");
+                    // Zamiast "", ustawiamy na null, aby odznaczyć wybór
+                    authorField.setSelectedItem(null);
                 }
             }
         }

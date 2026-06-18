@@ -22,4 +22,9 @@ public class Shelf extends AbstractLocation {
 	public void setBookcaseName(String name) {
 		this.bookcaseName = name;
 	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

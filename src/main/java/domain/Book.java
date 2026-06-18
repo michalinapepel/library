@@ -6,10 +6,10 @@ package domain;
  * rok wydania i numer ISBN.
  */
 public class Book {
-	
+
     private int id;
     private int shelfId;
-  
+
     /**
      * Tytuł książki.
      * Domyślnie pusty łańcuch, może być {@code null} jeśli zmienione.
@@ -38,74 +38,76 @@ public class Book {
      */
     private String isbn = "";
 
-	public Book() {
-	};
+    public Book() {
+    }
 
-	public Book(String title, String publisher, int publicationYear, String isbn, Integer shelfId) {
-		this.title = title;
-		this.publisher = publisher;
-		this.yearOfPublishing = publicationYear;
-		this.isbn = isbn;
-		this.shelfId = shelfId;
-	}
+    ;
 
-	public Book(int id, String title, String publisher, int publicationYear, String isbn, Integer shelfId) {
-		this.id = id;
-		this.title = title;
-		this.publisher = publisher;
-		this.yearOfPublishing = publicationYear;
-		this.isbn = isbn;
-		this.shelfId = shelfId;
-	}
+    public Book(String title, String publisher, int publicationYear, String isbn, Integer shelfId) {
+        this.title = title;
+        this.publisher = publisher;
+        this.yearOfPublishing = publicationYear;
+        this.isbn = isbn;
+        this.shelfId = shelfId;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public Book(int id, String title, String publisher, int publicationYear, String isbn, Integer shelfId) {
+        this.id = id;
+        this.title = title;
+        this.publisher = publisher;
+        this.yearOfPublishing = publicationYear;
+        this.isbn = isbn;
+        this.shelfId = shelfId;
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public String getPublisher() {
-		return publisher;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public int getPublicationYear() {
-		return yearOfPublishing;
-	}
+    public String getPublisher() {
+        return publisher;
+    }
 
-	public String getIsbn() {
-		return isbn;
-	}
+    public int getPublicationYear() {
+        return yearOfPublishing;
+    }
 
-	public Integer getShelfId() {
-		return shelfId;
-	}
+    public String getIsbn() {
+        return isbn;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public Integer getShelfId() {
+        return shelfId;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public void setPublisher(String publisher) {
-		this.publisher = publisher;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public void setPublicationYear(int publicationYear) {
-		this.yearOfPublishing = publicationYear;
-	}
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
 
-	public void setIsbn(String isbn) {
-		this.isbn = isbn;
-	}
+    public void setPublicationYear(int publicationYear) {
+        this.yearOfPublishing = publicationYear;
+    }
 
-	public void setShelfId(Integer shelfId) {
-		this.shelfId = shelfId;
-	}
-  
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public void setShelfId(Integer shelfId) {
+        this.shelfId = shelfId;
+    }
+
     public Author[] getAuthors() {
         return authors;
     }
@@ -117,6 +119,12 @@ public class Book {
                 result.append(author.getFirstName()).append(" ").append(author.getLastName()).append("; ");
             }
         }
+
+        // Usuwamy ostatnie dwa znaki ("; "), jeśli string nie jest pusty
+        if (result.length() > 2) {
+            result.setLength(result.length() - 2);
+        }
+
         return result.toString();
     }
 
@@ -124,8 +132,8 @@ public class Book {
         this.authors = authors;
     }
 
-	public void setYearOfPublishing(Integer value) {
-		this.yearOfPublishing = value;		
-	}
+    public void setYearOfPublishing(Integer value) {
+        this.yearOfPublishing = value;
+    }
 
 }

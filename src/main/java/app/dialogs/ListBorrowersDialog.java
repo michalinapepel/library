@@ -149,7 +149,7 @@ public class ListBorrowersDialog extends JDialog implements LanguageChangeListen
     public void setBorrowers(List<Borrower> borrowers) {
         this.borrowers.clear();
         this.borrowers.addAll(borrowers);
-        refreshTable();
+        loadAllBorrowers();
     }
 
     public void showDialog() {

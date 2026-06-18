@@ -47,4 +47,10 @@ public class Author extends AbstractPerson {
     public void setNationality(String nationality) {
         this.nationality = nationality;
     }
+
+    @Override
+    public String toString() {
+        return firstName + " " + lastName;
+    }
+
 }
