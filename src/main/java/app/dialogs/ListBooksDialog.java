@@ -2,6 +2,7 @@ package app.dialogs;
 
 import app.LanguageChangeListener;
 import app.Localization;
+import domain.Author;
 import domain.Book;
 
 import javax.swing.*;
@@ -14,6 +15,7 @@ public class ListBooksDialog extends JDialog implements LanguageChangeListener {
 
     private final List<Book> books = new ArrayList<>();
     private final List<Book> filteredBooks = new ArrayList<>();
+    private final Author[] authors;
     private JTable booksTable;
     private JTextField searchField;
     private JComboBox<String> searchTypeCombo;
@@ -21,8 +23,9 @@ public class ListBooksDialog extends JDialog implements LanguageChangeListener {
     private JButton close;
     private JButton edit;
 
-    public ListBooksDialog(JFrame parent) {
+    public ListBooksDialog(JFrame parent, Author[] authors) {
         super(parent, Localization.get("dialog.list.books.title"), true);
+        this.authors = authors;
         Localization.addLanguageChangeListener(this);
         initComponents();
         setSize(700, 500);
@@ -92,7 +95,7 @@ public class ListBooksDialog extends JDialog implements LanguageChangeListener {
          }
 
          Book selectedBook = filteredBooks.get(selectedRow);
-          EditBookDialog dialog = new EditBookDialog((JFrame) SwingUtilities.getWindowAncestor(this), selectedBook);
+          EditBookDialog dialog = new EditBookDialog((JFrame) SwingUtilities.getWindowAncestor(this), selectedBook, authors);
           Book editedBook = dialog.showDialog();
 
           if (dialog.isDeleted()) {

@@ -15,7 +15,8 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
     private Book result = null;
     private final Book originalBook;
     private JTextField titleField;
-    private JTextField authorField;
+    private JComboBox authorField;
+    private final Author[] authors;
     private JTextField publisherField;
     private JSpinner yearSpinner;
     private JTextField isbnField;
@@ -26,10 +27,11 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
     private boolean deleted = false;
     private final DataBaseBooks dbBooks;
 
-    public EditBookDialog(JFrame parent, Book book) {
+    public EditBookDialog(JFrame parent, Book book, Author[] authors) {
         super(parent, Localization.get("dialog.edit.book.title"), true);
         this.originalBook = book;
         this.dbBooks = new DataBaseBooks();
+        this.authors = authors;
         Localization.addLanguageChangeListener(this);
         initComponents();
         loadBookData();
@@ -51,14 +53,12 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
         titleField = new JTextField(20);
         add(titleField, gbc);
 
-        // Authors (read-only - pokazuje autorów z bazy)
+        // Authors
         gbc.gridx = 0;
         gbc.gridy = 1;
         add(new JLabel(Localization.get("label.author")), gbc);
         gbc.gridx = 1;
-        authorField = new JTextField(20);
-        authorField.setEditable(false);
-        authorField.setBackground(Color.LIGHT_GRAY);
+        authorField = new JComboBox<>(authors);
         add(authorField, gbc);
 
         // Publisher
@@ -127,6 +127,7 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
             result.setPublisher(publisher);
             result.setYearOfPublishing((Integer) yearSpinner.getValue());
             result.setIsbn(isbn);
+            result.setAuthors((Author[]) authorField.getSelectedItem());
             dispose();
         });
 
@@ -165,9 +166,9 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
                         if (authorsStr.length() > 0) authorsStr.append("; ");
                         authorsStr.append(author.getFirstName()).append(" ").append(author.getLastName());
                     }
-                    authorField.setText(authorsStr.toString());
+                    authorField.setSelectedItem(authorsStr.toString());
                 } else {
-                    authorField.setText("Brak przypisanych autorów");
+                    authorField.setSelectedItem("");
                 }
             }
         }

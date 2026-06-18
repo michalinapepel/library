@@ -2,16 +2,20 @@ package app.dialogs;
 
 import app.LanguageChangeListener;
 import app.Localization;
+import domain.Author;
 import domain.Book;
+import management.DataBaseAuthors;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class AddBookDialog extends JDialog implements LanguageChangeListener {
 
+    private final Author[] authors;
     private Book result = null;
     private JTextField titleField;
-    private JTextField authorField;
+    private JComboBox<Author> authorField;
     private JTextField publisherField;
     private JSpinner yearSpinner;
     private JTextField isbnField;
@@ -19,8 +23,9 @@ public class AddBookDialog extends JDialog implements LanguageChangeListener {
     private JButton ok;
     private JButton cancel;
 
-    public AddBookDialog(JFrame parent) {
+    public AddBookDialog(JFrame parent, Author[] authors) {
         super(parent, Localization.get("dialog.add.book.title"), true);
+        this.authors = authors;
         Localization.addLanguageChangeListener(this);
         initComponents();
         setSize(500, 350);
@@ -46,7 +51,7 @@ public class AddBookDialog extends JDialog implements LanguageChangeListener {
         gbc.gridy = 1;
         add(new JLabel(Localization.get("label.author")), gbc);
         gbc.gridx = 1;
-        authorField = new JTextField(20);
+        authorField = new JComboBox<>(authors);
         add(authorField, gbc);
 
         // Publisher
@@ -130,6 +135,7 @@ public class AddBookDialog extends JDialog implements LanguageChangeListener {
 
             result = new Book();
             result.setTitle(title);
+            result.setAuthors(new Author[]{(Author) authorField.getSelectedItem()});
             result.setPublisher(publisher);
             result.setYearOfPublishing((Integer) yearSpinner.getValue());
             result.setIsbn(isbn);
