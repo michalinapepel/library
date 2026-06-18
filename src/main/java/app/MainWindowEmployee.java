@@ -85,9 +85,6 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
         addLoanButton.setPreferredSize(new Dimension(50, 20));
         addLoanButton.setForeground(new Color(0,153,76));
         addLoanButton.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 25));
-        //editLoanButton = new JButton(Localization.get("button.loan.edit"));
-        //editLoanButton.addActionListener(e -> EditLoanDialog());
-        //editLoanButton.setPreferredSize(new Dimension(150, 20));
 
         managementButton = new JButton(Localization.get("button.management"));
         managementButton.addActionListener(e -> {
@@ -105,13 +102,11 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
         centerPanel.setLayout(new BorderLayout());
         centerPanel.add(authorsButton, BorderLayout.WEST);
         centerPanel.add(addAuthorButton, BorderLayout.CENTER);
-        //centerPanel.add(editLoanButton, BorderLayout.EAST);
 
         centerPanel2 = new JPanel();
         centerPanel2.setLayout(new BorderLayout());
         centerPanel2.add(loansButton, BorderLayout.WEST);
         centerPanel2.add(addLoanButton, BorderLayout.CENTER);
-        //centerPanel2.add(editLoanButton, BorderLayout.EAST);
 
         southPanel = new JPanel();
         southPanel.setLayout(new BorderLayout());
@@ -137,14 +132,14 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
     }
 
     private void showListBooksDialog() {
-        ListBooksDialog dialog = new ListBooksDialog(this);
+        ListBooksDialog dialog = new ListBooksDialog(this, dbAuthors.getAllAuthors().toArray(new Author[0]));
         // Pobierz wszystkie książki z bazy danych
         dialog.setBooks(dbBooks.getAllBooks());
         dialog.showDialog();
     }
 
     private void showAddBookDialog() {
-        AddBookDialog dialog = new AddBookDialog(this);
+        AddBookDialog dialog = new AddBookDialog(this, dbAuthors.getAllAuthors().toArray(new Author[0]));
         Book newBook = dialog.showDialog();
 
         if (newBook != null) {
