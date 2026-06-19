@@ -123,7 +123,7 @@ public class ListBooksDialog extends JDialog implements LanguageChangeListener {
 
         if (foundShelf == null) {
             JOptionPane.showMessageDialog(this,
-                book.getTitle() + "\n\n" + "Brak przypisanej półki.",
+                book.getTitle() + "\n\n" + Localization.get("message.no.shelf"),
                 Localization.get("label.location"),
                 JOptionPane.INFORMATION_MESSAGE);
             return;
@@ -163,8 +163,8 @@ public class ListBooksDialog extends JDialog implements LanguageChangeListener {
             return;
         }
         int confirm = JOptionPane.showConfirmDialog(this,
-            "Czy na pewno chcesz usunąć zaznaczone pozycje?",
-            "Potwierdź usunięcie",
+            Localization.get("message.confirm.delete.selected"),
+            Localization.get("dialog.confirm.delete.title"),
             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (confirm == JOptionPane.YES_OPTION) {
             List<Book> toDelete = new ArrayList<>();

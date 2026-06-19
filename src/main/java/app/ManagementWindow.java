@@ -11,7 +11,6 @@ import management.DataBaseShelfs;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class ManagementWindow extends JFrame implements LanguageChangeListener{
     private final ToolBar toolbar;
@@ -32,7 +31,6 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
     public ManagementWindow() {
         Localization.addLanguageChangeListener(this);
 
-        // Inicjalizacja klasy do obsługi bazy danych
         dbSections = new DataBaseSections();
         dbBookcases = new DataBaseBookcase();
         dbShelves = new DataBaseShelfs();
@@ -70,9 +68,7 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
 
         toolbar = new ToolBar(false);
         backButton = new JButton(Localization.get("button.back"));
-        backButton.addActionListener(e -> {
-            dispose();
-        });
+        backButton.addActionListener(e -> dispose());
 
         menu = new JPanel();
         menu.setLayout(new BorderLayout());
@@ -107,7 +103,6 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
 
     private void showListSectionsDialog() {
         ListSectionsDialog dialog = new ListSectionsDialog(this);
-        // Pobierz wszystkie sekcje z bazy danych
         dialog.setSections(dbSections.getAllSections());
         dialog.showDialog();
     }
@@ -118,13 +113,12 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
 
         if (newSection != null) {
             dbSections.addSection(newSection);
-            JOptionPane.showMessageDialog(this, "Sekcja dodana pomyślnie!");
+            JOptionPane.showMessageDialog(this, Localization.get("message.add.success.section"));
         }
     }
 
     private void showListBookcasesDialog() {
         ListBookcasesDialog dialog = new ListBookcasesDialog(this);
-        // Pobierz wszystkie regały z bazy danych
         dialog.setBookcases(dbBookcases.getAllBookcases());
         dialog.showDialog();
     }
@@ -135,7 +129,7 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
 
         if (newBookcase != null) {
             dbBookcases.addBookcase(newBookcase);
-            JOptionPane.showMessageDialog(this, "Regał dodany pomyślnie!");
+            JOptionPane.showMessageDialog(this, Localization.get("message.add.success.bookcase"));
         }
     }
 
@@ -152,7 +146,7 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
 
         if (newShelf != null) {
             dbShelves.addShelf(newShelf);
-            JOptionPane.showMessageDialog(this, "Półka dodana pomyślnie!");
+            JOptionPane.showMessageDialog(this, Localization.get("message.add.success.shelf"));
         }
     }
 

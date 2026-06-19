@@ -229,6 +229,7 @@ public class DataBaseLoans {
         return false;
     }
 
+    // Usuwa wszystkie wypożyczenia czytelnika przed usunięciem jego konta (wymagane przez FK).
     public void deleteLoansByBorrower(int borrowerId) {
         String sql = "DELETE FROM loan WHERE borrower_id = ?";
         try (Connection connection = DatabaseConnection.getConnection();

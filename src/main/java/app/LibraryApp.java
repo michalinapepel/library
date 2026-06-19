@@ -28,16 +28,16 @@ public class LibraryApp {
                     Borrower borrower = dbBorrowers.getBorrowerByCardNumber(cardNumber);
                     if (borrower == null) {
                         JOptionPane.showMessageDialog(null,
-                            "Nie znaleziono czytelnika z numerem karty: " + cardNumber,
-                            "Błąd logowania", JOptionPane.ERROR_MESSAGE);
+                            Localization.get("error.login.card.notFound") + " " + cardNumber,
+                            Localization.get("error.login.title"), JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     MainWindowBorrower window = new MainWindowBorrower(borrower);
                     window.setVisible(true);
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(null,
-                        "Numer karty musi być liczbą.",
-                        "Błąd logowania", JOptionPane.ERROR_MESSAGE);
+                        Localization.get("error.login.card.notNumber"),
+                        Localization.get("error.login.title"), JOptionPane.ERROR_MESSAGE);
                 }
             }
 

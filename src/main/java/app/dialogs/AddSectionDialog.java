@@ -51,12 +51,11 @@ public class AddSectionDialog extends JDialog implements LanguageChangeListener 
             String sectionKey = nameField.getText().trim();
 
             if (sectionKey.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Klucz sekcji jest wymagany!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.name.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
             if (sectionKey.length() > 100) {
-                JOptionPane.showMessageDialog(this, "Klucz sekcji nie może być dłuższy niż 100 znaków!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.name.maxLength"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
 

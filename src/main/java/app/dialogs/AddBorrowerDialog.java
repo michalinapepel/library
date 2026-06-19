@@ -105,7 +105,6 @@ public class AddBorrowerDialog extends JDialog implements LanguageChangeListener
         cancel = new JButton(Localization.get("button.cancel"));
 
         ok.addActionListener(e -> {
-            // Walidacja
             String firstName = firstNameField.getText().trim();
             String lastName = lastNameField.getText().trim();
             String city = addressCityField.getText().trim();
@@ -114,37 +113,31 @@ public class AddBorrowerDialog extends JDialog implements LanguageChangeListener
             Integer cardNumber = (Integer) cardNumberSpinner.getValue();
 
             if (firstName.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Imię jest wymagane!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.firstName.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
             if (lastName.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Nazwisko jest wymagane!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.lastName.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
             if (city.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Miasto jest wymagane!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.city.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
             if (street.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Ulica jest wymagana!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.street.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
             if (zip.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Kod pocztowy jest wymagany!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.zip.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
             if (!zip.matches("\\d{2}-\\d{3}|\\d{5}")) {
-                JOptionPane.showMessageDialog(this, "Kod pocztowy musi być w formacie XX-XXX!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.zip.format"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
             if (cardNumber <= 0) {
-                JOptionPane.showMessageDialog(this, "Numer karty bibliotecznej musi być dodatni!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.cardNumber.positive"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
 

@@ -2,7 +2,6 @@ package app.panels;
 
 import app.*;
 import app.dialogs.StartDialog;
-import com.sun.java.accessibility.util.SwingEventMonitor;
 
 import javax.swing.*;
 import java.awt.*;

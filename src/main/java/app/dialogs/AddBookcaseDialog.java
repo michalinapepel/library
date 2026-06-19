@@ -51,12 +51,11 @@ public class AddBookcaseDialog extends JDialog implements LanguageChangeListener
             String name = nameField.getText().trim();
 
             if (name.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Nazwa regału jest wymagana!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.name.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
             if (name.length() > 100) {
-                JOptionPane.showMessageDialog(this, "Nazwa regału nie może być dłuższa niż 100 znaków!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.name.maxLength"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
 

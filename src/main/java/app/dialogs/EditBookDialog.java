@@ -33,6 +33,7 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
     private JButton ok;
     private JButton cancel;
     private final DataBaseBooks dbBooks;
+    // Flaga zapobiegająca rekurencyjnemu wywoływaniu listenerów regał↔półka.
     private boolean updatingCombos = false;
 
     public EditBookDialog(JFrame parent, Book book, Author[] authors, Shelf[] shelves, Bookcase[] bookcases, Section[] sections) {
@@ -152,11 +153,11 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
             String isbn = isbnField.getText().trim();
 
             if (title.isEmpty() || publisher.isEmpty() || isbn.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Wszystkie pola są wymagane!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.all.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
             if (!isbn.matches("\\d{10}|\\d{13}")) {
-                JOptionPane.showMessageDialog(this, "ISBN musi mieć 10 lub 13 cyfr!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.isbn.format"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -169,7 +170,7 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
             Author selectedAuthor = (Author) authorField.getSelectedItem();
             if (selectedAuthor == null) {
                 int confirm = JOptionPane.showConfirmDialog(this,
-                    "Czy na pewno chcesz zapisać książkę bez autora?", "Brak autora",
+                    Localization.get("message.no.author.edit"), Localization.get("dialog.no.author.title"),
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (confirm != JOptionPane.YES_OPTION) return;
                 result.setAuthors(new Author[0]);

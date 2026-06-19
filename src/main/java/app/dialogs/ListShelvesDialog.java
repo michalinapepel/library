@@ -104,8 +104,8 @@ public class ListShelvesDialog extends JDialog implements LanguageChangeListener
              return;
          }
          int confirm = JOptionPane.showConfirmDialog(this,
-             "Czy na pewno chcesz usunąć zaznaczone pozycje?",
-             "Potwierdź usunięcie",
+             Localization.get("message.confirm.delete.selected"),
+             Localization.get("dialog.confirm.delete.title"),
              JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
          if (confirm == JOptionPane.YES_OPTION) {
              List<Shelf> toDelete = new ArrayList<>();

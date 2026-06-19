@@ -21,6 +21,8 @@ public class AddBookDialog extends JDialog implements LanguageChangeListener {
     private final Bookcase[] bookcases;
     private final Section[] sections;
     private final DataBaseAuthors dbAuthors = new DataBaseAuthors();
+    // Flaga zapobiegająca rekurencyjnemu wywoływaniu listenerów regał↔półka.
+    // Gdy jeden combo zmienia drugi programowo, flaga blokuje listener drugiego.
     private boolean updatingCombos = false;
     private Book result = null;
     private JTextField titleField;
@@ -166,27 +168,27 @@ public class AddBookDialog extends JDialog implements LanguageChangeListener {
             String isbn = isbnField.getText().trim();
 
             if (title.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Tytuł jest wymagany!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.title.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
             if (title.length() > 255) {
-                JOptionPane.showMessageDialog(this, "Tytuł nie może być dłuższy niż 255 znaków!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.title.maxLength"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
             if (publisher.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Wydawca jest wymagany!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.publisher.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
             if (publisher.length() > 255) {
-                JOptionPane.showMessageDialog(this, "Wydawca nie może być dłuższy niż 255 znaków!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.publisher.maxLength"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
             if (isbn.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "ISBN jest wymagany!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.isbn.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
             if (!isbn.matches("\\d{10}|\\d{13}")) {
-                JOptionPane.showMessageDialog(this, "ISBN musi mieć 10 lub 13 cyfr!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.isbn.format"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -196,7 +198,7 @@ public class AddBookDialog extends JDialog implements LanguageChangeListener {
             Author selectedAuthor = (Author) authorField.getSelectedItem();
             if (selectedAuthor == null) {
                 int confirm = JOptionPane.showConfirmDialog(this,
-                    "Czy na pewno chcesz dodać książkę bez autora?", "Brak autora",
+                    Localization.get("message.no.author.add"), Localization.get("dialog.no.author.title"),
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (confirm != JOptionPane.YES_OPTION) return;
                 result.setAuthors(new Author[0]);

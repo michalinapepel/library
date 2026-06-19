@@ -64,17 +64,15 @@ public class AddShelfDialog extends JDialog implements LanguageChangeListener {
 
             Bookcase selectedBookcase = (Bookcase) bookcaseCombo.getSelectedItem();
             if (selectedBookcase == null) {
-                JOptionPane.showMessageDialog(this, "Regał jest wymagany!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("message.select.bookcase"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
             if (name.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Nazwa półki jest wymagana!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.name.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
             if (name.length() > 100) {
-                JOptionPane.showMessageDialog(this, "Nazwa półki nie może być dłuższa niż 100 znaków!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.name.maxLength"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
 

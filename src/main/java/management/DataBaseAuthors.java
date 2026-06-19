@@ -11,103 +11,87 @@ import java.util.List;
 import domain.Author;
 
 public class DataBaseAuthors {
-	public void addAuthor(Author author) {
-		// Komenda SQLowska do dodania do bazy;
-		String sql = """
-				INSERT INTO authors(first_name, last_name, pseudonym,nationality)
-				VALUES (?, ?, ?, ?)
-				""";
 
-		try (Connection connection = DatabaseConnection.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+    public void addAuthor(Author author) {
+        String sql = """
+                INSERT INTO authors(first_name, last_name, pseudonym, nationality)
+                VALUES (?, ?, ?, ?)
+                """;
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-			statement.setString(1, author.getFirstName());
-			statement.setString(2, author.getLastName());
-			statement.setString(3, author.getPseudonym());
-			statement.setString(4, author.getNationality());
+            statement.setString(1, author.getFirstName());
+            statement.setString(2, author.getLastName());
+            statement.setString(3, author.getPseudonym());
+            statement.setString(4, author.getNationality());
+            statement.executeUpdate();
 
-			statement.executeUpdate();
+            try (ResultSet keys = statement.getGeneratedKeys()) {
+                if (keys.next()) author.setId(keys.getInt(1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
-			try (ResultSet keys = statement.getGeneratedKeys()) {
-				if (keys.next()) {
-					author.setId(keys.getInt(1));
-				}
-			}
+    public List<Author> getAllAuthors() {
+        List<Author> authors = new ArrayList<>();
+        String sql = """
+                SELECT id, first_name, last_name, pseudonym, nationality
+                FROM authors
+                ORDER BY id
+                """;
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+            while (resultSet.next()) {
+                authors.add(new Author(
+                        resultSet.getInt("id"),
+                        resultSet.getString("first_name"),
+                        resultSet.getString("last_name"),
+                        resultSet.getString("pseudonym"),
+                        resultSet.getString("nationality")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return authors;
+    }
 
-	public List<Author> getAllAuthors() {
-		//lista do zwrotki
-		List<Author> authors = new ArrayList<>();
-		
-		//sql query
-		String sql = """
-				SELECT id, first_name, last_name, pseudonym, nationality
-				FROM authors
-				ORDER BY id
-				""";
-		//proba polaczenia z baza
-		try (Connection connection = DatabaseConnection.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql);
-				ResultSet resultSet = statement.executeQuery()) {
-			//pobieranie ksiazka po ksiazce
-			while (resultSet.next()) {
-				Author author = new Author(
-						resultSet.getInt("id"), 
-						resultSet.getString("first_name"),
-						resultSet.getString("last_name"), 
-						resultSet.getString("pseudonym"),
-						resultSet.getString("nationality"));	
-				authors.add(author);
-			}
+    public void deleteAuthor(int authorId) {
+        String deleteRelations = "DELETE FROM book_author WHERE author_id = ?";
+        String deleteAuthor = "DELETE FROM authors WHERE id = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt1 = connection.prepareStatement(deleteRelations);
+             PreparedStatement stmt2 = connection.prepareStatement(deleteAuthor)) {
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+            stmt1.setInt(1, authorId);
+            stmt1.executeUpdate();
+            stmt2.setInt(1, authorId);
+            stmt2.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
-		return authors;
-	}
-	
-	public void deleteAuthor(int authorId) {
-	    String deleteRelations = "DELETE FROM book_author WHERE author_id = ?";
-	    String deleteAuthor = "DELETE FROM authors WHERE id = ?";
-	    try (Connection connection = DatabaseConnection.getConnection();
-	         PreparedStatement stmt1 = connection.prepareStatement(deleteRelations);
-	         PreparedStatement stmt2 = connection.prepareStatement(deleteAuthor)) {
+    public void updateAuthor(Author author) {
+        String sql = """
+                UPDATE authors
+                SET first_name = ?, last_name = ?, pseudonym = ?, nationality = ?
+                WHERE id = ?
+                """;
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-	        stmt1.setInt(1, authorId);
-	        stmt1.executeUpdate();
-
-	        stmt2.setInt(1, authorId);
-	        stmt2.executeUpdate();
-
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	}
-
-	public void updateAuthor(Author author) {
-		String sql = """
-				UPDATE authors
-				SET first_name = ?, last_name = ?, pseudonym = ?, nationality = ?
-				WHERE id = ?
-				""";
-
-		try (Connection connection = DatabaseConnection.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql)) {
-
-			statement.setString(1, author.getFirstName());
-			statement.setString(2, author.getLastName());
-			statement.setString(3, author.getPseudonym());
-			statement.setString(4, author.getNationality());
-			statement.setInt(5, author.getId());
-			statement.executeUpdate();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+            statement.setString(1, author.getFirstName());
+            statement.setString(2, author.getLastName());
+            statement.setString(3, author.getPseudonym());
+            statement.setString(4, author.getNationality());
+            statement.setInt(5, author.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

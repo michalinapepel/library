@@ -19,7 +19,6 @@ import domain.Shelf;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class MainWindowEmployee extends JFrame implements LanguageChangeListener {
 
@@ -49,7 +48,6 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
     public MainWindowEmployee() {
         Localization.addLanguageChangeListener(this);
 
-        // Inicjalizacja klasy do obsługi bazy danych
         dbBooks = new DataBaseBooks();
         dbAuthors = new DataBaseAuthors();
         dbBorrowers = new DataBaseBorrowers();
@@ -161,7 +159,7 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
 
         if (newBook != null) {
             dbBooks.addBook(newBook);
-            JOptionPane.showMessageDialog(this, "Książka dodana pomyślnie!");
+            JOptionPane.showMessageDialog(this, Localization.get("message.add.success.book"));
         }
     }
 
@@ -171,20 +169,18 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
 
         if (newAuthor != null) {
             dbAuthors.addAuthor(newAuthor);
-            JOptionPane.showMessageDialog(this, "Autor dodany pomyślnie!");
+            JOptionPane.showMessageDialog(this, Localization.get("message.add.success.author"));
         }
     }
 
     private void showAuthorsDialog() {
         ListAuthorsDialog dialog = new ListAuthorsDialog(this);
-        // Pobierz wszystkich autorów z bazy danych
         dialog.setAuthors(dbAuthors.getAllAuthors());
         dialog.showDialog();
     }
 
     private void showListBorrowersDialog() {
         ListBorrowersDialog dialog = new ListBorrowersDialog(this);
-        // Pobierz wszystkich czytelników z bazy danych
         dialog.setBorrowers(dbBorrowers.getAllBorrowers());
         dialog.showDialog();
     }
@@ -196,13 +192,12 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
 
         if (newBorrower != null) {
             dbBorrowers.addBorrower(newBorrower);
-            JOptionPane.showMessageDialog(this, "Czytelnik dodany pomyślnie!");
+            JOptionPane.showMessageDialog(this, Localization.get("message.add.success.borrower"));
         }
     }
 
     private void showListLoansDialog() {
         ListLoansDialog dialog = new ListLoansDialog(this);
-        // Pobierz wszystkie wypożyczenia z bazy danych
         dialog.setLoans(dbLoans.getAllLoans());
         dialog.showDialog();
     }
@@ -218,7 +213,7 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
 
         if (newLoan != null) {
             dbLoans.addLoan(newLoan);
-            JOptionPane.showMessageDialog(this, "Wypożyczenie dodane pomyślnie!");
+            JOptionPane.showMessageDialog(this, Localization.get("message.add.success.loan"));
         }
     }
 

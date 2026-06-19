@@ -80,22 +80,22 @@ public class AddAuthorDialog extends JDialog implements LanguageChangeListener {
             String lastName = lastNameField.getText().trim();
 
             if (firstName.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Imię jest wymagane!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.firstName.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
             if (firstName.length() > 100) {
-                JOptionPane.showMessageDialog(this, "Imię nie może być dłuższe niż 100 znaków!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.firstName.maxLength"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
             if (lastName.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Nazwisko jest wymagane!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.lastName.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
             if (lastName.length() > 100) {
-                JOptionPane.showMessageDialog(this, "Nazwisko nie może być dłuższe niż 100 znaków!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.lastName.maxLength"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
 

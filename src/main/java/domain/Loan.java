@@ -2,44 +2,17 @@ package domain;
 
 import java.time.LocalDate;
 
-/**
- * Reprezentuje wypożyczenie książki przez czytelnika.
- * Zawiera informacje o powiązanych książce, czytelniku, datach wypożyczenia i zwrotu.
- */
 public class Loan {
-    /**
-     * Unikalny identyfikator wypożyczenia.
-     */
+
     private int id;
-
-    /**
-     * Książka będąca przedmiotem wypożyczenia.
-     */
     private Book book;
-
-    /**
-     * Czytelnik, który wypożyczył książkę.
-     */
     private Borrower borrower;
-
-    /**
-     * Data wypożyczenia książki.
-     */
     private LocalDate loanDate;
-
-    /**
-     * Data planowanego zwrotu książki.
-     */
     private LocalDate dueDate;
-
-    /**
-     * Data faktycznego zwrotu książki.
-     * Może być {@code null}, jeśli książka nie została jeszcze zwrócona.
-     */
+    // null means the book has not been returned yet
     private LocalDate returnDate;
 
-    public Loan() {
-    }
+    public Loan() {}
 
     public Loan(int id, Book book, Borrower borrower, LocalDate loanDate, LocalDate dueDate) {
         this.id = id;
@@ -50,55 +23,23 @@ public class Loan {
         this.returnDate = null;
     }
 
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public Book getBook() { return book; }
+    public void setBook(Book book) { this.book = book; }
 
-    public Book getBook() {
-        return book;
-    }
+    public Borrower getBorrower() { return borrower; }
+    public void setBorrower(Borrower borrower) { this.borrower = borrower; }
 
-    public void setBook(Book book) {
-        this.book = book;
-    }
+    public LocalDate getLoanDate() { return loanDate; }
+    public void setLoanDate(LocalDate loanDate) { this.loanDate = loanDate; }
 
-    public Borrower getBorrower() {
-        return borrower;
-    }
+    public LocalDate getDueDate() { return dueDate; }
+    public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
 
-    public void setBorrower(Borrower borrower) {
-        this.borrower = borrower;
-    }
+    public LocalDate getReturnDate() { return returnDate; }
+    public void setReturnDate(LocalDate returnDate) { this.returnDate = returnDate; }
 
-    public LocalDate getLoanDate() {
-        return loanDate;
-    }
-
-    public void setLoanDate(LocalDate loanDate) {
-        this.loanDate = loanDate;
-    }
-
-    public LocalDate getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
-    }
-
-    public LocalDate getReturnDate() {
-        return returnDate;
-    }
-
-    public void setReturnDate(LocalDate returnDate) {
-        this.returnDate = returnDate;
-    }
-
-    public boolean isReturned() {
-        return returnDate != null;
-    }
+    public boolean isReturned() { return returnDate != null; }
 }

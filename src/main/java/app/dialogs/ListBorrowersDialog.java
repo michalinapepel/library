@@ -157,9 +157,9 @@ public class ListBorrowersDialog extends JDialog implements LanguageChangeListen
         }
         if (!withActive.isEmpty()) {
             JOptionPane.showMessageDialog(this,
-                "Nie można usunąć następujących czytelników, ponieważ mają aktywne wypożyczenia:\n" +
-                String.join("\n", withActive) + "\n\nNajpierw zwróć wszystkie książki.",
-                "Aktywne wypożyczenia", JOptionPane.ERROR_MESSAGE);
+                Localization.get("message.delete.active.loans") + "\n" +
+                String.join("\n", withActive) + "\n\n" + Localization.get("message.delete.return.first"),
+                Localization.get("dialog.active.loans.title"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -173,14 +173,14 @@ public class ListBorrowersDialog extends JDialog implements LanguageChangeListen
 
         String confirmMsg;
         if (!withHistory.isEmpty()) {
-            confirmMsg = "Następujący czytelnicy mają historię wypożyczeń, która zostanie również usunięta:\n" +
-                String.join("\n", withHistory) + "\n\nCzy na pewno chcesz usunąć?";
+            confirmMsg = Localization.get("message.delete.history") + "\n" +
+                String.join("\n", withHistory) + "\n\n" + Localization.get("message.confirm.delete.selected");
         } else {
-            confirmMsg = "Czy na pewno chcesz usunąć zaznaczone pozycje?";
+            confirmMsg = Localization.get("message.confirm.delete.selected");
         }
 
         int confirm = JOptionPane.showConfirmDialog(this, confirmMsg,
-            "Potwierdź usunięcie", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            Localization.get("dialog.confirm.delete.title"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (confirm == JOptionPane.YES_OPTION) {
             for (Borrower borrower : toDelete) {
                 dbLoans.deleteLoansByBorrower(borrower.getId());

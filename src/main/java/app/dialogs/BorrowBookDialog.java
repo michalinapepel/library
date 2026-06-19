@@ -129,7 +129,7 @@ public class BorrowBookDialog extends JDialog implements LanguageChangeListener 
 
         if (foundShelf == null) {
             JOptionPane.showMessageDialog(this,
-                book.getTitle() + "\n\n" + "Brak przypisanej półki.",
+                book.getTitle() + "\n\n" + Localization.get("message.no.shelf"),
                 Localization.get("label.location"),
                 JOptionPane.INFORMATION_MESSAGE);
             return;

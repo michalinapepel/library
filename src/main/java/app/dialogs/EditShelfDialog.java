@@ -68,7 +68,7 @@ public class EditShelfDialog extends JDialog implements LanguageChangeListener {
         ok.addActionListener(e -> {
             Bookcase selectedBookcase = (Bookcase) bookcaseCombo.getSelectedItem();
             if (selectedBookcase == null) {
-                JOptionPane.showMessageDialog(this, "Regał jest wymagany!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("validation.bookcase.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
             result = originalShelf;

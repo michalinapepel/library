@@ -70,17 +70,17 @@ public class AddLoanDialog extends JDialog implements LanguageChangeListener {
             Borrower selectedBorrower = (Borrower) borrowerCombo.getSelectedItem();
 
             if (selectedBook == null) {
-                JOptionPane.showMessageDialog(this, "Książka jest wymagana!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("message.select.book"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
             if (selectedBorrower == null) {
-                JOptionPane.showMessageDialog(this, "Czytelnik jest wymagany!", "Błąd walidacji", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, Localization.get("message.select.borrower"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
             if (dbLoans.isBookOnActiveLoan(selectedBook.getId())) {
                 JOptionPane.showMessageDialog(this,
-                    "Książka \"" + selectedBook.getTitle() + "\" jest już wypożyczona i nie może być wypożyczona ponownie.",
-                    "Książka niedostępna", JOptionPane.WARNING_MESSAGE);
+                    "\"" + selectedBook.getTitle() + "\" " + Localization.get("message.book.already.loaned"),
+                    Localization.get("message.book.unavailable.title"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
