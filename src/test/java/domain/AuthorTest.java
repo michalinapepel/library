@@ -28,7 +28,7 @@ class AuthorTest {
     }
 
     @Test
-    void getNationality_zwracaNarodowоsc() {
+    void getNationality_zwracaNarodowosc() {
         Author author = new Author(1, "Adam", "Mickiewicz", "", "PL");
 
         assertEquals("PL", author.getNationality());
