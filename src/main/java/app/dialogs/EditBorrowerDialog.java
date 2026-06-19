@@ -3,6 +3,7 @@ package app.dialogs;
 import app.LanguageChangeListener;
 import app.Localization;
 import domain.Borrower;
+import management.DataBaseBorrowers;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +12,7 @@ public class EditBorrowerDialog extends JDialog implements LanguageChangeListene
 
     private Borrower result = null;
     private final Borrower originalBorrower;
+    private final DataBaseBorrowers dbBorrowers;
     private JTextField firstNameField;
     private JTextField lastNameField;
     private JTextField addressCityField;
@@ -20,12 +22,11 @@ public class EditBorrowerDialog extends JDialog implements LanguageChangeListene
     private JSpinner cardNumberSpinner;
     private JButton ok;
     private JButton cancel;
-    private JButton delete;
-    private boolean deleted = false;
 
     public EditBorrowerDialog(JFrame parent, Borrower borrower) {
         super(parent, Localization.get("dialog.edit.borrower.title"), true);
         this.originalBorrower = borrower;
+        this.dbBorrowers = new DataBaseBorrowers();
         Localization.addLanguageChangeListener(this);
         initComponents();
         loadBorrowerData();
@@ -105,9 +106,6 @@ public class EditBorrowerDialog extends JDialog implements LanguageChangeListene
         JPanel buttonPanel = new JPanel();
         ok = new JButton(Localization.get("button.ok"));
         cancel = new JButton(Localization.get("button.cancel"));
-        delete = new JButton(Localization.get("button.delete"));
-        delete.setForeground(Color.RED);
-
         ok.addActionListener(e -> {
             result = originalBorrower;
             result.setFirstName(firstNameField.getText().trim());
@@ -117,6 +115,7 @@ public class EditBorrowerDialog extends JDialog implements LanguageChangeListene
             result.setAddressNumber(((Integer) addressNumberSpinner.getValue()));
             result.setAddressZip(addressZipField.getText().trim());
             result.setCardNumber((Integer) cardNumberSpinner.getValue());
+            dbBorrowers.updateBorrower(result);
             dispose();
         });
 
@@ -125,17 +124,8 @@ public class EditBorrowerDialog extends JDialog implements LanguageChangeListene
             dispose();
         });
 
-        delete.addActionListener(e -> {
-            int confirm = JOptionPane.showConfirmDialog(this, Localization.get("message.confirm.delete"));
-            if (confirm == JOptionPane.YES_OPTION) {
-                deleted = true;
-                dispose();
-            }
-        });
-
         buttonPanel.add(ok);
         buttonPanel.add(cancel);
-        buttonPanel.add(delete);
         add(buttonPanel, gbc);
     }
 
@@ -158,16 +148,11 @@ public class EditBorrowerDialog extends JDialog implements LanguageChangeListene
         return result;
     }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-
     @Override
     public void onLanguageChanged() {
         setTitle(Localization.get("dialog.edit.borrower.title"));
         ok.setText(Localization.get("button.ok"));
         cancel.setText(Localization.get("button.cancel"));
-        delete.setText(Localization.get("button.delete"));
         revalidate();
         repaint();
     }

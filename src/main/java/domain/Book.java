@@ -1,5 +1,8 @@
 package domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Reprezentuje książkę w systemie bibliotecznym.
  * Zawiera podstawowe metadane książki takie jak tytuł, autorzy, wydawca,
@@ -9,6 +12,7 @@ public class Book {
 
     private int id;
     private int shelfId;
+    private List<Section> sections = new ArrayList<>();
 
     /**
      * Tytuł książki.
@@ -96,10 +100,6 @@ public class Book {
         this.publisher = publisher;
     }
 
-    public void setPublicationYear(int publicationYear) {
-        this.yearOfPublishing = publicationYear;
-    }
-
     public void setIsbn(String isbn) {
         this.isbn = isbn;
     }
@@ -136,4 +136,25 @@ public class Book {
         this.yearOfPublishing = value;
     }
 
+    public List<Section> getSections() {
+        return sections;
+    }
+
+    public void setSections(List<Section> sections) {
+        this.sections = sections != null ? sections : new ArrayList<>();
+    }
+
+    public String getSectionsAsString() {
+        StringBuilder sb = new StringBuilder();
+        for (Section section : sections) {
+            sb.append(section.getName()).append(", ");
+        }
+        if (sb.length() > 2) sb.setLength(sb.length() - 2);
+        return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        return title;
+    }
 }

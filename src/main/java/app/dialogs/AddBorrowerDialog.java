@@ -20,8 +20,11 @@ public class AddBorrowerDialog extends JDialog implements LanguageChangeListener
     private JButton ok;
     private JButton cancel;
 
-    public AddBorrowerDialog(JFrame parent) {
+    private final int nextCardNumber;
+
+    public AddBorrowerDialog(JFrame parent, int nextCardNumber) {
         super(parent, Localization.get("dialog.add.borrower.title"), true);
+        this.nextCardNumber = nextCardNumber;
         Localization.addLanguageChangeListener(this);
         initComponents();
         setSize(500, 350);
@@ -87,7 +90,7 @@ public class AddBorrowerDialog extends JDialog implements LanguageChangeListener
         gbc.gridy = 6;
         add(new JLabel(Localization.get("label.cardNumber")), gbc);
         gbc.gridx = 1;
-        cardNumberSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 999999, 1));
+        cardNumberSpinner = new JSpinner(new SpinnerNumberModel(nextCardNumber, 1, 999999, 1));
         add(cardNumberSpinner, gbc);
 
         // Buttons

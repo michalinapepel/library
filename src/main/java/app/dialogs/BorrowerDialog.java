@@ -17,6 +17,8 @@ public class BorrowerDialog extends JDialog implements LanguageChangeListener {
 
         setLayout(new BorderLayout(10, 10));
 
+        JLabel label = new JLabel(Localization.get("label.cardNumber") + ":");
+        label.setBorder(BorderFactory.createEmptyBorder(5, 10, 0, 10));
         JTextField field = new JTextField();
         ok = new JButton(Localization.get("button.ok"));
         cancel = new JButton(Localization.get("button.cancel"));
@@ -31,6 +33,7 @@ public class BorrowerDialog extends JDialog implements LanguageChangeListener {
             dispose();
         });
 
+        add(label, BorderLayout.NORTH);
         add(field, BorderLayout.CENTER);
 
         JPanel bottom = new JPanel();
@@ -38,7 +41,7 @@ public class BorrowerDialog extends JDialog implements LanguageChangeListener {
         bottom.add(cancel);
         add(bottom, BorderLayout.SOUTH);
 
-        setSize(300, 100);
+        setSize(300, 130);
         setLocationRelativeTo(parent);
     }
 

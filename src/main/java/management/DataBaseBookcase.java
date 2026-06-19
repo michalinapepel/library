@@ -63,12 +63,17 @@ public class DataBaseBookcase {
 	}
 	
 	public void deleteBookcase(int bookcaseId) {
-		String sql = "DELETE FROM bookcase WHERE id = ?";
+		String deleteShelves = "DELETE FROM shelfs WHERE bookcase_id = ?";
+		String deleteBookcase = "DELETE FROM bookcase WHERE id = ?";
 		try (Connection connection = DatabaseConnection.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql)) {
+			 PreparedStatement stmt1 = connection.prepareStatement(deleteShelves);
+			 PreparedStatement stmt2 = connection.prepareStatement(deleteBookcase)) {
 
-			statement.setInt(1, bookcaseId);
-			statement.executeUpdate();
+			stmt1.setInt(1, bookcaseId);
+			stmt1.executeUpdate();
+
+			stmt2.setInt(1, bookcaseId);
+			stmt2.executeUpdate();
 
 		} catch (SQLException e) {
 			e.printStackTrace();

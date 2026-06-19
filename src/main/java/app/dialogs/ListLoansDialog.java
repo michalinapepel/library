@@ -3,6 +3,7 @@ package app.dialogs;
 import app.LanguageChangeListener;
 import app.Localization;
 import domain.Loan;
+import management.DataBaseLoans;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,6 +15,7 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
 
      private final List<Loan> loans = new ArrayList<>();
      private final List<Loan> filteredLoans = new ArrayList<>();
+     private final DataBaseLoans dbLoans = new DataBaseLoans();
      private JTable loansTable;
      private JTextField searchField;
      private JComboBox<String> filterCombo;
@@ -21,6 +23,7 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
      private JButton close;
      private JButton returnBook;
      private JButton edit;
+     private JButton delete;
 
     public ListLoansDialog(JFrame parent) {
         super(parent, Localization.get("dialog.list.loans.title"), true);
@@ -63,7 +66,7 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
             }
         };
         loansTable = new JTable(tableModel);
-        loansTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        loansTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane scrollPane = new JScrollPane(loansTable);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -71,14 +74,18 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
          JPanel buttonPanel = new JPanel();
          returnBook = new JButton(Localization.get("button.returnBook"));
          edit = new JButton(Localization.get("button.edit"));
+         delete = new JButton(Localization.get("button.delete"));
+         delete.setForeground(Color.RED);
          close = new JButton(Localization.get("button.close"));
 
          returnBook.addActionListener(e -> returnSelectedBook());
          edit.addActionListener(e -> editSelectedLoan());
+         delete.addActionListener(e -> deleteSelectedLoans());
          close.addActionListener(e -> dispose());
 
          buttonPanel.add(returnBook);
          buttonPanel.add(edit);
+         buttonPanel.add(delete);
          buttonPanel.add(close);
          add(buttonPanel, BorderLayout.SOUTH);
 
@@ -95,7 +102,7 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
     private void searchLoans() {
         String searchText = searchField.getText().trim().toLowerCase();
         String filterType = (String) filterCombo.getSelectedItem();
-        
+
         filteredLoans.clear();
 
         for (Loan loan : loans) {
@@ -122,7 +129,7 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
         for (Loan loan : filteredLoans) {
             Object[] row = {
                 loan.getBook() != null ? loan.getBook().getTitle() : "",
-                loan.getBorrower() != null ? 
+                loan.getBorrower() != null ?
                     loan.getBorrower().getFirstName() + " " + loan.getBorrower().getLastName() : "",
                 loan.getLoanDate(),
                 loan.getDueDate(),
@@ -148,10 +155,7 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
           EditLoanDialog dialog = new EditLoanDialog((JFrame) SwingUtilities.getWindowAncestor(this), selectedLoan);
           Loan returnedLoan = dialog.showDialog();
 
-          if (dialog.isDeleted()) {
-              loans.remove(selectedLoan);
-              loadAllLoans();
-          } else if (returnedLoan != null) {
+          if (returnedLoan != null) {
               refreshTable();
           }
      }
@@ -167,12 +171,30 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
           EditLoanDialog dialog = new EditLoanDialog((JFrame) SwingUtilities.getWindowAncestor(this), selectedLoan);
           Loan editedLoan = dialog.showDialog();
 
-          if (dialog.isDeleted()) {
-              loans.remove(selectedLoan);
-              loadAllLoans();
-          } else if (editedLoan != null) {
+          if (editedLoan != null) {
               refreshTable();
           }
+     }
+
+     private void deleteSelectedLoans() {
+         int[] selectedRows = loansTable.getSelectedRows();
+         if (selectedRows.length == 0) {
+             JOptionPane.showMessageDialog(this, Localization.get("message.select.loan"));
+             return;
+         }
+         int confirm = JOptionPane.showConfirmDialog(this,
+             "Czy na pewno chcesz usunąć zaznaczone pozycje?",
+             "Potwierdź usunięcie",
+             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+         if (confirm == JOptionPane.YES_OPTION) {
+             List<Loan> toDelete = new ArrayList<>();
+             for (int row : selectedRows) toDelete.add(filteredLoans.get(row));
+             for (Loan loan : toDelete) {
+                 dbLoans.deleteLoan(loan.getId());
+                 loans.remove(loan);
+             }
+             loadAllLoans();
+         }
      }
 
     public void setLoans(List<Loan> loans) {
@@ -191,6 +213,7 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
          search.setText(Localization.get("button.search"));
          returnBook.setText(Localization.get("button.returnBook"));
          edit.setText(Localization.get("button.edit"));
+         delete.setText(Localization.get("button.delete"));
          close.setText(Localization.get("button.close"));
          revalidate();
          repaint();

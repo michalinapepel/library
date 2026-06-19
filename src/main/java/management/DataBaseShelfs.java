@@ -40,9 +40,10 @@ public class DataBaseShelfs {
 		
 		//sql query
 		String sql = """
-				SELECT id, bookcase_id, name
-				FROM shelfs
-				ORDER BY id
+				SELECT s.id, s.bookcase_id, s.name, b.name AS bookcase_name
+				FROM shelfs s
+				LEFT JOIN bookcase b ON s.bookcase_id = b.id
+				ORDER BY s.id
 				""";
 		//proba polaczenia z baza
 		try (Connection connection = DatabaseConnection.getConnection();
@@ -51,9 +52,10 @@ public class DataBaseShelfs {
 			//pobieranie ksiazka po ksiazce
 			while (resultSet.next()) {
 				Shelf shelf = new Shelf(
-						resultSet.getInt("id"), 
+						resultSet.getInt("id"),
 						resultSet.getInt("bookcase_id"),
 						resultSet.getString("name"));
+				shelf.setBookcaseName(resultSet.getString("bookcase_name"));
 				shelves.add(shelf);
 			}
 
@@ -65,12 +67,17 @@ public class DataBaseShelfs {
 	}
 	
 	public void deleteShelf(int shelfId) {
-		String sql = "DELETE FROM shelfs WHERE id = ?";
+		String nullBooks = "UPDATE book SET shelf_id = NULL WHERE shelf_id = ?";
+		String deleteShelf = "DELETE FROM shelfs WHERE id = ?";
 		try (Connection connection = DatabaseConnection.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql)) {
+			 PreparedStatement stmt1 = connection.prepareStatement(nullBooks);
+			 PreparedStatement stmt2 = connection.prepareStatement(deleteShelf)) {
 
-			statement.setInt(1, shelfId);
-			statement.executeUpdate();
+			stmt1.setInt(1, shelfId);
+			stmt1.executeUpdate();
+
+			stmt2.setInt(1, shelfId);
+			stmt2.executeUpdate();
 
 		} catch (SQLException e) {
 			e.printStackTrace();

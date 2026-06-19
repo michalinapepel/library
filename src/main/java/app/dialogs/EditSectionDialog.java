@@ -3,6 +3,7 @@ package app.dialogs;
 import app.LanguageChangeListener;
 import app.Localization;
 import domain.Section;
+import management.DataBaseSections;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,15 +12,15 @@ public class EditSectionDialog extends JDialog implements LanguageChangeListener
 
     private Section result = null;
     private final Section originalSection;
+    private final DataBaseSections dbSections;
     private JTextField nameField;
     private JButton ok;
     private JButton cancel;
-    private JButton delete;
-    private boolean deleted = false;
 
     public EditSectionDialog(JFrame parent, Section section) {
         super(parent, Localization.get("dialog.edit.section.title"), true);
         this.originalSection = section;
+        this.dbSections = new DataBaseSections();
         Localization.addLanguageChangeListener(this);
         initComponents();
         loadSectionData();
@@ -51,11 +52,9 @@ public class EditSectionDialog extends JDialog implements LanguageChangeListener
         JPanel buttonPanel = new JPanel();
         ok = new JButton(Localization.get("button.ok"));
         cancel = new JButton(Localization.get("button.cancel"));
-        delete = new JButton(Localization.get("button.delete"));
-        delete.setForeground(Color.RED);
-
         ok.addActionListener(e -> {
             result = new Section(originalSection.getId(), nameField.getText().trim());
+            dbSections.updateSection(result);
             dispose();
         });
 
@@ -64,17 +63,8 @@ public class EditSectionDialog extends JDialog implements LanguageChangeListener
             dispose();
         });
 
-        delete.addActionListener(e -> {
-            int confirm = JOptionPane.showConfirmDialog(this, Localization.get("message.confirm.delete"));
-            if (confirm == JOptionPane.YES_OPTION) {
-                deleted = true;
-                dispose();
-            }
-        });
-
         buttonPanel.add(ok);
         buttonPanel.add(cancel);
-        buttonPanel.add(delete);
         add(buttonPanel, gbc);
     }
 
@@ -89,16 +79,11 @@ public class EditSectionDialog extends JDialog implements LanguageChangeListener
         return result;
     }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-
     @Override
     public void onLanguageChanged() {
         setTitle(Localization.get("dialog.edit.section.title"));
         ok.setText(Localization.get("button.ok"));
         cancel.setText(Localization.get("button.cancel"));
-        delete.setText(Localization.get("button.delete"));
         revalidate();
         repaint();
     }

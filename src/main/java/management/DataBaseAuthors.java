@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,19 +18,21 @@ public class DataBaseAuthors {
 				VALUES (?, ?, ?, ?)
 				""";
 
-		// proba polaczenia sie z baza danych
 		try (Connection connection = DatabaseConnection.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql)) {
+				PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-			// ustawiamy pola dla VALUES z sql'a, kolejnosc zgodna z kolejnoscia w insert into
-			
 			statement.setString(1, author.getFirstName());
 			statement.setString(2, author.getLastName());
 			statement.setString(3, author.getPseudonym());
 			statement.setString(4, author.getNationality());
 
-			// execujemy sql
 			statement.executeUpdate();
+
+			try (ResultSet keys = statement.getGeneratedKeys()) {
+				if (keys.next()) {
+					author.setId(keys.getInt(1));
+				}
+			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -68,18 +71,23 @@ public class DataBaseAuthors {
 		return authors;
 	}
 	
-	 public void deleteAuthor(int authorId) {
-	        String sql = "DELETE FROM authors WHERE id = ?";
-	        try (Connection connection = DatabaseConnection.getConnection();
-	             PreparedStatement statement = connection.prepareStatement(sql)) {
+	public void deleteAuthor(int authorId) {
+	    String deleteRelations = "DELETE FROM book_author WHERE author_id = ?";
+	    String deleteAuthor = "DELETE FROM authors WHERE id = ?";
+	    try (Connection connection = DatabaseConnection.getConnection();
+	         PreparedStatement stmt1 = connection.prepareStatement(deleteRelations);
+	         PreparedStatement stmt2 = connection.prepareStatement(deleteAuthor)) {
 
-	            statement.setInt(1, authorId);
-	            statement.executeUpdate();
+	        stmt1.setInt(1, authorId);
+	        stmt1.executeUpdate();
 
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        }
+	        stmt2.setInt(1, authorId);
+	        stmt2.executeUpdate();
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
 	    }
+	}
 
 	public void updateAuthor(Author author) {
 		String sql = """

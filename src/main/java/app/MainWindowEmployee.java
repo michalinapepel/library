@@ -10,6 +10,12 @@ import management.DataBaseBooks;
 import management.DataBaseAuthors;
 import management.DataBaseBorrowers;
 import management.DataBaseLoans;
+import management.DataBaseShelfs;
+import management.DataBaseSections;
+import management.DataBaseBookcase;
+import domain.Bookcase;
+import domain.Section;
+import domain.Shelf;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +28,9 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
     private final DataBaseAuthors dbAuthors;
     private final DataBaseBorrowers dbBorrowers;
     private final DataBaseLoans dbLoans;
+    private final DataBaseShelfs dbShelves;
+    private final DataBaseSections dbSections;
+    private final DataBaseBookcase dbBookcase;
     private final JButton booksButton;
     private final JButton addBookButton;
     private final JButton authorsButton;
@@ -45,6 +54,9 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
         dbAuthors = new DataBaseAuthors();
         dbBorrowers = new DataBaseBorrowers();
         dbLoans = new DataBaseLoans();
+        dbShelves = new DataBaseShelfs();
+        dbSections = new DataBaseSections();
+        dbBookcase = new DataBaseBookcase();
 
         setTitle(Localization.get("app.title"));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -132,24 +144,24 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
     }
 
     private void showListBooksDialog() {
-        ListBooksDialog dialog = new ListBooksDialog(this, dbAuthors.getAllAuthors().toArray(new Author[0]));
-        // Pobierz wszystkie książki z bazy danych
+        Shelf[] shelves = dbShelves.getAllShelves().toArray(new Shelf[0]);
+        Bookcase[] bookcases = dbBookcase.getAllBookcases().toArray(new Bookcase[0]);
+        Section[] sections = dbSections.getAllSections().toArray(new Section[0]);
+        ListBooksDialog dialog = new ListBooksDialog(this, dbAuthors.getAllAuthors().toArray(new Author[0]), shelves, bookcases, sections);
         dialog.setBooks(dbBooks.getAllBooks());
         dialog.showDialog();
     }
 
     private void showAddBookDialog() {
-        AddBookDialog dialog = new AddBookDialog(this, dbAuthors.getAllAuthors().toArray(new Author[0]));
+        Shelf[] shelves = dbShelves.getAllShelves().toArray(new Shelf[0]);
+        Bookcase[] bookcases = dbBookcase.getAllBookcases().toArray(new Bookcase[0]);
+        Section[] sections = dbSections.getAllSections().toArray(new Section[0]);
+        AddBookDialog dialog = new AddBookDialog(this, dbAuthors.getAllAuthors().toArray(new Author[0]), shelves, bookcases, sections);
         Book newBook = dialog.showDialog();
 
         if (newBook != null) {
-            // Pobierz ID półki jeśli jest dostępna
-            if (newBook.getShelfId() != null && newBook.getShelfId() > 0) {
-                dbBooks.addBook(newBook);
-                JOptionPane.showMessageDialog(this, "Książka dodana pomyślnie!");
-            } else {
-                JOptionPane.showMessageDialog(this, "Proszę wybrać półkę!", "Błąd", JOptionPane.WARNING_MESSAGE);
-            }
+            dbBooks.addBook(newBook);
+            JOptionPane.showMessageDialog(this, "Książka dodana pomyślnie!");
         }
     }
 
@@ -178,7 +190,8 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
     }
 
     private void showAddBorrowerDialog() {
-        AddBorrowerDialog dialog = new AddBorrowerDialog(this);
+        int nextCardNumber = dbBorrowers.getNextCardNumber();
+        AddBorrowerDialog dialog = new AddBorrowerDialog(this, nextCardNumber);
         Borrower newBorrower = dialog.showDialog();
 
         if (newBorrower != null) {
@@ -195,7 +208,12 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
     }
 
     private void showAddLoanDialog() {
-        AddLoanDialog dialog = new AddLoanDialog(this);
+        java.util.Set<Integer> onLoan = dbLoans.getActiveLoanBookIds();
+        Book[] books = dbBooks.getAllBooks().stream()
+                .filter(b -> !onLoan.contains(b.getId()))
+                .toArray(Book[]::new);
+        Borrower[] borrowers = dbBorrowers.getAllBorrowers().toArray(new Borrower[0]);
+        AddLoanDialog dialog = new AddLoanDialog(this, books, borrowers);
         Loan newLoan = dialog.showDialog();
 
         if (newLoan != null) {

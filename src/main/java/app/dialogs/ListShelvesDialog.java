@@ -2,7 +2,9 @@ package app.dialogs;
 
 import app.LanguageChangeListener;
 import app.Localization;
+import domain.Bookcase;
 import domain.Shelf;
+import management.DataBaseShelfs;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,11 +16,14 @@ public class ListShelvesDialog extends JDialog implements LanguageChangeListener
 
      private final List<Shelf> shelves = new ArrayList<>();
      private final List<Shelf> filteredShelves = new ArrayList<>();
+     private Bookcase[] bookcases = new Bookcase[0];
+     private final DataBaseShelfs dbShelves = new DataBaseShelfs();
      private JTable shelvesTable;
      private JTextField searchField;
      private JButton search;
      private JButton close;
      private JButton edit;
+     private JButton delete;
 
     public ListShelvesDialog(JFrame parent) {
         super(parent, Localization.get("dialog.list.shelves.title"), true);
@@ -42,9 +47,8 @@ public class ListShelvesDialog extends JDialog implements LanguageChangeListener
 
         // Table
         String[] columnNames = {
-            Localization.get("label.id"),
             Localization.get("label.name"),
-                Localization.get("label.bookcaseName")
+            Localization.get("label.bookcaseName")
         };
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -53,7 +57,7 @@ public class ListShelvesDialog extends JDialog implements LanguageChangeListener
             }
         };
         shelvesTable = new JTable(tableModel);
-        shelvesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        shelvesTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane scrollPane = new JScrollPane(shelvesTable);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -62,10 +66,14 @@ public class ListShelvesDialog extends JDialog implements LanguageChangeListener
          edit = new JButton(Localization.get("button.edit"));
          close = new JButton(Localization.get("button.close"));
 
+         delete = new JButton(Localization.get("button.delete"));
+         delete.setForeground(Color.RED);
          edit.addActionListener(e -> editSelectedShelf());
+         delete.addActionListener(e -> deleteSelectedShelves());
          close.addActionListener(e -> dispose());
 
          buttonPanel.add(edit);
+         buttonPanel.add(delete);
          buttonPanel.add(close);
          add(buttonPanel, BorderLayout.SOUTH);
 
@@ -81,16 +89,34 @@ public class ListShelvesDialog extends JDialog implements LanguageChangeListener
          }
 
          Shelf selectedShelf = filteredShelves.get(selectedRow);
-          EditShelfDialog dialog = new EditShelfDialog((JFrame) SwingUtilities.getWindowAncestor(this), selectedShelf);
+          EditShelfDialog dialog = new EditShelfDialog((JFrame) SwingUtilities.getWindowAncestor(this), selectedShelf, bookcases);
           Shelf editedShelf = dialog.showDialog();
 
-          if (dialog.isDeleted()) {
-              shelves.remove(selectedShelf);
-              loadAllShelves();
-          } else if (editedShelf != null) {
+          if (editedShelf != null) {
               refreshTable();
           }
       }
+
+     private void deleteSelectedShelves() {
+         int[] selectedRows = shelvesTable.getSelectedRows();
+         if (selectedRows.length == 0) {
+             JOptionPane.showMessageDialog(this, Localization.get("message.select.shelf"));
+             return;
+         }
+         int confirm = JOptionPane.showConfirmDialog(this,
+             "Czy na pewno chcesz usunąć zaznaczone pozycje?",
+             "Potwierdź usunięcie",
+             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+         if (confirm == JOptionPane.YES_OPTION) {
+             List<Shelf> toDelete = new ArrayList<>();
+             for (int row : selectedRows) toDelete.add(filteredShelves.get(row));
+             for (Shelf shelf : toDelete) {
+                 dbShelves.deleteShelf(shelf.getId());
+                 shelves.remove(shelf);
+             }
+             loadAllShelves();
+         }
+     }
 
      private void loadAllShelves() {
          filteredShelves.clear();
@@ -118,9 +144,8 @@ public class ListShelvesDialog extends JDialog implements LanguageChangeListener
 
         for (Shelf shelf : filteredShelves) {
             Object[] row = {
-                shelf.getId(),
                 shelf.getName(),
-                    shelf.getBookcaseName()
+                shelf.getBookcaseName()
             };
             model.addRow(row);
         }
@@ -132,6 +157,10 @@ public class ListShelvesDialog extends JDialog implements LanguageChangeListener
         loadAllShelves();
     }
 
+    public void setBookcases(Bookcase[] bookcases) {
+        this.bookcases = bookcases;
+    }
+
     public void showDialog() {
         setVisible(true);
     }
@@ -141,6 +170,7 @@ public class ListShelvesDialog extends JDialog implements LanguageChangeListener
          setTitle(Localization.get("dialog.list.shelves.title"));
          search.setText(Localization.get("button.search"));
          edit.setText(Localization.get("button.edit"));
+         delete.setText(Localization.get("button.delete"));
          close.setText(Localization.get("button.close"));
          revalidate();
          repaint();

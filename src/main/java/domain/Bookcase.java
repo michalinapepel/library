@@ -12,4 +12,9 @@ public class Bookcase extends AbstractLocation {
 	public Bookcase(Integer id, String name) {
 		super.init(id, name);
 	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

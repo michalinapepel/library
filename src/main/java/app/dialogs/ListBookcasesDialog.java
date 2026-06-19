@@ -3,6 +3,9 @@ package app.dialogs;
 import app.LanguageChangeListener;
 import app.Localization;
 import domain.Bookcase;
+import domain.Shelf;
+import management.DataBaseBookcase;
+import management.DataBaseShelfs;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,11 +17,14 @@ public class ListBookcasesDialog extends JDialog implements LanguageChangeListen
 
      private final List<Bookcase> bookcases = new ArrayList<>();
      private final List<Bookcase> filteredBookcases = new ArrayList<>();
+     private final DataBaseBookcase dbBookcase = new DataBaseBookcase();
+     private final DataBaseShelfs dbShelves = new DataBaseShelfs();
      private JTable bookcasesTable;
      private JTextField searchField;
      private JButton search;
      private JButton close;
      private JButton edit;
+     private JButton delete;
 
     public ListBookcasesDialog(JFrame parent) {
         super(parent, Localization.get("dialog.list.bookcases.title"), true);
@@ -42,7 +48,6 @@ public class ListBookcasesDialog extends JDialog implements LanguageChangeListen
 
         // Table
         String[] columnNames = {
-            Localization.get("label.id"),
             Localization.get("label.name")
         };
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
@@ -52,7 +57,15 @@ public class ListBookcasesDialog extends JDialog implements LanguageChangeListen
             }
         };
         bookcasesTable = new JTable(tableModel);
-        bookcasesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        bookcasesTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        bookcasesTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (e.getClickCount() == 2 && bookcasesTable.getSelectedRow() != -1) {
+                    showShelvesForBookcase(filteredBookcases.get(bookcasesTable.getSelectedRow()));
+                }
+            }
+        });
         JScrollPane scrollPane = new JScrollPane(bookcasesTable);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -61,10 +74,14 @@ public class ListBookcasesDialog extends JDialog implements LanguageChangeListen
          edit = new JButton(Localization.get("button.edit"));
          close = new JButton(Localization.get("button.close"));
 
+         delete = new JButton(Localization.get("button.delete"));
+         delete.setForeground(Color.RED);
          edit.addActionListener(e -> editSelectedBookcase());
+         delete.addActionListener(e -> deleteSelectedBookcases());
          close.addActionListener(e -> dispose());
 
          buttonPanel.add(edit);
+         buttonPanel.add(delete);
          buttonPanel.add(close);
          add(buttonPanel, BorderLayout.SOUTH);
 
@@ -83,13 +100,47 @@ public class ListBookcasesDialog extends JDialog implements LanguageChangeListen
           EditBookcaseDialog dialog = new EditBookcaseDialog((JFrame) SwingUtilities.getWindowAncestor(this), selectedBookcase);
           Bookcase editedBookcase = dialog.showDialog();
 
-          if (dialog.isDeleted()) {
-              bookcases.remove(selectedBookcase);
-              loadAllBookcases();
-          } else if (editedBookcase != null) {
+          if (editedBookcase != null) {
               refreshTable();
           }
       }
+
+     private void deleteSelectedBookcases() {
+         int[] selectedRows = bookcasesTable.getSelectedRows();
+         if (selectedRows.length == 0) {
+             JOptionPane.showMessageDialog(this, Localization.get("message.select.bookcase"));
+             return;
+         }
+         int confirm = JOptionPane.showConfirmDialog(this,
+             "Czy na pewno chcesz usunąć zaznaczone pozycje?",
+             "Potwierdź usunięcie",
+             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+         if (confirm == JOptionPane.YES_OPTION) {
+             List<Bookcase> toDelete = new ArrayList<>();
+             for (int row : selectedRows) toDelete.add(filteredBookcases.get(row));
+             for (Bookcase bookcase : toDelete) {
+                 dbBookcase.deleteBookcase(bookcase.getId());
+                 bookcases.remove(bookcase);
+             }
+             loadAllBookcases();
+         }
+     }
+
+     private void showShelvesForBookcase(Bookcase bookcase) {
+         List<Shelf> allShelves = dbShelves.getAllShelves();
+         List<Shelf> filtered = new ArrayList<>();
+         for (Shelf shelf : allShelves) {
+             if (shelf.getBookcaseId() == bookcase.getId()) {
+                 filtered.add(shelf);
+             }
+         }
+
+         ListShelvesDialog dialog = new ListShelvesDialog((JFrame) SwingUtilities.getWindowAncestor(this));
+         dialog.setTitle(Localization.get("dialog.list.shelves.title") + " — " + bookcase.getName());
+         dialog.setBookcases(bookcases.toArray(new Bookcase[0]));
+         dialog.setShelves(filtered);
+         dialog.showDialog();
+     }
 
      private void loadAllBookcases() {
          filteredBookcases.clear();
@@ -117,7 +168,6 @@ public class ListBookcasesDialog extends JDialog implements LanguageChangeListen
 
         for (Bookcase bookcase : filteredBookcases) {
             Object[] row = {
-                bookcase.getId(),
                 bookcase.getName()
             };
             model.addRow(row);
@@ -139,6 +189,7 @@ public class ListBookcasesDialog extends JDialog implements LanguageChangeListen
          setTitle(Localization.get("dialog.list.bookcases.title"));
          search.setText(Localization.get("button.search"));
          edit.setText(Localization.get("button.edit"));
+         delete.setText(Localization.get("button.delete"));
          close.setText(Localization.get("button.close"));
          revalidate();
          repaint();

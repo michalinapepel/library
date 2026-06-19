@@ -38,9 +38,22 @@ public class DataBaseBooks {
                         String sqlAuthor = "INSERT INTO book_author(book_id, author_id) VALUES (?, ?)";
                         try (PreparedStatement authorStmt = connection.prepareStatement(sqlAuthor)) {
                             for (Author author : book.getAuthors()) {
+                                if (author == null) continue;
                                 authorStmt.setInt(1, bookId);
-                                authorStmt.setInt(2, author.getId()); // Upewnij się, że klasa Author ma metodę getId()
+                                authorStmt.setInt(2, author.getId());
                                 authorStmt.executeUpdate();
+                            }
+                        }
+                    }
+
+                    List<Section> sections = book.getSections();
+                    if (sections != null && !sections.isEmpty()) {
+                        String sqlSection = "INSERT INTO book_section(book_id, section_id) VALUES (?, ?)";
+                        try (PreparedStatement sectionStmt = connection.prepareStatement(sqlSection)) {
+                            for (Section section : sections) {
+                                sectionStmt.setInt(1, bookId);
+                                sectionStmt.setInt(2, section.getId());
+                                sectionStmt.executeUpdate();
                             }
                         }
                     }
@@ -78,6 +91,9 @@ public class DataBaseBooks {
                 if (!authors.isEmpty()) {
                     book.setAuthors(authors.toArray(new Author[0]));
                 }
+
+                // Pobierz działy dla tej książki
+                book.setSections(getSectionsForBook(bookId));
 
                 books.add(book);
             }
@@ -130,20 +146,39 @@ public class DataBaseBooks {
 
             // 2. Aktualizacja autora w tabeli book_author
             if (book.getAuthors() != null) {
-                // Najpierw usuwamy stare powiązania dla tej książki
                 String deleteSql = "DELETE FROM book_author WHERE book_id = ?";
                 try (PreparedStatement delStmt = connection.prepareStatement(deleteSql)) {
                     delStmt.setInt(1, book.getId());
                     delStmt.executeUpdate();
                 }
 
-                // Następnie dodajemy nowe powiązanie
                 String insertSql = "INSERT INTO book_author(book_id, author_id) VALUES (?, ?)";
                 try (PreparedStatement insStmt = connection.prepareStatement(insertSql)) {
                     for (Author author : book.getAuthors()) {
+                        if (author == null) continue;
                         insStmt.setInt(1, book.getId());
                         insStmt.setInt(2, author.getId());
                         insStmt.executeUpdate();
+                    }
+                }
+            }
+
+            // 3. Aktualizacja działów w tabeli book_section
+            List<Section> sections = book.getSections();
+            if (sections != null) {
+                String deleteSectionSql = "DELETE FROM book_section WHERE book_id = ?";
+                try (PreparedStatement delStmt = connection.prepareStatement(deleteSectionSql)) {
+                    delStmt.setInt(1, book.getId());
+                    delStmt.executeUpdate();
+                }
+                if (!sections.isEmpty()) {
+                    String insertSectionSql = "INSERT INTO book_section(book_id, section_id) VALUES (?, ?)";
+                    try (PreparedStatement insStmt = connection.prepareStatement(insertSectionSql)) {
+                        for (Section section : sections) {
+                            insStmt.setInt(1, book.getId());
+                            insStmt.setInt(2, section.getId());
+                            insStmt.executeUpdate();
+                        }
                     }
                 }
             }

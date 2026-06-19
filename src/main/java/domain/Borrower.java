@@ -90,8 +90,8 @@ public class Borrower extends AbstractPerson {
 		this.cardNumber = cardNumber;
 	}
 
-
-    
-
-
+	@Override
+	public String toString() {
+		return firstName + " " + lastName;
+	}
 }

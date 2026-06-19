@@ -141,13 +141,13 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
 
     private void showListShelvesDialog() {
         ListShelvesDialog dialog = new ListShelvesDialog(this);
-        // Pobierz wszystkie półki z bazy danych
+        dialog.setBookcases(dbBookcases.getAllBookcases().toArray(new Bookcase[0]));
         dialog.setShelves(dbShelves.getAllShelves());
         dialog.showDialog();
     }
 
     private void showAddShelfDialog() {
-        AddShelfDialog dialog = new AddShelfDialog(this);
+        AddShelfDialog dialog = new AddShelfDialog(this, dbBookcases.getAllBookcases().toArray(new Bookcase[0]));
         Shelf newShelf = dialog.showDialog();
 
         if (newShelf != null) {

@@ -92,6 +92,48 @@ public class DataBaseBorrowers {
 	        }
 	    }
 
+	public int getNextCardNumber() {
+		String sql = "SELECT MAX(card_number::integer) FROM borrower";
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql);
+				ResultSet rs = statement.executeQuery()) {
+			if (rs.next()) {
+				int max = rs.getInt(1);
+				return rs.wasNull() ? 20000 : max + 1;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 20000;
+	}
+
+	public Borrower getBorrowerByCardNumber(int cardNumber) {
+		String sql = """
+				SELECT id, first_name, last_name, addresscity, addressstreet, addressnumber, addresszip, card_number
+				FROM borrower WHERE card_number::integer = ?
+				""";
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setInt(1, cardNumber);
+			try (ResultSet rs = statement.executeQuery()) {
+				if (rs.next()) {
+					return new Borrower(
+							rs.getInt("id"),
+							rs.getString("first_name"),
+							rs.getString("last_name"),
+							rs.getString("addresscity"),
+							rs.getString("addressstreet"),
+							rs.getInt("addressnumber"),
+							rs.getString("addresszip"),
+							rs.getInt("card_number"));
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public void updateBorrower(Borrower borrower) {
 		String sql = """
 				UPDATE borrower

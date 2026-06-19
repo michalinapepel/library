@@ -79,6 +79,42 @@ public class DataBaseLoans {
         return loans;
     }
 
+    public List<Loan> getAllLoansByBorrower(int borrowerId) {
+        List<Loan> loans = new ArrayList<>();
+        String sql = """
+                SELECT id, book_id, borrower_id, loan_date, due_date, return_date
+                FROM loan
+                WHERE borrower_id = ?
+                ORDER BY loan_date DESC
+                """;
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, borrowerId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                DataBaseBooks dbBooks = new DataBaseBooks();
+                DataBaseBorrowers dbBorrowers = new DataBaseBorrowers();
+                List<Book> books = dbBooks.getAllBooks();
+                List<Borrower> borrowers = dbBorrowers.getAllBorrowers();
+                while (resultSet.next()) {
+                    int loanId = resultSet.getInt("id");
+                    int bookId = resultSet.getInt("book_id");
+                    LocalDate loanDate = resultSet.getDate("loan_date").toLocalDate();
+                    LocalDate dueDate = resultSet.getDate("due_date").toLocalDate();
+                    LocalDate returnDate = resultSet.getDate("return_date") != null ?
+                        resultSet.getDate("return_date").toLocalDate() : null;
+                    Book book = books.stream().filter(b -> b.getId() == bookId).findFirst().orElse(null);
+                    Borrower borrower = borrowers.stream().filter(b -> b.getId() == borrowerId).findFirst().orElse(null);
+                    Loan loan = new Loan(loanId, book, borrower, loanDate, dueDate);
+                    loan.setReturnDate(returnDate);
+                    loans.add(loan);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return loans;
+    }
+
     public List<Loan> getActiveLoansByBorrower(int borrowerId) {
         List<Loan> loans = new ArrayList<>();
 
@@ -163,6 +199,72 @@ public class DataBaseLoans {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean hasActiveLoans(int borrowerId) {
+        String sql = "SELECT COUNT(*) FROM loan WHERE borrower_id = ? AND return_date IS NULL";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, borrowerId);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean hasAnyLoans(int borrowerId) {
+        String sql = "SELECT COUNT(*) FROM loan WHERE borrower_id = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, borrowerId);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void deleteLoansByBorrower(int borrowerId) {
+        String sql = "DELETE FROM loan WHERE borrower_id = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, borrowerId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isBookOnActiveLoan(int bookId) {
+        String sql = "SELECT COUNT(*) FROM loan WHERE book_id = ? AND return_date IS NULL";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, bookId);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public java.util.Set<Integer> getActiveLoanBookIds() {
+        java.util.Set<Integer> ids = new java.util.HashSet<>();
+        String sql = "SELECT book_id FROM loan WHERE return_date IS NULL";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet rs = statement.executeQuery()) {
+            while (rs.next()) ids.add(rs.getInt("book_id"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ids;
     }
 
     public void deleteLoan(int loanId) {

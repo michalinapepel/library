@@ -3,6 +3,7 @@ package app.dialogs;
 import app.LanguageChangeListener;
 import app.Localization;
 import domain.Loan;
+import management.DataBaseLoans;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,18 +13,18 @@ public class EditLoanDialog extends JDialog implements LanguageChangeListener {
 
     private Loan result = null;
     private final Loan originalLoan;
+    private final DataBaseLoans dbLoans;
     private JLabel bookLabel;
     private JLabel borrowerLabel;
     private JLabel loanDateLabel;
     private JSpinner returnDateSpinner;
     private JButton ok;
     private JButton cancel;
-    private JButton delete;
-    private boolean deleted = false;
 
     public EditLoanDialog(JFrame parent, Loan loan) {
         super(parent, Localization.get("dialog.edit.loan.title"), true);
         this.originalLoan = loan;
+        this.dbLoans = new DataBaseLoans();
         Localization.addLanguageChangeListener(this);
         initComponents();
         loadLoanData();
@@ -79,12 +80,10 @@ public class EditLoanDialog extends JDialog implements LanguageChangeListener {
         JPanel buttonPanel = new JPanel();
         ok = new JButton(Localization.get("button.ok"));
         cancel = new JButton(Localization.get("button.cancel"));
-        delete = new JButton(Localization.get("button.delete"));
-        delete.setForeground(Color.RED);
-
         ok.addActionListener(e -> {
             result = originalLoan;
             result.setReturnDate(LocalDate.now());
+            dbLoans.returnBook(originalLoan.getId());
             dispose();
         });
 
@@ -93,17 +92,8 @@ public class EditLoanDialog extends JDialog implements LanguageChangeListener {
             dispose();
         });
 
-        delete.addActionListener(e -> {
-            int confirm = JOptionPane.showConfirmDialog(this, Localization.get("message.confirm.delete"));
-            if (confirm == JOptionPane.YES_OPTION) {
-                deleted = true;
-                dispose();
-            }
-        });
-
         buttonPanel.add(ok);
         buttonPanel.add(cancel);
-        buttonPanel.add(delete);
         add(buttonPanel, gbc);
     }
 
@@ -121,16 +111,11 @@ public class EditLoanDialog extends JDialog implements LanguageChangeListener {
         return result;
     }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-
     @Override
     public void onLanguageChanged() {
         setTitle(Localization.get("dialog.edit.loan.title"));
         ok.setText(Localization.get("button.ok"));
         cancel.setText(Localization.get("button.cancel"));
-        delete.setText(Localization.get("button.delete"));
         revalidate();
         repaint();
     }
