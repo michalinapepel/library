@@ -25,6 +25,7 @@ public class MainWindowBorrower extends JFrame implements LanguageChangeListener
     private final JTable loansTable;
     private final DefaultTableModel loansTableModel;
     private final JButton borrowButton;
+    private final JLabel cardLabel;
     private final Borrower borrower;
     private final DataBaseLoans dbLoans = new DataBaseLoans();
     private final DataBaseBooks dbBooks = new DataBaseBooks();
@@ -45,7 +46,7 @@ public class MainWindowBorrower extends JFrame implements LanguageChangeListener
         JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 6));
         JLabel nameLabel = new JLabel(borrower.getFirstName() + " " + borrower.getLastName());
         nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD, 16f));
-        JLabel cardLabel = new JLabel(Localization.get("label.cardNumber") + ": " + borrower.getCardNumber());
+        cardLabel = new JLabel(Localization.get("label.cardNumber") + ": " + borrower.getCardNumber());
         cardLabel.setFont(cardLabel.getFont().deriveFont(14f));
         infoPanel.add(nameLabel);
         infoPanel.add(new JLabel(" | "));
@@ -133,6 +134,15 @@ public class MainWindowBorrower extends JFrame implements LanguageChangeListener
     public void onLanguageChanged() {
         setTitle(Localization.get("app.title") + " — " + borrower.getFirstName() + " " + borrower.getLastName());
         borrowButton.setText(Localization.get("button.borrow"));
+        cardLabel.setText(Localization.get("label.cardNumber") + ": " + borrower.getCardNumber());
+        loansTableModel.setColumnIdentifiers(new Object[]{
+                Localization.get("label.book"),
+                Localization.get("label.loanDate"),
+                Localization.get("label.dueDate"),
+                Localization.get("label.returnDate"),
+                Localization.get("label.status"),
+        });
+        loadLoans();
         revalidate();
         repaint();
     }
