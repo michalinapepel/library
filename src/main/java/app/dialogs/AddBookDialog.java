@@ -70,7 +70,7 @@ public class AddBookDialog extends JDialog implements LanguageChangeListener {
         addAuthorBtn = new JButton("+");
         addAuthorBtn.setFont(new Font(Font.MONOSPACED, Font.BOLD, 14));
         addAuthorBtn.setMargin(new Insets(2, 8, 2, 8));
-        addAuthorBtn.setToolTipText("Dodaj nowego autora");
+        addAuthorBtn.setToolTipText(Localization.get("tooltip.author.add"));
         addAuthorBtn.addActionListener(e -> {
             AddAuthorDialog authorDialog = new AddAuthorDialog((JFrame) SwingUtilities.getWindowAncestor(this));
             Author newAuthor = authorDialog.showDialog();
@@ -270,6 +270,7 @@ public class AddBookDialog extends JDialog implements LanguageChangeListener {
         setTitle(Localization.get("dialog.add.book.title"));
         ok.setText(Localization.get("button.ok"));
         cancel.setText(Localization.get("button.cancel"));
+        addAuthorBtn.setToolTipText(Localization.get("tooltip.author.add"));
         revalidate();
         repaint();
     }

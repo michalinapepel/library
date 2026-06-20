@@ -1,6 +1,7 @@
 package management;
 
 import app.AppConfig;
+import app.Localization;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -22,8 +23,7 @@ public class DatabaseConnection {
 		Properties props = new Properties();
 		try (InputStream input = DatabaseConnection.class.getClassLoader().getResourceAsStream(AppConfig.DB_PROPERTIES_FILE)) {
 			if (input == null) {
-				System.err.println("Plik database.properties nie znaleziony!");
-				throw new RuntimeException("database.properties file not found in resources!");
+				throw new RuntimeException(Localization.get("error.db.properties.notFound"));
 			}
 			props.load(input);
 			url = props.getProperty("db.url");
@@ -31,11 +31,11 @@ public class DatabaseConnection {
 			pass = props.getProperty("db.password");
 
 			if (url == null || uname == null || pass == null) {
-				throw new RuntimeException("Brakuje wymaganych właściwości w database.properties: db.url, db.username, db.password");
+				throw new RuntimeException(Localization.get("error.db.properties.missing"));
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
-			throw new RuntimeException("Błąd podczas ładowania pliku database.properties", ex);
+			throw new RuntimeException(Localization.get("error.db.properties.loadError"), ex);
 		}
 	}
 
