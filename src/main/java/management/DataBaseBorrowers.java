@@ -1,5 +1,7 @@
 package management;
 
+import app.AppConfig;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -107,12 +109,12 @@ public class DataBaseBorrowers {
 
             if (rs.next()) {
                 int max = rs.getInt(1);
-                return rs.wasNull() ? 20000 : max + 1;
+                return rs.wasNull() ? AppConfig.MIN_CARD_NUMBER : max + 1;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return 20000;
+        return AppConfig.MIN_CARD_NUMBER;
     }
 
     public Borrower getBorrowerByCardNumber(int cardNumber) {

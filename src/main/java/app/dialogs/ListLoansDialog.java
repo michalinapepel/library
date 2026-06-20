@@ -6,8 +6,10 @@ import domain.Loan;
 import management.DataBaseLoans;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +44,8 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
         filterCombo = new JComboBox<>(new String[]{
             Localization.get("label.all"),
             Localization.get("label.active"),
-            Localization.get("label.returned")
+            Localization.get("label.returned"),
+            Localization.get("label.overdue")
         });
         searchField = new JTextField(20);
         search = new JButton(Localization.get("button.search"));
@@ -57,6 +60,7 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
             Localization.get("label.borrower"),
             Localization.get("label.loanDate"),
             Localization.get("label.dueDate"),
+            Localization.get("label.returnDate"),
             Localization.get("label.status")
         };
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
@@ -67,6 +71,22 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
         };
         loansTable = new JTable(tableModel);
         loansTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        loansTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (!isSelected && row < filteredLoans.size()) {
+                    Loan loan = filteredLoans.get(row);
+                    if (!loan.isReturned() && loan.getDueDate() != null && loan.getDueDate().isBefore(LocalDate.now())) {
+                        c.setBackground(new Color(255, 180, 180));
+                    } else {
+                        c.setBackground(Color.WHITE);
+                    }
+                }
+                return c;
+            }
+        });
         JScrollPane scrollPane = new JScrollPane(loansTable);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -106,9 +126,11 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
         filteredLoans.clear();
 
         for (Loan loan : loans) {
+            boolean isOverdue = !loan.isReturned() && loan.getDueDate() != null && loan.getDueDate().isBefore(LocalDate.now());
             boolean statusMatch = Localization.get("label.all").equals(filterType) ||
                 (Localization.get("label.active").equals(filterType) && !loan.isReturned()) ||
-                (Localization.get("label.returned").equals(filterType) && loan.isReturned());
+                (Localization.get("label.returned").equals(filterType) && loan.isReturned()) ||
+                (Localization.get("label.overdue").equals(filterType) && isOverdue);
 
             boolean textMatch = searchText.isEmpty() ||
                 (loan.getBook() != null && loan.getBook().getTitle().toLowerCase().contains(searchText)) ||
@@ -133,6 +155,7 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
                     loan.getBorrower().getFirstName() + " " + loan.getBorrower().getLastName() : "",
                 loan.getLoanDate(),
                 loan.getDueDate(),
+                loan.getReturnDate(),
                 loan.isReturned() ? Localization.get("label.returned") : Localization.get("label.active")
             };
             model.addRow(row);

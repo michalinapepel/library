@@ -1,5 +1,7 @@
 package management;
 
+import app.AppConfig;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -18,7 +20,7 @@ public class DatabaseConnection {
 
 	private static void loadProperties() {
 		Properties props = new Properties();
-		try (InputStream input = DatabaseConnection.class.getClassLoader().getResourceAsStream("database.properties")) {
+		try (InputStream input = DatabaseConnection.class.getClassLoader().getResourceAsStream(AppConfig.DB_PROPERTIES_FILE)) {
 			if (input == null) {
 				System.err.println("Plik database.properties nie znaleziony!");
 				throw new RuntimeException("database.properties file not found in resources!");

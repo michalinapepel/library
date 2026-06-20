@@ -8,6 +8,7 @@ import domain.Bookcase;
 import domain.Section;
 import domain.Shelf;
 import management.DataBaseBooks;
+import management.DataBaseLoans;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -24,6 +25,7 @@ public class ListBooksDialog extends JDialog implements LanguageChangeListener {
     private final Bookcase[] bookcases;
     private final Section[] sections;
     private final DataBaseBooks dbBooks = new DataBaseBooks();
+    private final DataBaseLoans dbLoans = new DataBaseLoans();
     private JTable booksTable;
     private JTextField searchField;
     private JComboBox<String> searchTypeCombo;
@@ -115,7 +117,7 @@ public class ListBooksDialog extends JDialog implements LanguageChangeListener {
         Book book = filteredBooks.get(selectedRow);
         Shelf foundShelf = null;
         for (Shelf shelf : shelves) {
-            if (shelf.getId() == book.getShelfId()) {
+            if (book.getShelfId() != null && shelf.getId() == book.getShelfId()) {
                 foundShelf = shelf;
                 break;
             }
@@ -162,14 +164,42 @@ public class ListBooksDialog extends JDialog implements LanguageChangeListener {
             JOptionPane.showMessageDialog(this, Localization.get("message.select.book"));
             return;
         }
-        int confirm = JOptionPane.showConfirmDialog(this,
-            Localization.get("message.confirm.delete.selected"),
+
+        List<String> withActive = new ArrayList<>();
+        for (int row : selectedRows) {
+            Book book = filteredBooks.get(row);
+            if (dbLoans.isBookOnActiveLoan(book.getId())) {
+                withActive.add(book.getTitle());
+            }
+        }
+        if (!withActive.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                Localization.get("message.delete.book.active.loans") + "\n" + String.join("\n", withActive),
+                Localization.get("dialog.active.loans.title"), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        List<String> withHistory = new ArrayList<>();
+        List<Book> toDelete = new ArrayList<>();
+        for (int row : selectedRows) {
+            Book book = filteredBooks.get(row);
+            toDelete.add(book);
+            if (dbLoans.hasAnyLoanForBook(book.getId())) {
+                withHistory.add(book.getTitle());
+            }
+        }
+
+        String confirmMsg = withHistory.isEmpty()
+            ? Localization.get("message.confirm.delete.selected")
+            : Localization.get("message.delete.book.history") + "\n" + String.join("\n", withHistory)
+                + "\n\n" + Localization.get("message.confirm.delete.selected");
+
+        int confirm = JOptionPane.showConfirmDialog(this, confirmMsg,
             Localization.get("dialog.confirm.delete.title"),
             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (confirm == JOptionPane.YES_OPTION) {
-            List<Book> toDelete = new ArrayList<>();
-            for (int row : selectedRows) toDelete.add(filteredBooks.get(row));
             for (Book book : toDelete) {
+                dbLoans.deleteLoansByBook(book.getId());
                 dbBooks.deleteBook(book.getId());
                 books.remove(book);
             }

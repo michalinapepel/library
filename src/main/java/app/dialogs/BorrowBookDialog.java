@@ -121,7 +121,7 @@ public class BorrowBookDialog extends JDialog implements LanguageChangeListener 
         Book book = availableBooks.get(selectedRow);
         Shelf foundShelf = null;
         for (Shelf shelf : shelves) {
-            if (shelf.getId() == book.getShelfId()) {
+            if (book.getShelfId() != null && shelf.getId() == book.getShelfId()) {
                 foundShelf = shelf;
                 break;
             }

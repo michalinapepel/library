@@ -68,6 +68,7 @@ public class EditLoanDialog extends JDialog implements LanguageChangeListener {
         add(new JLabel(Localization.get("label.returnDate")), gbc);
         gbc.gridx = 1;
         returnDateSpinner = new JSpinner(new SpinnerDateModel());
+        returnDateSpinner.setEditor(new JSpinner.DateEditor(returnDateSpinner, "yyyy-MM-dd"));
         add(returnDateSpinner, gbc);
 
         // Buttons
@@ -81,9 +82,11 @@ public class EditLoanDialog extends JDialog implements LanguageChangeListener {
         ok = new JButton(Localization.get("button.ok"));
         cancel = new JButton(Localization.get("button.cancel"));
         ok.addActionListener(e -> {
+            java.util.Date selected = (java.util.Date) returnDateSpinner.getValue();
+            LocalDate returnDate = new java.sql.Date(selected.getTime()).toLocalDate();
+            originalLoan.setReturnDate(returnDate);
+            dbLoans.updateLoan(originalLoan);
             result = originalLoan;
-            result.setReturnDate(LocalDate.now());
-            dbLoans.returnBook(originalLoan.getId());
             dispose();
         });
 
@@ -100,9 +103,11 @@ public class EditLoanDialog extends JDialog implements LanguageChangeListener {
     private void loadLoanData() {
         if (originalLoan != null) {
             bookLabel.setText(originalLoan.getBook() != null ? originalLoan.getBook().getTitle() : "");
-            borrowerLabel.setText(originalLoan.getBorrower() != null ? 
+            borrowerLabel.setText(originalLoan.getBorrower() != null ?
                 originalLoan.getBorrower().getFirstName() + " " + originalLoan.getBorrower().getLastName() : "");
             loanDateLabel.setText(originalLoan.getLoanDate() != null ? originalLoan.getLoanDate().toString() : "");
+            LocalDate defaultDate = originalLoan.getReturnDate() != null ? originalLoan.getReturnDate() : LocalDate.now();
+            returnDateSpinner.setValue(java.sql.Date.valueOf(defaultDate));
         }
     }
 

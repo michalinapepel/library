@@ -6,7 +6,7 @@ import java.util.List;
 public class Book {
 
     private int id;
-    private int shelfId;
+    private Integer shelfId;
     private String title = "";
     private Author[] authors = null;
     private String publisher = "";

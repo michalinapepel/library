@@ -53,17 +53,26 @@ public class DataBaseShelfs {
         return shelves;
     }
 
-    public void deleteShelf(int shelfId) {
-        String nullBooks = "UPDATE book SET shelf_id = NULL WHERE shelf_id = ?";
-        String deleteShelf = "DELETE FROM shelfs WHERE id = ?";
+    public boolean hasBooksAssigned(int shelfId) {
+        String sql = "SELECT COUNT(*) FROM book WHERE shelf_id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement stmt1 = connection.prepareStatement(nullBooks);
-             PreparedStatement stmt2 = connection.prepareStatement(deleteShelf)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, shelfId);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
-            stmt1.setInt(1, shelfId);
-            stmt1.executeUpdate();
-            stmt2.setInt(1, shelfId);
-            stmt2.executeUpdate();
+    public void deleteShelf(int shelfId) {
+        String sql = "DELETE FROM shelfs WHERE id = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, shelfId);
+            statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

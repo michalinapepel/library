@@ -111,13 +111,30 @@ public class ListBookcasesDialog extends JDialog implements LanguageChangeListen
              JOptionPane.showMessageDialog(this, Localization.get("message.select.bookcase"));
              return;
          }
+
+         List<String> blocked = new ArrayList<>();
+         List<Bookcase> toDelete = new ArrayList<>();
+         for (int row : selectedRows) {
+             Bookcase bookcase = filteredBookcases.get(row);
+             if (dbBookcase.hasBooksOnAnyShelff(bookcase.getId())) {
+                 blocked.add(bookcase.getName());
+             } else {
+                 toDelete.add(bookcase);
+             }
+         }
+
+         if (!blocked.isEmpty()) {
+             JOptionPane.showMessageDialog(this,
+                 Localization.get("message.delete.bookcase.has.books") + "\n" + String.join("\n", blocked),
+                 Localization.get("dialog.delete.blocked.title"), JOptionPane.ERROR_MESSAGE);
+             return;
+         }
+
          int confirm = JOptionPane.showConfirmDialog(this,
              Localization.get("message.confirm.delete.selected"),
              Localization.get("dialog.confirm.delete.title"),
              JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
          if (confirm == JOptionPane.YES_OPTION) {
-             List<Bookcase> toDelete = new ArrayList<>();
-             for (int row : selectedRows) toDelete.add(filteredBookcases.get(row));
              for (Bookcase bookcase : toDelete) {
                  dbBookcase.deleteBookcase(bookcase.getId());
                  bookcases.remove(bookcase);

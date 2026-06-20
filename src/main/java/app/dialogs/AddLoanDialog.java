@@ -1,5 +1,6 @@
 package app.dialogs;
 
+import app.AppConfig;
 import app.LanguageChangeListener;
 import app.Localization;
 import domain.Book;
@@ -88,7 +89,7 @@ public class AddLoanDialog extends JDialog implements LanguageChangeListener {
             result.setBook(selectedBook);
             result.setBorrower(selectedBorrower);
             result.setLoanDate(LocalDate.now());
-            result.setDueDate(LocalDate.now().plusDays(14));
+            result.setDueDate(LocalDate.now().plusDays(AppConfig.DEFAULT_LOAN_DAYS));
             dispose();
         });
 

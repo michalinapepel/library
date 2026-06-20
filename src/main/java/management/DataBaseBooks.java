@@ -6,7 +6,9 @@ import domain.Section;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DataBaseBooks {
 
@@ -60,29 +62,71 @@ public class DataBaseBooks {
         }
     }
 
+    // 3 zapytania zbiorcze zamiast 1+N+N — eliminuje problem N+1 przy ładowaniu listy książek.
     public List<Book> getAllBooks() {
         List<Book> books = new ArrayList<>();
-        String sql = """
+        Map<Integer, Book> bookMap = new HashMap<>();
+
+        String sqlBooks = """
                 SELECT id, title, publisher, publication_year, isbn, shelf_id
                 FROM book
                 ORDER BY id
                 """;
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
+        String sqlAuthors = """
+                SELECT ba.book_id, a.id, a.first_name, a.last_name, a.pseudonym, a.nationality
+                FROM book_author ba
+                INNER JOIN authors a ON a.id = ba.author_id
+                ORDER BY ba.book_id, a.id
+                """;
+        String sqlSections = """
+                SELECT bs.book_id, s.id, s.key
+                FROM book_section bs
+                INNER JOIN section s ON s.id = bs.section_id
+                ORDER BY bs.book_id, s.id
+                """;
 
-            while (resultSet.next()) {
-                int bookId = resultSet.getInt("id");
-                Book book = new Book(bookId, resultSet.getString("title"),
-                        resultSet.getString("publisher"), resultSet.getInt("publication_year"),
-                        resultSet.getString("isbn"),
-                        resultSet.getObject("shelf_id") == null ? null : resultSet.getInt("shelf_id"));
-
-                List<Author> authors = getAuthorsForBook(bookId);
-                if (!authors.isEmpty()) book.setAuthors(authors.toArray(new Author[0]));
-                book.setSections(getSectionsForBook(bookId));
-                books.add(book);
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            try (PreparedStatement stmt = connection.prepareStatement(sqlBooks);
+                 ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    int bookId = rs.getInt("id");
+                    Book book = new Book(bookId, rs.getString("title"),
+                            rs.getString("publisher"), rs.getInt("publication_year"),
+                            rs.getString("isbn"),
+                            rs.getObject("shelf_id") == null ? null : rs.getInt("shelf_id"));
+                    books.add(book);
+                    bookMap.put(bookId, book);
+                }
             }
+
+            Map<Integer, List<Author>> authorsMap = new HashMap<>();
+            try (PreparedStatement stmt = connection.prepareStatement(sqlAuthors);
+                 ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    int bookId = rs.getInt("book_id");
+                    authorsMap.computeIfAbsent(bookId, k -> new ArrayList<>())
+                              .add(new Author(rs.getInt("id"), rs.getString("first_name"),
+                                             rs.getString("last_name"), rs.getString("pseudonym"),
+                                             rs.getString("nationality")));
+                }
+            }
+
+            Map<Integer, List<Section>> sectionsMap = new HashMap<>();
+            try (PreparedStatement stmt = connection.prepareStatement(sqlSections);
+                 ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    int bookId = rs.getInt("book_id");
+                    sectionsMap.computeIfAbsent(bookId, k -> new ArrayList<>())
+                               .add(new Section(rs.getInt("id"), rs.getString("key")));
+                }
+            }
+
+            for (Book book : books) {
+                List<Author> authors = authorsMap.getOrDefault(book.getId(), new ArrayList<>());
+                if (!authors.isEmpty()) book.setAuthors(authors.toArray(new Author[0]));
+                book.setSections(sectionsMap.getOrDefault(book.getId(), new ArrayList<>()));
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -90,16 +134,25 @@ public class DataBaseBooks {
     }
 
     public void deleteBook(int bookId) {
-        String sql = "DELETE FROM book WHERE id = ?";
+        String deleteAuthors = "DELETE FROM book_author WHERE book_id = ?";
+        String deleteSections = "DELETE FROM book_section WHERE book_id = ?";
+        String deleteBook = "DELETE FROM book WHERE id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+             PreparedStatement stmt1 = connection.prepareStatement(deleteAuthors);
+             PreparedStatement stmt2 = connection.prepareStatement(deleteSections);
+             PreparedStatement stmt3 = connection.prepareStatement(deleteBook)) {
 
-            statement.setInt(1, bookId);
-            statement.executeUpdate();
+            stmt1.setInt(1, bookId);
+            stmt1.executeUpdate();
+            stmt2.setInt(1, bookId);
+            stmt2.executeUpdate();
+            stmt3.setInt(1, bookId);
+            stmt3.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+    // Uwaga: przed wywołaniem tej metody należy usunąć powiązane wypożyczenia (deleteLoansByBook).
 
     public void updateBook(Book book) {
         String sql = """

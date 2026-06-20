@@ -103,13 +103,30 @@ public class ListShelvesDialog extends JDialog implements LanguageChangeListener
              JOptionPane.showMessageDialog(this, Localization.get("message.select.shelf"));
              return;
          }
+
+         List<String> blocked = new ArrayList<>();
+         List<Shelf> toDelete = new ArrayList<>();
+         for (int row : selectedRows) {
+             Shelf shelf = filteredShelves.get(row);
+             if (dbShelves.hasBooksAssigned(shelf.getId())) {
+                 blocked.add(shelf.getName());
+             } else {
+                 toDelete.add(shelf);
+             }
+         }
+
+         if (!blocked.isEmpty()) {
+             JOptionPane.showMessageDialog(this,
+                 Localization.get("message.delete.shelf.has.books") + "\n" + String.join("\n", blocked),
+                 Localization.get("dialog.delete.blocked.title"), JOptionPane.ERROR_MESSAGE);
+             return;
+         }
+
          int confirm = JOptionPane.showConfirmDialog(this,
              Localization.get("message.confirm.delete.selected"),
              Localization.get("dialog.confirm.delete.title"),
              JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
          if (confirm == JOptionPane.YES_OPTION) {
-             List<Shelf> toDelete = new ArrayList<>();
-             for (int row : selectedRows) toDelete.add(filteredShelves.get(row));
              for (Shelf shelf : toDelete) {
                  dbShelves.deleteShelf(shelf.getId());
                  shelves.remove(shelf);

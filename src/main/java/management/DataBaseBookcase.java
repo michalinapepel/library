@@ -45,7 +45,27 @@ public class DataBaseBookcase {
         return bookcases;
     }
 
+    public boolean hasBooksOnAnyShelff(int bookcaseId) {
+        String sql = """
+                SELECT COUNT(*) FROM book b
+                INNER JOIN shelfs s ON b.shelf_id = s.id
+                WHERE s.bookcase_id = ?
+                """;
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, bookcaseId);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public void deleteBookcase(int bookcaseId) {
+        // Usuwa najpierw puste półki regału, potem sam regał.
+        // Wywołanie jest poprzedzone sprawdzeniem hasBooksOnAnyShelff().
         String deleteShelves = "DELETE FROM shelfs WHERE bookcase_id = ?";
         String deleteBookcase = "DELETE FROM bookcase WHERE id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
