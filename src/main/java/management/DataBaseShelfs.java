@@ -9,8 +9,19 @@ import java.util.List;
 
 import domain.Shelf;
 
+/**
+ * Zapewnia dostęp do danych półek w bazie danych.
+ * <p>
+ * Udostępnia podstawowe operacje CRUD na tabeli półek oraz metody pomocnicze
+ * sprawdzające powiązania z książkami.
+ */
 public class DataBaseShelfs {
 
+    /**
+     * Dodaje nową półkę do bazy danych.
+     *
+     * @param shelf półka do dodania
+     */
     public void addShelf(Shelf shelf) {
         String sql = """
                 INSERT INTO shelfs(bookcase_id, name)
@@ -27,6 +38,11 @@ public class DataBaseShelfs {
         }
     }
 
+    /**
+     * Pobiera wszystkie półki z bazy danych wraz z nazwą regału, do którego należą.
+     *
+     * @return lista półek; pusta lista, jeśli brak danych
+     */
     public List<Shelf> getAllShelves() {
         List<Shelf> shelves = new ArrayList<>();
         String sql = """
@@ -53,6 +69,12 @@ public class DataBaseShelfs {
         return shelves;
     }
 
+    /**
+     * Sprawdza, czy do danej półki przypisane są jakiekolwiek książki.
+     *
+     * @param shelfId identyfikator półki
+     * @return {@code true}, jeśli półka zawiera książki; w przeciwnym razie {@code false}
+     */
     public boolean hasBooksAssigned(int shelfId) {
         String sql = "SELECT COUNT(*) FROM book WHERE shelf_id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -67,6 +89,11 @@ public class DataBaseShelfs {
         return false;
     }
 
+    /**
+     * Usuwa półkę z bazy danych.
+     *
+     * @param shelfId identyfikator półki do usunięcia
+     */
     public void deleteShelf(int shelfId) {
         String sql = "DELETE FROM shelfs WHERE id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -78,6 +105,11 @@ public class DataBaseShelfs {
         }
     }
 
+    /**
+     * Aktualizuje dane istniejącej półki.
+     *
+     * @param shelf półka z zaktualizowanymi danymi (musi zawierać poprawny identyfikator)
+     */
     public void updateShelf(Shelf shelf) {
         String sql = """
                 UPDATE shelfs

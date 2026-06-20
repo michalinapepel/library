@@ -9,8 +9,18 @@ import java.util.List;
 
 import domain.Section;
 
+/**
+ * Zapewnia dostęp do danych działów (sekcji) w bazie danych.
+ * <p>
+ * Udostępnia podstawowe operacje CRUD na tabeli działów.
+ */
 public class DataBaseSections {
 
+    /**
+     * Dodaje nowy dział do bazy danych.
+     *
+     * @param section dział do dodania
+     */
     public void addSection(Section section) {
         String sql = "INSERT INTO section(key) VALUES (?)";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -23,6 +33,11 @@ public class DataBaseSections {
         }
     }
 
+    /**
+     * Pobiera wszystkie działy z bazy danych, posortowane według identyfikatora.
+     *
+     * @return lista działów; pusta lista, jeśli brak danych
+     */
     public List<Section> getAllSections() {
         List<Section> sections = new ArrayList<>();
         String sql = """
@@ -45,6 +60,11 @@ public class DataBaseSections {
         return sections;
     }
 
+    /**
+     * Usuwa dział z bazy danych.
+     *
+     * @param sectionId identyfikator działu do usunięcia
+     */
     public void deleteSection(int sectionId) {
         String sql = "DELETE FROM section WHERE id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -57,6 +77,11 @@ public class DataBaseSections {
         }
     }
 
+    /**
+     * Aktualizuje dane istniejącego działu.
+     *
+     * @param section dział z zaktualizowanymi danymi (musi zawierać poprawny identyfikator)
+     */
     public void updateSection(Section section) {
         String sql = """
                 UPDATE section

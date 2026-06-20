@@ -10,8 +10,20 @@ import java.util.List;
 
 import domain.Author;
 
+/**
+ * Zapewnia dostęp do danych autorów w bazie danych.
+ * <p>
+ * Udostępnia podstawowe operacje CRUD (dodawanie, odczyt, aktualizacja, usuwanie)
+ * na tabeli autorów.
+ */
 public class DataBaseAuthors {
 
+    /**
+     * Dodaje nowego autora do bazy danych i ustawia w przekazanym obiekcie
+     * wygenerowany identyfikator.
+     *
+     * @param author autor do dodania
+     */
     public void addAuthor(Author author) {
         String sql = """
                 INSERT INTO authors(first_name, last_name, pseudonym, nationality)
@@ -34,6 +46,11 @@ public class DataBaseAuthors {
         }
     }
 
+    /**
+     * Pobiera wszystkich autorów z bazy danych, posortowanych według identyfikatora.
+     *
+     * @return lista autorów; pusta lista, jeśli brak danych
+     */
     public List<Author> getAllAuthors() {
         List<Author> authors = new ArrayList<>();
         String sql = """
@@ -59,6 +76,11 @@ public class DataBaseAuthors {
         return authors;
     }
 
+    /**
+     * Usuwa autora wraz z jego powiązaniami z książkami.
+     *
+     * @param authorId identyfikator autora do usunięcia
+     */
     public void deleteAuthor(int authorId) {
         String deleteRelations = "DELETE FROM book_author WHERE author_id = ?";
         String deleteAuthor = "DELETE FROM authors WHERE id = ?";
@@ -75,6 +97,11 @@ public class DataBaseAuthors {
         }
     }
 
+    /**
+     * Aktualizuje dane istniejącego autora.
+     *
+     * @param author autor z zaktualizowanymi danymi (musi zawierać poprawny identyfikator)
+     */
     public void updateAuthor(Author author) {
         String sql = """
                 UPDATE authors

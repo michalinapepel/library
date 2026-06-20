@@ -10,8 +10,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Zapewnia dostęp do danych książek w bazie danych.
+ * <p>
+ * Oprócz podstawowych operacji CRUD obsługuje również powiązania książek
+ * z autorami i działami (sekcjami) w tabelach łączących.
+ */
 public class DataBaseBooks {
 
+    /**
+     * Dodaje nową książkę do bazy danych wraz z jej powiązaniami z autorami i działami.
+     *
+     * @param book książka do dodania
+     */
     public void addBook(Book book) {
         String sql = "INSERT INTO book(title, publisher, publication_year, isbn, shelf_id) VALUES (?, ?, ?, ?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -63,6 +74,14 @@ public class DataBaseBooks {
     }
 
     // 3 zapytania zbiorcze zamiast 1+N+N — eliminuje problem N+1 przy ładowaniu listy książek.
+    /**
+     * Pobiera wszystkie książki z bazy danych wraz z ich autorami i działami.
+     * <p>
+     * Dane są wczytywane za pomocą trzech zapytań zbiorczych (książki, autorzy,
+     * działy), aby uniknąć problemu zapytań typu N+1.
+     *
+     * @return lista książek; pusta lista, jeśli brak danych
+     */
     public List<Book> getAllBooks() {
         List<Book> books = new ArrayList<>();
         Map<Integer, Book> bookMap = new HashMap<>();
@@ -133,6 +152,14 @@ public class DataBaseBooks {
         return books;
     }
 
+    /**
+     * Usuwa książkę wraz z jej powiązaniami z autorami i działami.
+     * <p>
+     * Uwaga: przed wywołaniem tej metody należy usunąć powiązane wypożyczenia
+     * (np. {@code DataBaseLoans#deleteLoansByBook(int)}).
+     *
+     * @param bookId identyfikator książki do usunięcia
+     */
     public void deleteBook(int bookId) {
         String deleteAuthors = "DELETE FROM book_author WHERE book_id = ?";
         String deleteSections = "DELETE FROM book_section WHERE book_id = ?";
@@ -154,6 +181,14 @@ public class DataBaseBooks {
     }
     // Uwaga: przed wywołaniem tej metody należy usunąć powiązane wypożyczenia (deleteLoansByBook).
 
+    /**
+     * Aktualizuje dane książki oraz jej powiązania z autorami i działami.
+     * <p>
+     * Powiązania są aktualizowane tylko wted, gdy odpowiednie kolekcje
+     * w obiekcie książki nie są {@code null}.
+     *
+     * @param book książka z zaktualizowanymi danymi (musi zawierać poprawny identyfikator)
+     */
     public void updateBook(Book book) {
         String sql = """
                 UPDATE book
@@ -215,6 +250,12 @@ public class DataBaseBooks {
         }
     }
 
+    /**
+     * Pobiera autorów przypisanych do danej książki.
+     *
+     * @param bookId identyfikator książki
+     * @return lista autorów książki; pusta lista, jeśli brak powiązań
+     */
     public List<Author> getAuthorsForBook(int bookId) {
         List<Author> authors = new ArrayList<>();
         String sql = """
@@ -244,6 +285,12 @@ public class DataBaseBooks {
         return authors;
     }
 
+    /**
+     * Pobiera działy (sekcje) przypisane do danej książki.
+     *
+     * @param bookId identyfikator książki
+     * @return lista działów książki; pusta lista, jeśli brak powiązań
+     */
     public List<Section> getSectionsForBook(int bookId) {
         List<Section> sections = new ArrayList<>();
         String sql = """
@@ -270,6 +317,12 @@ public class DataBaseBooks {
         return sections;
     }
 
+    /**
+     * Tworzy powiązanie między książką a autorem.
+     *
+     * @param bookId   identyfikator książki
+     * @param authorId identyfikator autora
+     */
     public void addBookAuthorRelation(int bookId, int authorId) {
         String sql = "INSERT INTO book_author(book_id, author_id) VALUES (?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -283,6 +336,12 @@ public class DataBaseBooks {
         }
     }
 
+    /**
+     * Usuwa powiązanie między książką a autorem.
+     *
+     * @param bookId   identyfikator książki
+     * @param authorId identyfikator autora
+     */
     public void removeBookAuthorRelation(int bookId, int authorId) {
         String sql = "DELETE FROM book_author WHERE book_id = ? AND author_id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -296,6 +355,12 @@ public class DataBaseBooks {
         }
     }
 
+    /**
+     * Tworzy powiązanie między książką a działem (sekcją).
+     *
+     * @param bookId    identyfikator książki
+     * @param sectionId identyfikator działu
+     */
     public void addBookSectionRelation(int bookId, int sectionId) {
         String sql = "INSERT INTO book_section(book_id, section_id) VALUES (?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -309,6 +374,12 @@ public class DataBaseBooks {
         }
     }
 
+    /**
+     * Usuwa powiązanie między książką a działem (sekcją).
+     *
+     * @param bookId    identyfikator książki
+     * @param sectionId identyfikator działu
+     */
     public void removeBookSectionRelation(int bookId, int sectionId) {
         String sql = "DELETE FROM book_section WHERE book_id = ? AND section_id = ?";
         try (Connection connection = DatabaseConnection.getConnection();

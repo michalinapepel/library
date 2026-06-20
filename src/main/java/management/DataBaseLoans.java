@@ -8,7 +8,20 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Zapewnia dostęp do danych wypożyczeń w bazie danych.
+ * <p>
+ * Udostępnia operacje tworzenia, odczytu, aktualizacji i usuwania wypożyczeń,
+ * obsługę zwrotów książek oraz metody pomocnicze sprawdzające stan wypożyczeń
+ * dla czytelników i książek.
+ */
 public class DataBaseLoans {
+
+    /**
+     * Dodaje nowe wypożyczenie do bazy danych.
+     *
+     * @param loan wypożyczenie do dodania
+     */
 
     public void addLoan(Loan loan) {
         String sql = """
@@ -37,7 +50,15 @@ public class DataBaseLoans {
         }
     }
 
-    // Jedno zapytanie JOIN zamiast ładowania wszystkich książek i czytelników osobno.
+    /**
+     * Pobiera wszystkie wypożyczenia wraz z danymi książek i czytelników.
+     * <p>
+     * Dane są pobierane jednym zapytaniem ze złączeniami (JOIN), aby uniknąć
+     * osobnego ładowania książek i czytelników.
+     *
+     * @return lista wypożyczeń posortowana malejąco według identyfikatora;
+     *         pusta lista, jeśli brak danych
+     */
     public List<Loan> getAllLoans() {
         List<Loan> loans = new ArrayList<>();
         String sql = """
@@ -77,6 +98,13 @@ public class DataBaseLoans {
         return loans;
     }
 
+    /**
+     * Pobiera wszystkie wypożyczenia danego czytelnika (zarówno aktywne, jak i zwrócone).
+     *
+     * @param borrowerId identyfikator czytelnika
+     * @return lista wypożyczeń posortowana malejąco według daty wypożyczenia;
+     *         pusta lista, jeśli brak danych
+     */
     public List<Loan> getAllLoansByBorrower(int borrowerId) {
         List<Loan> loans = new ArrayList<>();
         String sql = """
@@ -119,6 +147,14 @@ public class DataBaseLoans {
         return loans;
     }
 
+
+    /**
+     * Pobiera aktywne (niezwrócone) wypożyczenia danego czytelnika.
+     *
+     * @param borrowerId identyfikator czytelnika
+     * @return lista aktywnych wypożyczeń posortowana według planowanej daty zwrotu;
+     *         pusta lista, jeśli brak danych
+     */
     public List<Loan> getActiveLoansByBorrower(int borrowerId) {
         List<Loan> loans = new ArrayList<>();
         String sql = """
@@ -158,6 +194,11 @@ public class DataBaseLoans {
         return loans;
     }
 
+    /**
+     * Aktualizuje dane istniejącego wypożyczenia.
+     *
+     * @param loan wypożyczenie z zaktualizowanymi danymi (musi zawierać poprawny identyfikator)
+     */
     public void updateLoan(Loan loan) {
         String sql = """
                 UPDATE loan
@@ -187,6 +228,11 @@ public class DataBaseLoans {
         }
     }
 
+    /**
+     * Oznacza wypożyczenie jako zwrócone, ustawiając datę zwrotu na bieżący dzień.
+     *
+     * @param loanId identyfikator wypożyczenia do zwrotu
+     */
     public void returnBook(int loanId) {
         String sql = "UPDATE loan SET return_date = ? WHERE id = ?";
 
@@ -202,6 +248,12 @@ public class DataBaseLoans {
         }
     }
 
+    /**
+     * Sprawdza, czy dany czytelnik ma aktywne (niezwrócone) wypożyczenia.
+     *
+     * @param borrowerId identyfikator czytelnika
+     * @return {@code true}, jeśli istnieją aktywne wypożyczenia; w przeciwnym razie {@code false}
+     */
     public boolean hasActiveLoans(int borrowerId) {
         String sql = "SELECT COUNT(*) FROM loan WHERE borrower_id = ? AND return_date IS NULL";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -216,6 +268,12 @@ public class DataBaseLoans {
         return false;
     }
 
+    /**
+     * Sprawdza, czy dany czytelnik ma jakiekolwiek wypożyczenia (aktywne lub zakończone).
+     *
+     * @param borrowerId identyfikator czytelnika
+     * @return {@code true}, jeśli istnieją jakiekolwiek wypożyczenia; w przeciwnym razie {@code false}
+     */
     public boolean hasAnyLoans(int borrowerId) {
         String sql = "SELECT COUNT(*) FROM loan WHERE borrower_id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -230,7 +288,14 @@ public class DataBaseLoans {
         return false;
     }
 
-    // Usuwa wszystkie wypożyczenia czytelnika przed usunięciem jego konta (wymagane przez FK).
+    /**
+     * Usuwa wszystkie wypożyczenia danego czytelnika.
+     * <p>
+     * Metoda jest wykorzystywana przed usunięciem konta czytelnika, ponieważ
+     * wymaga tego więz integralności (klucz obcy).
+     *
+     * @param borrowerId identyfikator czytelnika
+     */
     public void deleteLoansByBorrower(int borrowerId) {
         String sql = "DELETE FROM loan WHERE borrower_id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -242,6 +307,12 @@ public class DataBaseLoans {
         }
     }
 
+    /**
+     * Sprawdza, czy dla danej książki istnieją jakiekolwiek wypożyczenia.
+     *
+     * @param bookId identyfikator książki
+     * @return {@code true}, jeśli istnieją jakiekolwiek wypożyczenia; w przeciwnym razie {@code false}
+     */
     public boolean hasAnyLoanForBook(int bookId) {
         String sql = "SELECT COUNT(*) FROM loan WHERE book_id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -256,7 +327,14 @@ public class DataBaseLoans {
         return false;
     }
 
-    // Usuwa wszystkie wypożyczenia książki przed usunięciem jej z bazy (wymagane przez FK).
+    /**
+     * Usuwa wszystkie wypożyczenia danej książki.
+     * <p>
+     * Metoda jest wykorzystywana przed usunięciem książki z bazy, ponieważ
+     * wymaga tego więz integralności (klucz obcy).
+     *
+     * @param bookId identyfikator książki
+     */
     public void deleteLoansByBook(int bookId) {
         String sql = "DELETE FROM loan WHERE book_id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -268,6 +346,12 @@ public class DataBaseLoans {
         }
     }
 
+    /**
+     * Sprawdza, czy dana książka jest aktualnie wypożyczona (niezwrócona).
+     *
+     * @param bookId identyfikator książki
+     * @return {@code true}, jeśli książka jest aktywnie wypożyczona; w przeciwnym razie {@code false}
+     */
     public boolean isBookOnActiveLoan(int bookId) {
         String sql = "SELECT COUNT(*) FROM loan WHERE book_id = ? AND return_date IS NULL";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -282,6 +366,11 @@ public class DataBaseLoans {
         return false;
     }
 
+    /**
+     * Pobiera identyfikatory wszystkich książek, które są aktualnie wypożyczone (niezwrócone).
+     *
+     * @return zbiór identyfikatorów aktywnie wypożyczonych książek; pusty zbiór, jeśli brak danych
+     */
     public java.util.Set<Integer> getActiveLoanBookIds() {
         java.util.Set<Integer> ids = new java.util.HashSet<>();
         String sql = "SELECT book_id FROM loan WHERE return_date IS NULL";
@@ -295,6 +384,11 @@ public class DataBaseLoans {
         return ids;
     }
 
+    /**
+     * Usuwa pojedyncze wypożyczenie z bazy danych.
+     *
+     * @param loanId identyfikator wypożyczenia do usunięcia
+     */
     public void deleteLoan(int loanId) {
         String sql = "DELETE FROM loan WHERE id = ?";
 

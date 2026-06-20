@@ -10,9 +10,28 @@ import java.io.IOException;
 import java.util.Properties;
 import java.io.InputStream;
 
+/**
+ * Odpowiada za nawiązywanie połączenia z bazą danych.
+ * <p>
+ * Parametry połączenia (adres URL, nazwa użytkownika, hasło) są wczytywane
+ * jednorazowo z pliku właściwości wskazanego w {@link AppConfig#DB_PROPERTIES_FILE}
+ * podczas inicjalizacji klasy.
+ */
 public class DatabaseConnection {
+
+	/**
+	 * Adres URL bazy danych
+	 */
 	private static String url;
+
+	/**
+	 * Nazwa użytkownika bazy danych
+	 */
 	private static String uname;
+
+	/**
+	 * Hasło użytkownika bazy danych
+	 */
 	private static String pass;
 
 	static {

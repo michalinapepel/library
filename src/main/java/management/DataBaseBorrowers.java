@@ -11,8 +11,19 @@ import java.util.List;
 
 import domain.Borrower;
 
+/**
+ * Zapewnia dostęp do danych czytelników w bazie danych.
+ * <p>
+ * Udostępnia podstawowe operacje CRUD na tabeli czytelników oraz metody
+ * związane z obsługą numerów kart bibliotecznych.
+ */
 public class DataBaseBorrowers {
 
+    /**
+     * Dodaje nowego czytelnika do bazy danych.
+     *
+     * @param borrower czytelnik do dodania
+     */
     public void addBorrower(Borrower borrower) {
         String sql = """
                 INSERT INTO borrower(first_name, last_name, addresscity, addressstreet, addressnumber, addresszip, card_number)
@@ -34,6 +45,11 @@ public class DataBaseBorrowers {
         }
     }
 
+    /**
+     * Pobiera wszystkich czytelników z bazy danych, posortowanych według identyfikatora.
+     *
+     * @return lista czytelników; pusta lista, jeśli brak danych
+     */
     public List<Borrower> getAllBorrowers() {
         List<Borrower> borrowers = new ArrayList<>();
         String sql = """
@@ -62,6 +78,11 @@ public class DataBaseBorrowers {
         return borrowers;
     }
 
+    /**
+     * Usuwa czytelnika z bazy danych.
+     *
+     * @param borrowerId identyfikator czytelnika do usunięcia
+     */
     public void deleteBorrower(int borrowerId) {
         String sql = "DELETE FROM borrower WHERE id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -74,6 +95,11 @@ public class DataBaseBorrowers {
         }
     }
 
+    /**
+     * Aktualizuje dane istniejącego czytelnika.
+     *
+     * @param borrower czytelnik z zaktualizowanymi danymi (musi zawierać poprawny identyfikator)
+     */
     public void updateBorrower(Borrower borrower) {
         String sql = """
                 UPDATE borrower
@@ -98,6 +124,15 @@ public class DataBaseBorrowers {
         }
     }
 
+    /**
+     * Wyznacza kolejny dostępny numer karty bibliotecznej.
+     * <p>
+     * Numer jest o jeden większy od największego dotychczasowego numeru karty.
+     * Jeśli tabela czytelników jest pusta, zwracana jest wartość początkowa
+     * {@link AppConfig#MIN_CARD_NUMBER}.
+     *
+     * @return kolejny dostępny numer karty bibliotecznej
+     */
     public int getNextCardNumber() {
         // MAX() na pustej tabeli zwraca SQL NULL – rs.getInt() zwróciłoby wtedy 0,
         // dlatego sprawdzamy wasNull() i zaczynamy numerację od 20000.
@@ -117,6 +152,12 @@ public class DataBaseBorrowers {
         return AppConfig.MIN_CARD_NUMBER;
     }
 
+    /**
+     * Wyszukuje czytelnika na podstawie numeru karty bibliotecznej.
+     *
+     * @param cardNumber numer karty bibliotecznej
+     * @return znaleziony czytelnik lub {@code null}, jeśli nie istnieje
+     */
     public Borrower getBorrowerByCardNumber(int cardNumber) {
         // Rzutowanie ::integer konieczne – kolumna card_number jest typu TEXT w bazie.
         String sql = """

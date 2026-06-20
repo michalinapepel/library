@@ -9,8 +9,19 @@ import java.util.List;
 
 import domain.Bookcase;
 
+/**
+ * Zapewnia dostęp do danych regałów w bazie danych.
+ * <p>
+ * Udostępnia podstawowe operacje CRUD na tabeli regałów oraz metody pomocnicze
+ * sprawdzające powiązania z książkami.
+ */
 public class DataBaseBookcase {
 
+    /**
+     * Dodaje nowy regał do bazy danych.
+     *
+     * @param bookcase regał do dodania
+     */
     public void addBookcase(Bookcase bookcase) {
         String sql = "INSERT INTO bookcase(name) VALUES (?)";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -23,6 +34,11 @@ public class DataBaseBookcase {
         }
     }
 
+    /**
+     * Pobiera wszystkie regały z bazy danych, posortowane według identyfikatora.
+     *
+     * @return lista regałów; pusta lista, jeśli brak danych
+     */
     public List<Bookcase> getAllBookcases() {
         List<Bookcase> bookcases = new ArrayList<>();
         String sql = """
@@ -45,6 +61,12 @@ public class DataBaseBookcase {
         return bookcases;
     }
 
+    /**
+     * Sprawdza, czy na którejkolwiek półce danego regału znajdują się książki.
+     *
+     * @param bookcaseId identyfikator regału
+     * @return {@code true}, jeśli regał zawiera książki; w przeciwnym razie {@code false}
+     */
     public boolean hasBooksOnAnyShelff(int bookcaseId) {
         String sql = """
                 SELECT COUNT(*) FROM book b
@@ -63,9 +85,14 @@ public class DataBaseBookcase {
         return false;
     }
 
+    /**
+     * Usuwa regał wraz z należącymi do niego (pustymi) półkami.
+     * <p>
+     * Wywołanie powinno być poprzedzone sprawdzeniem {@link #hasBooksOnAnyShelff(int)}.
+     *
+     * @param bookcaseId identyfikator regału do usunięcia
+     */
     public void deleteBookcase(int bookcaseId) {
-        // Usuwa najpierw puste półki regału, potem sam regał.
-        // Wywołanie jest poprzedzone sprawdzeniem hasBooksOnAnyShelff().
         String deleteShelves = "DELETE FROM shelfs WHERE bookcase_id = ?";
         String deleteBookcase = "DELETE FROM bookcase WHERE id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -81,6 +108,11 @@ public class DataBaseBookcase {
         }
     }
 
+    /**
+     * Aktualizuje dane istniejącego regału.
+     *
+     * @param bookcase regał z zaktualizowanymi danymi (musi zawierać poprawny identyfikator)
+     */
     public void updateBookcase(Bookcase bookcase) {
         String sql = """
                 UPDATE bookcase
