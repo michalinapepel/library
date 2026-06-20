@@ -3,15 +3,53 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Reprezentuje książkę przechowywaną w bibliotece.
+ * <p>
+ * Klasa przechowuje podstawowe dane bibliograficzne książki (tytuł, autorzy,
+ * wydawnictwo, rok wydania, numer ISBN) oraz informacje o jej lokalizacji
+ * (półka) i przynależności do działów (sekcji).
+ */
 public class Book {
 
+    /**
+     * Unikalny identyfikator książki
+     */
     private int id;
+
+    /**
+     * Identyfikator półki, na której znajduje się dana książka
+     */
     private Integer shelfId;
+
+    /**
+     * Tytuł książki
+     */
     private String title = "";
+
+    /**
+     * Tablica autorów książki
+     */
     private Author[] authors = null;
+
+    /**
+     * Nazwa wydawnictwa, które opublikowało książkę
+     */
     private String publisher = "";
+
+    /**
+     * Rok wydania książki
+     */
     private int yearOfPublishing = 0;
+
+    /**
+     * Numer ISBN książki
+     */
     private String isbn = "";
+
+    /**
+     * Lista działów (sekcji), do których przypisana jest książka
+     */
     private List<Section> sections = new ArrayList<>();
 
     public Book() {}
