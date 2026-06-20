@@ -3,17 +3,24 @@ package app.dialogs;
 import app.LanguageChangeListener;
 import app.Localization;
 import domain.Loan;
+import management.DataBaseLoans;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klasa okna dialogowego wypisywania wypożyczeń
+ */
 public class ListLoansDialog extends JDialog implements LanguageChangeListener {
 
      private final List<Loan> loans = new ArrayList<>();
      private final List<Loan> filteredLoans = new ArrayList<>();
+     private final DataBaseLoans dbLoans = new DataBaseLoans();
      private JTable loansTable;
      private JTextField searchField;
      private JComboBox<String> filterCombo;
@@ -21,6 +28,7 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
      private JButton close;
      private JButton returnBook;
      private JButton edit;
+     private JButton delete;
 
     public ListLoansDialog(JFrame parent) {
         super(parent, Localization.get("dialog.list.loans.title"), true);
@@ -39,7 +47,8 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
         filterCombo = new JComboBox<>(new String[]{
             Localization.get("label.all"),
             Localization.get("label.active"),
-            Localization.get("label.returned")
+            Localization.get("label.returned"),
+            Localization.get("label.overdue")
         });
         searchField = new JTextField(20);
         search = new JButton(Localization.get("button.search"));
@@ -54,6 +63,7 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
             Localization.get("label.borrower"),
             Localization.get("label.loanDate"),
             Localization.get("label.dueDate"),
+            Localization.get("label.returnDate"),
             Localization.get("label.status")
         };
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
@@ -63,7 +73,23 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
             }
         };
         loansTable = new JTable(tableModel);
-        loansTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        loansTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        loansTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (!isSelected && row < filteredLoans.size()) {
+                    Loan loan = filteredLoans.get(row);
+                    if (!loan.isReturned() && loan.getDueDate() != null && loan.getDueDate().isBefore(LocalDate.now())) {
+                        c.setBackground(new Color(255, 180, 180));
+                    } else {
+                        c.setBackground(Color.WHITE);
+                    }
+                }
+                return c;
+            }
+        });
         JScrollPane scrollPane = new JScrollPane(loansTable);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -71,14 +97,18 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
          JPanel buttonPanel = new JPanel();
          returnBook = new JButton(Localization.get("button.returnBook"));
          edit = new JButton(Localization.get("button.edit"));
+         delete = new JButton(Localization.get("button.delete"));
+         delete.setForeground(Color.RED);
          close = new JButton(Localization.get("button.close"));
 
          returnBook.addActionListener(e -> returnSelectedBook());
          edit.addActionListener(e -> editSelectedLoan());
+         delete.addActionListener(e -> deleteSelectedLoans());
          close.addActionListener(e -> dispose());
 
          buttonPanel.add(returnBook);
          buttonPanel.add(edit);
+         buttonPanel.add(delete);
          buttonPanel.add(close);
          add(buttonPanel, BorderLayout.SOUTH);
 
@@ -95,13 +125,15 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
     private void searchLoans() {
         String searchText = searchField.getText().trim().toLowerCase();
         String filterType = (String) filterCombo.getSelectedItem();
-        
+
         filteredLoans.clear();
 
         for (Loan loan : loans) {
+            boolean isOverdue = !loan.isReturned() && loan.getDueDate() != null && loan.getDueDate().isBefore(LocalDate.now());
             boolean statusMatch = Localization.get("label.all").equals(filterType) ||
                 (Localization.get("label.active").equals(filterType) && !loan.isReturned()) ||
-                (Localization.get("label.returned").equals(filterType) && loan.isReturned());
+                (Localization.get("label.returned").equals(filterType) && loan.isReturned()) ||
+                (Localization.get("label.overdue").equals(filterType) && isOverdue);
 
             boolean textMatch = searchText.isEmpty() ||
                 (loan.getBook() != null && loan.getBook().getTitle().toLowerCase().contains(searchText)) ||
@@ -122,10 +154,11 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
         for (Loan loan : filteredLoans) {
             Object[] row = {
                 loan.getBook() != null ? loan.getBook().getTitle() : "",
-                loan.getBorrower() != null ? 
+                loan.getBorrower() != null ?
                     loan.getBorrower().getFirstName() + " " + loan.getBorrower().getLastName() : "",
                 loan.getLoanDate(),
                 loan.getDueDate(),
+                loan.getReturnDate(),
                 loan.isReturned() ? Localization.get("label.returned") : Localization.get("label.active")
             };
             model.addRow(row);
@@ -148,10 +181,7 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
           EditLoanDialog dialog = new EditLoanDialog((JFrame) SwingUtilities.getWindowAncestor(this), selectedLoan);
           Loan returnedLoan = dialog.showDialog();
 
-          if (dialog.isDeleted()) {
-              loans.remove(selectedLoan);
-              loadAllLoans();
-          } else if (returnedLoan != null) {
+          if (returnedLoan != null) {
               refreshTable();
           }
      }
@@ -167,12 +197,30 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
           EditLoanDialog dialog = new EditLoanDialog((JFrame) SwingUtilities.getWindowAncestor(this), selectedLoan);
           Loan editedLoan = dialog.showDialog();
 
-          if (dialog.isDeleted()) {
-              loans.remove(selectedLoan);
-              loadAllLoans();
-          } else if (editedLoan != null) {
+          if (editedLoan != null) {
               refreshTable();
           }
+     }
+
+     private void deleteSelectedLoans() {
+         int[] selectedRows = loansTable.getSelectedRows();
+         if (selectedRows.length == 0) {
+             JOptionPane.showMessageDialog(this, Localization.get("message.select.loan"));
+             return;
+         }
+         int confirm = JOptionPane.showConfirmDialog(this,
+             Localization.get("message.confirm.delete.selected"),
+             Localization.get("dialog.confirm.delete.title"),
+             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+         if (confirm == JOptionPane.YES_OPTION) {
+             List<Loan> toDelete = new ArrayList<>();
+             for (int row : selectedRows) toDelete.add(filteredLoans.get(row));
+             for (Loan loan : toDelete) {
+                 dbLoans.deleteLoan(loan.getId());
+                 loans.remove(loan);
+             }
+             loadAllLoans();
+         }
      }
 
     public void setLoans(List<Loan> loans) {
@@ -191,6 +239,7 @@ public class ListLoansDialog extends JDialog implements LanguageChangeListener {
          search.setText(Localization.get("button.search"));
          returnBook.setText(Localization.get("button.returnBook"));
          edit.setText(Localization.get("button.edit"));
+         delete.setText(Localization.get("button.delete"));
          close.setText(Localization.get("button.close"));
          revalidate();
          repaint();

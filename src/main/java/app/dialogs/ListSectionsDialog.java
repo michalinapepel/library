@@ -3,6 +3,7 @@ package app.dialogs;
 import app.LanguageChangeListener;
 import app.Localization;
 import domain.Section;
+import management.DataBaseSections;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -10,15 +11,20 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klasa okna dialogowego wypisywania działów
+ */
 public class ListSectionsDialog extends JDialog implements LanguageChangeListener {
 
      private final List<Section> sections = new ArrayList<>();
+     private final List<Section> filteredSections = new ArrayList<>();
+     private final DataBaseSections dbSections = new DataBaseSections();
      private JTable sectionsTable;
      private JTextField searchField;
      private JButton search;
      private JButton close;
      private JButton edit;
-     private final List<Section> filteredSections = new ArrayList<>();
+     private JButton delete;
 
     public ListSectionsDialog(JFrame parent) {
         super(parent, Localization.get("dialog.list.sections.title"), true);
@@ -33,7 +39,7 @@ public class ListSectionsDialog extends JDialog implements LanguageChangeListene
 
         // Search panel
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        searchPanel.add(new JLabel(Localization.get("label.search.by.id")));
+        searchPanel.add(new JLabel(Localization.get("label.search")));
         searchField = new JTextField(20);
         search = new JButton(Localization.get("button.search"));
         searchPanel.add(searchField);
@@ -42,7 +48,6 @@ public class ListSectionsDialog extends JDialog implements LanguageChangeListene
 
         // Table
         String[] columnNames = {
-            Localization.get("label.id"),
             Localization.get("label.name")
         };
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
@@ -52,7 +57,7 @@ public class ListSectionsDialog extends JDialog implements LanguageChangeListene
             }
         };
         sectionsTable = new JTable(tableModel);
-        sectionsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        sectionsTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane scrollPane = new JScrollPane(sectionsTable);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -61,10 +66,14 @@ public class ListSectionsDialog extends JDialog implements LanguageChangeListene
          edit = new JButton(Localization.get("button.edit"));
          close = new JButton(Localization.get("button.close"));
 
+         delete = new JButton(Localization.get("button.delete"));
+         delete.setForeground(Color.RED);
          edit.addActionListener(e -> editSelectedSection());
+         delete.addActionListener(e -> deleteSelectedSections());
          close.addActionListener(e -> dispose());
 
          buttonPanel.add(edit);
+         buttonPanel.add(delete);
          buttonPanel.add(close);
          add(buttonPanel, BorderLayout.SOUTH);
 
@@ -83,13 +92,31 @@ public class ListSectionsDialog extends JDialog implements LanguageChangeListene
           EditSectionDialog dialog = new EditSectionDialog((JFrame) SwingUtilities.getWindowAncestor(this), selectedSection);
           Section editedSection = dialog.showDialog();
 
-          if (dialog.isDeleted()) {
-              sections.remove(selectedSection);
-              loadAllSections();
-          } else if (editedSection != null) {
+          if (editedSection != null) {
               refreshTable();
           }
       }
+
+     private void deleteSelectedSections() {
+         int[] selectedRows = sectionsTable.getSelectedRows();
+         if (selectedRows.length == 0) {
+             JOptionPane.showMessageDialog(this, Localization.get("message.select.section"));
+             return;
+         }
+         int confirm = JOptionPane.showConfirmDialog(this,
+             Localization.get("message.confirm.delete.selected"),
+             Localization.get("dialog.confirm.delete.title"),
+             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+         if (confirm == JOptionPane.YES_OPTION) {
+             List<Section> toDelete = new ArrayList<>();
+             for (int row : selectedRows) toDelete.add(filteredSections.get(row));
+             for (Section section : toDelete) {
+                 dbSections.deleteSection(section.getId());
+                 sections.remove(section);
+             }
+             loadAllSections();
+         }
+     }
 
      private void loadAllSections() {
          filteredSections.clear();
@@ -97,39 +124,37 @@ public class ListSectionsDialog extends JDialog implements LanguageChangeListene
          refreshTable();
      }
 
-     private void searchSections() {
-        String searchText = searchField.getText().trim().toLowerCase();
-        filteredSections.clear();
+      private void searchSections() {
+         String searchText = searchField.getText().trim().toLowerCase();
+         filteredSections.clear();
 
-        for (Section section : sections) {
-            if (searchText.isEmpty() || 
-                (section.getName() != null && section.getName().toLowerCase().contains(searchText))) {
-                filteredSections.add(section);
-            }
-        }
+         for (Section section : sections) {
+             if (searchText.isEmpty() || (section.getName() != null && section.getName().toLowerCase().contains(searchText))) {
+                 filteredSections.add(section);
+             }
+         }
 
-        refreshTable();
-    }
+         refreshTable();
+     }
 
-    private void refreshTable() {
-        DefaultTableModel model = (DefaultTableModel) sectionsTable.getModel();
-        model.setRowCount(0);
+     private void refreshTable() {
+         DefaultTableModel model = (DefaultTableModel) sectionsTable.getModel();
+         model.setRowCount(0);
 
-        for (Section section : filteredSections) {
-            Object[] row = {
-                section.getId(),
-                section.getName()
-            };
-            model.addRow(row);
-        }
-    }
+         for (Section section : filteredSections) {
+             Object[] row = {
+                 section.getName()
+             };
+             model.addRow(row);
+         }
+     }
 
 
 
     public void setSections(List<Section> sections) {
         this.sections.clear();
         this.sections.addAll(sections);
-        refreshTable();
+        loadAllSections();
     }
 
     public void showDialog() {
@@ -141,6 +166,7 @@ public class ListSectionsDialog extends JDialog implements LanguageChangeListene
          setTitle(Localization.get("dialog.list.sections.title"));
          search.setText(Localization.get("button.search"));
          edit.setText(Localization.get("button.edit"));
+         delete.setText(Localization.get("button.delete"));
          close.setText(Localization.get("button.close"));
          revalidate();
          repaint();

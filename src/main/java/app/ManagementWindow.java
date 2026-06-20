@@ -2,13 +2,24 @@ package app;
 
 import app.dialogs.*;
 import app.panels.ToolBar;
+import domain.Bookcase;
+import domain.Shelf;
+import domain.Section;
+import management.DataBaseBookcase;
+import management.DataBaseSections;
+import management.DataBaseShelfs;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
+/**
+ * Okno do zarządzania biblioteką dla pracownika
+ */
 public class ManagementWindow extends JFrame implements LanguageChangeListener{
     private final ToolBar toolbar;
+    private final DataBaseSections dbSections;
+    private final DataBaseBookcase dbBookcases;
+    private final DataBaseShelfs dbShelves;
     private final JButton sectionsButton;
     private final JButton addSectionButton;
     private final JButton bookcasesButton;
@@ -20,8 +31,17 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
     private final JPanel northPanel;
     private final JPanel centerPanel;
     private final JPanel southPanel;
+
+    /**
+     * Tworzy okno zarządzania biblioteką wraz z przyciskami obsługi
+     * działów, regałów i półek.
+     */
     public ManagementWindow() {
         Localization.addLanguageChangeListener(this);
+
+        dbSections = new DataBaseSections();
+        dbBookcases = new DataBaseBookcase();
+        dbShelves = new DataBaseShelfs();
 
         setTitle(Localization.get("app.title"));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -56,9 +76,7 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
 
         toolbar = new ToolBar(false);
         backButton = new JButton(Localization.get("button.back"));
-        backButton.addActionListener(e -> {
-            dispose();
-        });
+        backButton.addActionListener(e -> dispose());
 
         menu = new JPanel();
         menu.setLayout(new BorderLayout());
@@ -91,39 +109,76 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
 
     }
 
+    /**
+     * Otwiera okno z listą działów.
+     */
     private void showListSectionsDialog() {
         ListSectionsDialog dialog = new ListSectionsDialog(this);
-        dialog.setSections(new ArrayList<>());
+        dialog.setSections(dbSections.getAllSections());
         dialog.showDialog();
     }
 
+    /**
+     * Otwiera okno dodawania działu i zapisuje nowy dział do bazy danych.
+     */
     private void showAddSectionDialog() {
         AddSectionDialog dialog = new AddSectionDialog(this);
-        dialog.showDialog();
+        Section newSection = dialog.showDialog();
+
+        if (newSection != null) {
+            dbSections.addSection(newSection);
+            JOptionPane.showMessageDialog(this, Localization.get("message.add.success.section"));
+        }
     }
 
+    /**
+     * Otwiera okno z listą regałów.
+     */
     private void showListBookcasesDialog() {
         ListBookcasesDialog dialog = new ListBookcasesDialog(this);
-        dialog.setBookcases(new ArrayList<>());
+        dialog.setBookcases(dbBookcases.getAllBookcases());
         dialog.showDialog();
     }
 
+    /**
+     * Otwiera okno dodawania regału i zapisuje nowy regał do bazy danych.
+     */
     private void showAddBookcaseDialog() {
         AddBookcaseDialog dialog = new AddBookcaseDialog(this);
-        dialog.showDialog();
+        Bookcase newBookcase = dialog.showDialog();
+
+        if (newBookcase != null) {
+            dbBookcases.addBookcase(newBookcase);
+            JOptionPane.showMessageDialog(this, Localization.get("message.add.success.bookcase"));
+        }
     }
 
+    /**
+     * Otwiera okno z listą półek.
+     */
     private void showListShelvesDialog() {
         ListShelvesDialog dialog = new ListShelvesDialog(this);
-        dialog.setShelves(new ArrayList<>());
+        dialog.setBookcases(dbBookcases.getAllBookcases().toArray(new Bookcase[0]));
+        dialog.setShelves(dbShelves.getAllShelves());
         dialog.showDialog();
     }
 
+    /**
+     * Otwiera okno dodawania półki i zapisuje nową półkę do bazy danych.
+     */
     private void showAddShelfDialog() {
-        AddShelfDialog dialog = new AddShelfDialog(this);
-        dialog.showDialog();
+        AddShelfDialog dialog = new AddShelfDialog(this, dbBookcases.getAllBookcases().toArray(new Bookcase[0]));
+        Shelf newShelf = dialog.showDialog();
+
+        if (newShelf != null) {
+            dbShelves.addShelf(newShelf);
+            JOptionPane.showMessageDialog(this, Localization.get("message.add.success.shelf"));
+        }
     }
 
+    /**
+     * Aktualizuje teksty przycisków i tytuł okna po zmianie języka.
+     */
     @Override
     public void onLanguageChanged() {
         setTitle(Localization.get("app.title"));

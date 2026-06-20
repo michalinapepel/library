@@ -6,6 +6,9 @@ import app.Localization;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna logowania pracownika
+ */
 public class EmployeeDialog extends JDialog implements LanguageChangeListener {
 
     private String code = null;

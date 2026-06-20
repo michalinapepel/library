@@ -9,71 +9,122 @@ import java.util.List;
 
 import domain.Shelf;
 
+/**
+ * Zapewnia dostęp do danych półek w bazie danych.
+ * <p>
+ * Udostępnia podstawowe operacje CRUD na tabeli półek oraz metody pomocnicze
+ * sprawdzające powiązania z książkami.
+ */
 public class DataBaseShelfs {
-	public void addShelf(Shelf shelf) {
-		// Komenda SQLowska do dodania do bazy;
-		String sql = """
-				INSERT INTO shelfs(bookcase_id, name)
-				VALUES (?, ?)
-				""";
 
-		// proba polaczenia sie z baza danych
-		try (Connection connection = DatabaseConnection.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql)) {
+    /**
+     * Dodaje nową półkę do bazy danych.
+     *
+     * @param shelf półka do dodania
+     */
+    public void addShelf(Shelf shelf) {
+        String sql = """
+                INSERT INTO shelfs(bookcase_id, name)
+                VALUES (?, ?)
+                """;
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-			// ustawiamy pola dla VALUES z sql'a, kolejnosc zgodna z kolejnoscia w insert into
-			
-			statement.setInt(1, shelf.getBookcaseId());
-			statement.setString(2, shelf.getName());
+            statement.setInt(1, shelf.getBookcaseId());
+            statement.setString(2, shelf.getName());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
-			// execujemy sql
-			statement.executeUpdate();
+    /**
+     * Pobiera wszystkie półki z bazy danych wraz z nazwą regału, do którego należą.
+     *
+     * @return lista półek; pusta lista, jeśli brak danych
+     */
+    public List<Shelf> getAllShelves() {
+        List<Shelf> shelves = new ArrayList<>();
+        String sql = """
+                SELECT s.id, s.bookcase_id, s.name, b.name AS bookcase_name
+                FROM shelfs s
+                LEFT JOIN bookcase b ON s.bookcase_id = b.id
+                ORDER BY s.id
+                """;
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+            while (resultSet.next()) {
+                Shelf shelf = new Shelf(
+                        resultSet.getInt("id"),
+                        resultSet.getInt("bookcase_id"),
+                        resultSet.getString("name"));
+                shelf.setBookcaseName(resultSet.getString("bookcase_name"));
+                shelves.add(shelf);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return shelves;
+    }
 
-	public List<Shelf> getAllShelves() {
-		//lista do zwrotki
-		List<Shelf> shelves = new ArrayList<>();
-		
-		//sql query
-		String sql = """
-				SELECT id, bookcase_id, name
-				FROM shelfs
-				ORDER BY id
-				""";
-		//proba polaczenia z baza
-		try (Connection connection = DatabaseConnection.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql);
-				ResultSet resultSet = statement.executeQuery()) {
-			//pobieranie ksiazka po ksiazce
-			while (resultSet.next()) {
-				Shelf shelf = new Shelf(
-						resultSet.getInt("id"), 
-						resultSet.getInt("bookcase_id"),
-						resultSet.getString("name"));
-				shelves.add(shelf);
-			}
+    /**
+     * Sprawdza, czy do danej półki przypisane są jakiekolwiek książki.
+     *
+     * @param shelfId identyfikator półki
+     * @return {@code true}, jeśli półka zawiera książki; w przeciwnym razie {@code false}
+     */
+    public boolean hasBooksAssigned(int shelfId) {
+        String sql = "SELECT COUNT(*) FROM book WHERE shelf_id = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, shelfId);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+    /**
+     * Usuwa półkę z bazy danych.
+     *
+     * @param shelfId identyfikator półki do usunięcia
+     */
+    public void deleteShelf(int shelfId) {
+        String sql = "DELETE FROM shelfs WHERE id = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, shelfId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
-		return shelves;
-	}
-	
-	 public void deleteShelf(int shelfId) {
-	        String sql = "DELETE FROM shelfs WHERE id = ?";
-	        try (Connection connection = DatabaseConnection.getConnection();
-	             PreparedStatement statement = connection.prepareStatement(sql)) {
+    /**
+     * Aktualizuje dane istniejącej półki.
+     *
+     * @param shelf półka z zaktualizowanymi danymi (musi zawierać poprawny identyfikator)
+     */
+    public void updateShelf(Shelf shelf) {
+        String sql = """
+                UPDATE shelfs
+                SET bookcase_id = ?, name = ?
+                WHERE id = ?
+                """;
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-	            statement.setInt(1, shelfId);
-	            statement.executeUpdate();
-
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        }
-	    }
+            statement.setInt(1, shelf.getBookcaseId());
+            statement.setString(2, shelf.getName());
+            statement.setInt(3, shelf.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

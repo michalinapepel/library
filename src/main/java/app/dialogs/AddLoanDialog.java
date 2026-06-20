@@ -1,28 +1,38 @@
 package app.dialogs;
 
+import app.AppConfig;
 import app.LanguageChangeListener;
 import app.Localization;
+import domain.Book;
+import domain.Borrower;
 import domain.Loan;
+import management.DataBaseLoans;
 
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
 
+/**
+ * Klasa okna dialogowego dodawania wypożyczenia
+ */
 public class AddLoanDialog extends JDialog implements LanguageChangeListener {
 
     private Loan result = null;
-    private JComboBox<String> bookCombo;
-    private JComboBox<String> borrowerCombo;
-    private JSpinner loanDateSpinner;
-    private JSpinner dueDateSpinner;
+    private final Book[] books;
+    private final Borrower[] borrowers;
+    private final DataBaseLoans dbLoans = new DataBaseLoans();
+    private JComboBox<Book> bookCombo;
+    private JComboBox<Borrower> borrowerCombo;
     private JButton ok;
     private JButton cancel;
 
-    public AddLoanDialog(JFrame parent) {
+    public AddLoanDialog(JFrame parent, Book[] books, Borrower[] borrowers) {
         super(parent, Localization.get("dialog.add.loan.title"), true);
+        this.books = books;
+        this.borrowers = borrowers;
         Localization.addLanguageChangeListener(this);
         initComponents();
-        setSize(500, 250);
+        setSize(500, 200);
         setLocationRelativeTo(parent);
     }
 
@@ -37,7 +47,7 @@ public class AddLoanDialog extends JDialog implements LanguageChangeListener {
         gbc.gridy = 0;
         add(new JLabel(Localization.get("label.book")), gbc);
         gbc.gridx = 1;
-        bookCombo = new JComboBox<>();
+        bookCombo = new JComboBox<>(books);
         add(bookCombo, gbc);
 
         // Borrower
@@ -45,28 +55,12 @@ public class AddLoanDialog extends JDialog implements LanguageChangeListener {
         gbc.gridy = 1;
         add(new JLabel(Localization.get("label.borrower")), gbc);
         gbc.gridx = 1;
-        borrowerCombo = new JComboBox<>();
+        borrowerCombo = new JComboBox<>(borrowers);
         add(borrowerCombo, gbc);
-
-        // Loan Date
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        add(new JLabel(Localization.get("label.loanDate")), gbc);
-        gbc.gridx = 1;
-        loanDateSpinner = new JSpinner(new SpinnerDateModel());
-        add(loanDateSpinner, gbc);
-
-        // Due Date
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        add(new JLabel(Localization.get("label.dueDate")), gbc);
-        gbc.gridx = 1;
-        dueDateSpinner = new JSpinner(new SpinnerDateModel());
-        add(dueDateSpinner, gbc);
 
         // Buttons
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -76,9 +70,29 @@ public class AddLoanDialog extends JDialog implements LanguageChangeListener {
         cancel = new JButton(Localization.get("button.cancel"));
 
         ok.addActionListener(e -> {
+            Book selectedBook = (Book) bookCombo.getSelectedItem();
+            Borrower selectedBorrower = (Borrower) borrowerCombo.getSelectedItem();
+
+            if (selectedBook == null) {
+                JOptionPane.showMessageDialog(this, Localization.get("message.select.book"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (selectedBorrower == null) {
+                JOptionPane.showMessageDialog(this, Localization.get("message.select.borrower"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (dbLoans.isBookOnActiveLoan(selectedBook.getId())) {
+                JOptionPane.showMessageDialog(this,
+                    "\"" + selectedBook.getTitle() + "\" " + Localization.get("message.book.already.loaned"),
+                    Localization.get("message.book.unavailable.title"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             result = new Loan();
+            result.setBook(selectedBook);
+            result.setBorrower(selectedBorrower);
             result.setLoanDate(LocalDate.now());
-            result.setDueDate(LocalDate.now().plusDays(14));
+            result.setDueDate(LocalDate.now().plusDays(AppConfig.DEFAULT_LOAN_DAYS));
             dispose();
         });
 

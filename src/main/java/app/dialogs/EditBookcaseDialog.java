@@ -3,23 +3,27 @@ package app.dialogs;
 import app.LanguageChangeListener;
 import app.Localization;
 import domain.Bookcase;
+import management.DataBaseBookcase;
 
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna dialogowego edytowania regału
+ */
 public class EditBookcaseDialog extends JDialog implements LanguageChangeListener {
 
     private Bookcase result = null;
     private final Bookcase originalBookcase;
+    private final DataBaseBookcase dbBookcase;
     private JTextField nameField;
     private JButton ok;
     private JButton cancel;
-    private JButton delete;
-    private boolean deleted = false;
 
     public EditBookcaseDialog(JFrame parent, Bookcase bookcase) {
         super(parent, Localization.get("dialog.edit.bookcase.title"), true);
         this.originalBookcase = bookcase;
+        this.dbBookcase = new DataBaseBookcase();
         Localization.addLanguageChangeListener(this);
         initComponents();
         loadBookcaseData();
@@ -51,12 +55,10 @@ public class EditBookcaseDialog extends JDialog implements LanguageChangeListene
         JPanel buttonPanel = new JPanel();
         ok = new JButton(Localization.get("button.ok"));
         cancel = new JButton(Localization.get("button.cancel"));
-        delete = new JButton(Localization.get("button.delete"));
-        delete.setForeground(Color.RED);
-
         ok.addActionListener(e -> {
             result = originalBookcase;
             result.setName(nameField.getText().trim());
+            dbBookcase.updateBookcase(result);
             dispose();
         });
 
@@ -65,17 +67,8 @@ public class EditBookcaseDialog extends JDialog implements LanguageChangeListene
             dispose();
         });
 
-        delete.addActionListener(e -> {
-            int confirm = JOptionPane.showConfirmDialog(this, Localization.get("message.confirm.delete"));
-            if (confirm == JOptionPane.YES_OPTION) {
-                deleted = true;
-                dispose();
-            }
-        });
-
         buttonPanel.add(ok);
         buttonPanel.add(cancel);
-        buttonPanel.add(delete);
         add(buttonPanel, gbc);
     }
 
@@ -90,16 +83,11 @@ public class EditBookcaseDialog extends JDialog implements LanguageChangeListene
         return result;
     }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-
     @Override
     public void onLanguageChanged() {
         setTitle(Localization.get("dialog.edit.bookcase.title"));
         ok.setText(Localization.get("button.ok"));
         cancel.setText(Localization.get("button.cancel"));
-        delete.setText(Localization.get("button.delete"));
         revalidate();
         repaint();
     }

@@ -4,14 +4,35 @@ import app.dialogs.*;
 import app.panels.ToolBar;
 import domain.Author;
 import domain.Book;
+import domain.Borrower;
+import domain.Loan;
+import management.DataBaseBooks;
+import management.DataBaseAuthors;
+import management.DataBaseBorrowers;
+import management.DataBaseLoans;
+import management.DataBaseShelfs;
+import management.DataBaseSections;
+import management.DataBaseBookcase;
+import domain.Bookcase;
+import domain.Section;
+import domain.Shelf;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
+/**
+ * Okno główne do obsługi dla pracownika
+ */
 public class MainWindowEmployee extends JFrame implements LanguageChangeListener {
 
     private final ToolBar toolbar;
+    private final DataBaseBooks dbBooks;
+    private final DataBaseAuthors dbAuthors;
+    private final DataBaseBorrowers dbBorrowers;
+    private final DataBaseLoans dbLoans;
+    private final DataBaseShelfs dbShelves;
+    private final DataBaseSections dbSections;
+    private final DataBaseBookcase dbBookcase;
     private final JButton booksButton;
     private final JButton addBookButton;
     private final JButton authorsButton;
@@ -27,8 +48,20 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
     private final JPanel southPanel;
     private final JPanel managementPanel;
 
+    /**
+     * Tworzy okno główne pracownika wraz z przyciskami obsługi
+     * książek, autorów, czytelników i wypożyczeń.
+     */
     public MainWindowEmployee() {
         Localization.addLanguageChangeListener(this);
+
+        dbBooks = new DataBaseBooks();
+        dbAuthors = new DataBaseAuthors();
+        dbBorrowers = new DataBaseBorrowers();
+        dbLoans = new DataBaseLoans();
+        dbShelves = new DataBaseShelfs();
+        dbSections = new DataBaseSections();
+        dbBookcase = new DataBaseBookcase();
 
         setTitle(Localization.get("app.title"));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -69,9 +102,6 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
         addLoanButton.setPreferredSize(new Dimension(50, 20));
         addLoanButton.setForeground(new Color(0,153,76));
         addLoanButton.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 25));
-        //editLoanButton = new JButton(Localization.get("button.loan.edit"));
-        //editLoanButton.addActionListener(e -> EditLoanDialog());
-        //editLoanButton.setPreferredSize(new Dimension(150, 20));
 
         managementButton = new JButton(Localization.get("button.management"));
         managementButton.addActionListener(e -> {
@@ -89,13 +119,11 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
         centerPanel.setLayout(new BorderLayout());
         centerPanel.add(authorsButton, BorderLayout.WEST);
         centerPanel.add(addAuthorButton, BorderLayout.CENTER);
-        //centerPanel.add(editLoanButton, BorderLayout.EAST);
 
         centerPanel2 = new JPanel();
         centerPanel2.setLayout(new BorderLayout());
         centerPanel2.add(loansButton, BorderLayout.WEST);
         centerPanel2.add(addLoanButton, BorderLayout.CENTER);
-        //centerPanel2.add(editLoanButton, BorderLayout.EAST);
 
         southPanel = new JPanel();
         southPanel.setLayout(new BorderLayout());
@@ -116,62 +144,113 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
         add(managementPanel);
 
 
-        setSize(600, 300);
+        setSize(600, 350);
         setLocationRelativeTo(null);
     }
 
+    /**
+     * Otwiera okno z listą książek.
+     */
     private void showListBooksDialog() {
-        ListBooksDialog dialog = new ListBooksDialog(this);
-        ArrayList<Book> books = new ArrayList<>();
-
-        Book book1 = new Book();
-        book1.setTitle("The Great Gatsby");
-        book1.setAuthors(new Author[] {new Author()});
-        book1.setPublisher("HarperCollins");
-
-        books.add(book1);
-
-        dialog.setBooks(books);
+        Shelf[] shelves = dbShelves.getAllShelves().toArray(new Shelf[0]);
+        Bookcase[] bookcases = dbBookcase.getAllBookcases().toArray(new Bookcase[0]);
+        Section[] sections = dbSections.getAllSections().toArray(new Section[0]);
+        ListBooksDialog dialog = new ListBooksDialog(this, dbAuthors.getAllAuthors().toArray(new Author[0]), shelves, bookcases, sections);
+        dialog.setBooks(dbBooks.getAllBooks());
         dialog.showDialog();
     }
 
+    /**
+     * Otwiera okno dodawania książki i zapisuje nową książkę do bazy danych.
+     */
     private void showAddBookDialog() {
-        AddBookDialog dialog = new AddBookDialog(this);
-        dialog.showDialog();
+        Shelf[] shelves = dbShelves.getAllShelves().toArray(new Shelf[0]);
+        Bookcase[] bookcases = dbBookcase.getAllBookcases().toArray(new Bookcase[0]);
+        Section[] sections = dbSections.getAllSections().toArray(new Section[0]);
+        AddBookDialog dialog = new AddBookDialog(this, dbAuthors.getAllAuthors().toArray(new Author[0]), shelves, bookcases, sections);
+        Book newBook = dialog.showDialog();
+
+        if (newBook != null) {
+            dbBooks.addBook(newBook);
+            JOptionPane.showMessageDialog(this, Localization.get("message.add.success.book"));
+        }
     }
 
+    /**
+     * Otwiera okno dodawania autora i zapisuje nowego autora do bazy danych.
+     */
     private void showAddAuthorDialog() {
         AddAuthorDialog dialog = new AddAuthorDialog(this);
-        dialog.showDialog();
+        Author newAuthor = dialog.showDialog();
+
+        if (newAuthor != null) {
+            dbAuthors.addAuthor(newAuthor);
+            JOptionPane.showMessageDialog(this, Localization.get("message.add.success.author"));
+        }
     }
 
+    /**
+     * Otwiera okno z listą autorów.
+     */
     private void showAuthorsDialog() {
         ListAuthorsDialog dialog = new ListAuthorsDialog(this);
+        dialog.setAuthors(dbAuthors.getAllAuthors());
         dialog.showDialog();
     }
 
+    /**
+     * Otwiera okno z listą czytelników.
+     */
     private void showListBorrowersDialog() {
         ListBorrowersDialog dialog = new ListBorrowersDialog(this);
-        dialog.setBorrowers(new ArrayList<>());
+        dialog.setBorrowers(dbBorrowers.getAllBorrowers());
         dialog.showDialog();
     }
 
+    /**
+     * Otwiera okno dodawania czytelnika i zapisuje nowego czytelnika do bazy danych.
+     */
     private void showAddBorrowerDialog() {
-        AddBorrowerDialog dialog = new AddBorrowerDialog(this);
-        dialog.showDialog();
+        int nextCardNumber = dbBorrowers.getNextCardNumber();
+        AddBorrowerDialog dialog = new AddBorrowerDialog(this, nextCardNumber);
+        Borrower newBorrower = dialog.showDialog();
+
+        if (newBorrower != null) {
+            dbBorrowers.addBorrower(newBorrower);
+            JOptionPane.showMessageDialog(this, Localization.get("message.add.success.borrower"));
+        }
     }
 
+    /**
+     * Otwiera okno z listą wypożyczeń.
+     */
     private void showListLoansDialog() {
         ListLoansDialog dialog = new ListLoansDialog(this);
-        dialog.setLoans(new ArrayList<>());
+        dialog.setLoans(dbLoans.getAllLoans());
         dialog.showDialog();
     }
 
+    /**
+     * Otwiera okno dodawania wypożyczenia i zapisuje nowe wypożyczenie do bazy danych.
+     */
     private void showAddLoanDialog() {
-        AddLoanDialog dialog = new AddLoanDialog(this);
-        dialog.showDialog();
+        java.util.Set<Integer> onLoan = dbLoans.getActiveLoanBookIds();
+        Book[] books = dbBooks.getAllBooks().stream()
+                .filter(b -> !onLoan.contains(b.getId()))
+                .toArray(Book[]::new);
+        Borrower[] borrowers = dbBorrowers.getAllBorrowers().toArray(new Borrower[0]);
+        AddLoanDialog dialog = new AddLoanDialog(this, books, borrowers);
+        Loan newLoan = dialog.showDialog();
+
+        if (newLoan != null) {
+            dbLoans.addLoan(newLoan);
+            JOptionPane.showMessageDialog(this, Localization.get("message.add.success.loan"));
+        }
     }
 
+    /**
+     * Aktualizuje teksty przycisków i tytuł okna po zmianie języka.
+     */
     @Override
     public void onLanguageChanged() {
         setTitle(Localization.get("app.title"));

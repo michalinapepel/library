@@ -4,44 +4,71 @@ import app.Localization;
 import domain.base.AbstractLocation;
 
 /**
- * Reprezentuje dział w bibliotece (np. literatura piękna, naukowa).
- * Nazwa działu jest przechowywana jako klucz lokalizacyjny i pobierana
- * przez klasę {@code Localization} zgodnie z aktualnym językiem.
+ * Reprezentuje dział (kategorię/sekcję) tematyczny książek w bibliotece.
+ * <p>
+ * Klucz działu ({@code key}) jest kluczem lokalizacji (np. {@code "section.fantasy"}),
+ * który w czasie działania programu jest tłumaczony na nazwę wyświetlaną
+ * w bieżącym języku.
  */
 public class Section extends AbstractLocation {
     /**
-     * Klucz służący do pobrania nazwy działu z zasobów lokalizacyjnych.
-     * Nazwa jest zależna od aktualnego języka i pobierana przez klasę {@code Localization}.
+     * Klucz lokalizacji działu używany do pobrania nazwy w bieżącym języku
      */
-    private String key; //nazwa zgodnie z językiem przekazanym przez obiekt Localization
 
+    private String key;
+
+    /**
+     * Tworzy nowy obiekt działu z podanym identyfikatorem i kluczem lokalizacji.
+     *
+     * @param id  unikalny identyfikator działu
+     * @param key klucz lokalizacji działu
+     */
     public Section(int id, String key) {
         this.id = id;
         this.key = key;
     }
 
-    public String getKey() {
-        return key;
-    }
+    /**
+     * Zwraca klucz lokalizacji działu.
+     *
+     * @return klucz lokalizacji
+     */
+    public String getKey() { return key; }
 
+    /**
+     * Ustawia klucz lokalizacji działu.
+     *
+     * @param key klucz lokalizacji
+     */
+    public void setKey(String key) { this.key = key; }
+
+    /**
+     * Zwraca nazwę działu przetłumaczoną na bieżący język.
+     * <p>
+     * Jeśli tłumaczenie dla klucza nie jest dostępne, zwracany jest sam klucz.
+     *
+     * @return nazwa działu w bieżącym języku lub klucz lokalizacji w razie błędu
+     */
     public String getName() {
-        return Localization.get(key);
-    }
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
+        try {
+            return Localization.get(key);
+        } catch (Exception ex) {
+            return key;
+        }
     }
 
-    public void setName(String name) {
-        
-    }
+    /**
+     * Ustawia identyfikator działu.
+     *
+     * @param id unikalny identyfikator działu
+     */
+    public void setId(int id) { this.id = id; }
 
+    /**
+     * Zwraca tekstową reprezentację działu, czyli jego nazwę w bieżącym języku.
+     *
+     * @return nazwa działu
+     */
     @Override
-    public String toString() {
-        return getName(); // dzięki temu JComboBox pokaże nazwę w aktualnym języku
-    }
+    public String toString() { return getName(); }
 }
-

@@ -7,6 +7,9 @@ import domain.Section;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna dialogowego dodawania działu (sekcji)
+ */
 public class AddSectionDialog extends JDialog implements LanguageChangeListener {
 
     private Section result = null;
@@ -49,9 +52,17 @@ public class AddSectionDialog extends JDialog implements LanguageChangeListener 
 
         ok.addActionListener(e -> {
             String sectionKey = nameField.getText().trim();
-            if (!sectionKey.isEmpty()) {
-                result = new Section(0, sectionKey);
+
+            if (sectionKey.isEmpty()) {
+                JOptionPane.showMessageDialog(this, Localization.get("validation.name.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
             }
+            if (sectionKey.length() > 100) {
+                JOptionPane.showMessageDialog(this, Localization.get("validation.name.maxLength"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            result = new Section(0, sectionKey);
             dispose();
         });
 

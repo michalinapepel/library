@@ -3,6 +3,8 @@ package app.dialogs;
 import app.LanguageChangeListener;
 import app.Localization;
 import domain.Borrower;
+import management.DataBaseBorrowers;
+import management.DataBaseLoans;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -10,15 +12,21 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klasa okna dialogowego wypisywania wypożyczających
+ */
 public class ListBorrowersDialog extends JDialog implements LanguageChangeListener {
 
      private final List<Borrower> borrowers = new ArrayList<>();
+     private final List<Borrower> filteredBorrowers = new ArrayList<>();
+     private final DataBaseBorrowers dbBorrowers = new DataBaseBorrowers();
+     private final DataBaseLoans dbLoans = new DataBaseLoans();
      private JTable borrowersTable;
      private JTextField searchField;
      private JButton search;
      private JButton close;
      private JButton edit;
-     private final List<Borrower> filteredBorrowers = new ArrayList<>();
+     private JButton delete;
 
     public ListBorrowersDialog(JFrame parent) {
         super(parent, Localization.get("dialog.list.borrowers.title"), true);
@@ -54,7 +62,7 @@ public class ListBorrowersDialog extends JDialog implements LanguageChangeListen
             }
         };
         borrowersTable = new JTable(tableModel);
-        borrowersTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        borrowersTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane scrollPane = new JScrollPane(borrowersTable);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -63,10 +71,14 @@ public class ListBorrowersDialog extends JDialog implements LanguageChangeListen
          edit = new JButton(Localization.get("button.edit"));
          close = new JButton(Localization.get("button.close"));
 
+         delete = new JButton(Localization.get("button.delete"));
+         delete.setForeground(Color.RED);
          edit.addActionListener(e -> editSelectedBorrower());
+         delete.addActionListener(e -> deleteSelectedBorrowers());
          close.addActionListener(e -> dispose());
 
          buttonPanel.add(edit);
+         buttonPanel.add(delete);
          buttonPanel.add(close);
          add(buttonPanel, BorderLayout.SOUTH);
 
@@ -124,32 +136,68 @@ public class ListBorrowersDialog extends JDialog implements LanguageChangeListen
         EditBorrowerDialog dialog = new EditBorrowerDialog((JFrame) SwingUtilities.getWindowAncestor(this), selectedBorrower);
         Borrower editedBorrower = dialog.showDialog();
 
-        if (dialog.isDeleted()) {
-            borrowers.remove(selectedBorrower);
-            loadAllBorrowers();
-        } else if (editedBorrower != null) {
+        if (editedBorrower != null) {
             refreshTable();
         }
     }
 
-    private void deleteSelectedBorrower() {
-        int selectedRow = borrowersTable.getSelectedRow();
-        if (selectedRow == -1) {
+    private void deleteSelectedBorrowers() {
+        int[] selectedRows = borrowersTable.getSelectedRows();
+        if (selectedRows.length == 0) {
             JOptionPane.showMessageDialog(this, Localization.get("message.select.borrower"));
             return;
         }
 
-        int confirm = JOptionPane.showConfirmDialog(this, Localization.get("message.confirm.delete"));
+        List<Borrower> toDelete = new ArrayList<>();
+        for (int row : selectedRows) toDelete.add(filteredBorrowers.get(row));
+
+        // Check for active loans — hard block
+        List<String> withActive = new ArrayList<>();
+        for (Borrower b : toDelete) {
+            if (dbLoans.hasActiveLoans(b.getId())) {
+                withActive.add(b.getFirstName() + " " + b.getLastName());
+            }
+        }
+        if (!withActive.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                Localization.get("message.delete.active.loans") + "\n" +
+                String.join("\n", withActive) + "\n\n" + Localization.get("message.delete.return.first"),
+                Localization.get("dialog.active.loans.title"), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Check for historical loans — warn that history will also be deleted
+        List<String> withHistory = new ArrayList<>();
+        for (Borrower b : toDelete) {
+            if (dbLoans.hasAnyLoans(b.getId())) {
+                withHistory.add(b.getFirstName() + " " + b.getLastName());
+            }
+        }
+
+        String confirmMsg;
+        if (!withHistory.isEmpty()) {
+            confirmMsg = Localization.get("message.delete.history") + "\n" +
+                String.join("\n", withHistory) + "\n\n" + Localization.get("message.confirm.delete.selected");
+        } else {
+            confirmMsg = Localization.get("message.confirm.delete.selected");
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this, confirmMsg,
+            Localization.get("dialog.confirm.delete.title"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (confirm == JOptionPane.YES_OPTION) {
-            borrowers.remove(selectedRow);
-            refreshTable();
+            for (Borrower borrower : toDelete) {
+                dbLoans.deleteLoansByBorrower(borrower.getId());
+                dbBorrowers.deleteBorrower(borrower.getId());
+                borrowers.remove(borrower);
+            }
+            loadAllBorrowers();
         }
     }
 
     public void setBorrowers(List<Borrower> borrowers) {
         this.borrowers.clear();
         this.borrowers.addAll(borrowers);
-        refreshTable();
+        loadAllBorrowers();
     }
 
     public void showDialog() {
@@ -161,6 +209,7 @@ public class ListBorrowersDialog extends JDialog implements LanguageChangeListen
          setTitle(Localization.get("dialog.list.borrowers.title"));
          search.setText(Localization.get("button.search"));
          edit.setText(Localization.get("button.edit"));
+         delete.setText(Localization.get("button.delete"));
          close.setText(Localization.get("button.close"));
          revalidate();
          repaint();

@@ -7,6 +7,9 @@ import domain.Borrower;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna dialogowego dodawania wypożyczającego
+ */
 public class AddBorrowerDialog extends JDialog implements LanguageChangeListener {
 
     private Borrower result = null;
@@ -20,8 +23,11 @@ public class AddBorrowerDialog extends JDialog implements LanguageChangeListener
     private JButton ok;
     private JButton cancel;
 
-    public AddBorrowerDialog(JFrame parent) {
+    private final int nextCardNumber;
+
+    public AddBorrowerDialog(JFrame parent, int nextCardNumber) {
         super(parent, Localization.get("dialog.add.borrower.title"), true);
+        this.nextCardNumber = nextCardNumber;
         Localization.addLanguageChangeListener(this);
         initComponents();
         setSize(500, 350);
@@ -87,7 +93,7 @@ public class AddBorrowerDialog extends JDialog implements LanguageChangeListener
         gbc.gridy = 6;
         add(new JLabel(Localization.get("label.cardNumber")), gbc);
         gbc.gridx = 1;
-        cardNumberSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 999999, 1));
+        cardNumberSpinner = new JSpinner(new SpinnerNumberModel(nextCardNumber, 1, 999999, 1));
         add(cardNumberSpinner, gbc);
 
         // Buttons
@@ -102,14 +108,50 @@ public class AddBorrowerDialog extends JDialog implements LanguageChangeListener
         cancel = new JButton(Localization.get("button.cancel"));
 
         ok.addActionListener(e -> {
+            String firstName = firstNameField.getText().trim();
+            String lastName = lastNameField.getText().trim();
+            String city = addressCityField.getText().trim();
+            String street = addressStreetField.getText().trim();
+            String zip = addressZipField.getText().trim();
+            Integer cardNumber = (Integer) cardNumberSpinner.getValue();
+
+            if (firstName.isEmpty()) {
+                JOptionPane.showMessageDialog(this, Localization.get("validation.firstName.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (lastName.isEmpty()) {
+                JOptionPane.showMessageDialog(this, Localization.get("validation.lastName.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (city.isEmpty()) {
+                JOptionPane.showMessageDialog(this, Localization.get("validation.city.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (street.isEmpty()) {
+                JOptionPane.showMessageDialog(this, Localization.get("validation.street.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (zip.isEmpty()) {
+                JOptionPane.showMessageDialog(this, Localization.get("validation.zip.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (!zip.matches("\\d{2}-\\d{3}|\\d{5}")) {
+                JOptionPane.showMessageDialog(this, Localization.get("validation.zip.format"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (cardNumber <= 0) {
+                JOptionPane.showMessageDialog(this, Localization.get("validation.cardNumber.positive"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             result = new Borrower();
-            result.setFirstName(firstNameField.getText().trim());
-            result.setLastName(lastNameField.getText().trim());
-            result.setAddressCity(addressCityField.getText().trim());
-            result.setAddressStreet(addressStreetField.getText().trim());
+            result.setFirstName(firstName);
+            result.setLastName(lastName);
+            result.setAddressCity(city);
+            result.setAddressStreet(street);
             result.setAddressNumber(((Integer) addressNumberSpinner.getValue()));
-            result.setAddressZip(addressZipField.getText().trim());
-            result.setCardNumber((Integer) cardNumberSpinner.getValue());
+            result.setAddressZip(zip);
+            result.setCardNumber(cardNumber);
             dispose();
         });
 

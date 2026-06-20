@@ -7,6 +7,9 @@ import domain.Bookcase;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna dialogowego dodawania regału
+ */
 public class AddBookcaseDialog extends JDialog implements LanguageChangeListener {
 
     private Bookcase result = null;
@@ -48,8 +51,18 @@ public class AddBookcaseDialog extends JDialog implements LanguageChangeListener
         cancel = new JButton(Localization.get("button.cancel"));
 
         ok.addActionListener(e -> {
-            result = new Bookcase();
-            result.setName(nameField.getText().trim());
+            String name = nameField.getText().trim();
+
+            if (name.isEmpty()) {
+                JOptionPane.showMessageDialog(this, Localization.get("validation.name.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (name.length() > 100) {
+                JOptionPane.showMessageDialog(this, Localization.get("validation.name.maxLength"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            result = new Bookcase(0, name);
             dispose();
         });
 

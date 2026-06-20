@@ -3,6 +3,7 @@ package app.dialogs;
 import app.LanguageChangeListener;
 import app.Localization;
 import domain.Author;
+import management.DataBaseAuthors;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -10,16 +11,21 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klasa okna dialogowego wypisywania autorów
+ */
 public class ListAuthorsDialog extends JDialog implements LanguageChangeListener {
 
     private final List<Author> authors = new ArrayList<>();
     private final List<Author> filteredAuthors = new ArrayList<>();
+    private final DataBaseAuthors dbAuthors = new DataBaseAuthors();
     private JTable authorsTable;
     private JTextField searchField;
     private JComboBox<String> searchTypeCombo;
     private JButton search;
     private JButton close;
     private JButton edit;
+    private JButton delete;
 
     public ListAuthorsDialog(JFrame parent) {
         super(parent, Localization.get("dialog.list.authors.title"), true);
@@ -62,7 +68,7 @@ public class ListAuthorsDialog extends JDialog implements LanguageChangeListener
             }
         };
         authorsTable = new JTable(tableModel);
-        authorsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        authorsTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane scrollPane = new JScrollPane(authorsTable);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -71,10 +77,14 @@ public class ListAuthorsDialog extends JDialog implements LanguageChangeListener
          edit = new JButton(Localization.get("button.edit"));
          close = new JButton(Localization.get("button.close"));
 
+         delete = new JButton(Localization.get("button.delete"));
+         delete.setForeground(Color.RED);
          edit.addActionListener(e -> editSelectedAuthor());
+         delete.addActionListener(e -> deleteSelectedAuthors());
          close.addActionListener(e -> dispose());
 
          buttonPanel.add(edit);
+         buttonPanel.add(delete);
          buttonPanel.add(close);
          add(buttonPanel, BorderLayout.SOUTH);
 
@@ -93,13 +103,31 @@ public class ListAuthorsDialog extends JDialog implements LanguageChangeListener
           EditAuthorDialog dialog = new EditAuthorDialog((JFrame) SwingUtilities.getWindowAncestor(this), selectedAuthor);
           Author editedAuthor = dialog.showDialog();
 
-          if (dialog.isDeleted()) {
-              authors.remove(selectedAuthor);
-              loadAllAuthors();
-          } else if (editedAuthor != null) {
+          if (editedAuthor != null) {
               refreshTable();
           }
       }
+
+     private void deleteSelectedAuthors() {
+         int[] selectedRows = authorsTable.getSelectedRows();
+         if (selectedRows.length == 0) {
+             JOptionPane.showMessageDialog(this, Localization.get("message.select.author"));
+             return;
+         }
+         int confirm = JOptionPane.showConfirmDialog(this,
+             Localization.get("message.confirm.delete.selected"),
+             Localization.get("dialog.confirm.delete.title"),
+             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+         if (confirm == JOptionPane.YES_OPTION) {
+             List<Author> toDelete = new ArrayList<>();
+             for (int row : selectedRows) toDelete.add(filteredAuthors.get(row));
+             for (Author author : toDelete) {
+                 dbAuthors.deleteAuthor(author.getId());
+                 authors.remove(author);
+             }
+             loadAllAuthors();
+         }
+     }
 
      private void loadAllAuthors() {
          filteredAuthors.clear();
@@ -166,6 +194,7 @@ public class ListAuthorsDialog extends JDialog implements LanguageChangeListener
          setTitle(Localization.get("dialog.list.authors.title"));
          search.setText(Localization.get("button.search"));
          edit.setText(Localization.get("button.edit"));
+         delete.setText(Localization.get("button.delete"));
          close.setText(Localization.get("button.close"));
          revalidate();
          repaint();

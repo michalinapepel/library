@@ -8,6 +8,9 @@ import app.panels.ToolBar;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna startowego (wybór rodzaju logowania)
+ */
 public class StartDialog extends JDialog implements LanguageChangeListener {
 
     private UserType result = UserType.CANCEL;

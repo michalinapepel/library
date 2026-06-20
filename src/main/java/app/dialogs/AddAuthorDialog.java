@@ -7,6 +7,9 @@ import domain.Author;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna dialogowego dodawania autora
+ */
 public class AddAuthorDialog extends JDialog implements LanguageChangeListener {
 
     private Author result = null;
@@ -75,9 +78,33 @@ public class AddAuthorDialog extends JDialog implements LanguageChangeListener {
         cancel = new JButton(Localization.get("button.cancel"));
 
         ok.addActionListener(e -> {
+            // Walidacja
+            String firstName = firstNameField.getText().trim();
+            String lastName = lastNameField.getText().trim();
+
+            if (firstName.isEmpty()) {
+                JOptionPane.showMessageDialog(this, Localization.get("validation.firstName.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (firstName.length() > 100) {
+                JOptionPane.showMessageDialog(this, Localization.get("validation.firstName.maxLength"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (lastName.isEmpty()) {
+                JOptionPane.showMessageDialog(this, Localization.get("validation.lastName.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (lastName.length() > 100) {
+                JOptionPane.showMessageDialog(this, Localization.get("validation.lastName.maxLength"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             result = new Author();
-            result.setFirstName(firstNameField.getText().trim());
-            result.setLastName(lastNameField.getText().trim());
+            result.setFirstName(firstName);
+            result.setLastName(lastName);
             result.setPseudonym(pseudonymField.getText().trim());
             result.setNationality(nationalityField.getText().trim());
             dispose();
