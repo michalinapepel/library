@@ -11,6 +11,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klasa okna dialogowego wypisywania działów
+ */
 public class ListSectionsDialog extends JDialog implements LanguageChangeListener {
 
      private final List<Section> sections = new ArrayList<>();

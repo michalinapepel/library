@@ -13,6 +13,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klasa okna dialogowego wypisywania wypożyczeń
+ */
 public class ListLoansDialog extends JDialog implements LanguageChangeListener {
 
      private final List<Loan> loans = new ArrayList<>();

@@ -20,6 +20,9 @@ import domain.Shelf;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Okno główne do obsługi dla pracownika
+ */
 public class MainWindowEmployee extends JFrame implements LanguageChangeListener {
 
     private final ToolBar toolbar;

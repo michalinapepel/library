@@ -8,6 +8,9 @@ import management.DataBaseSections;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna dialogowego edytowania działu (sekcji)
+ */
 public class EditSectionDialog extends JDialog implements LanguageChangeListener {
 
     private Section result = null;

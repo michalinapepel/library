@@ -13,6 +13,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klasa okna dialogowego wypisywania regałów
+ */
 public class ListBookcasesDialog extends JDialog implements LanguageChangeListener {
 
      private final List<Bookcase> bookcases = new ArrayList<>();

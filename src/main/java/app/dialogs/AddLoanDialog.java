@@ -12,6 +12,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
 
+/**
+ * Klasa okna dialogowego dodawania wypożyczenia
+ */
 public class AddLoanDialog extends JDialog implements LanguageChangeListener {
 
     private Loan result = null;

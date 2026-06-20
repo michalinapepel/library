@@ -8,6 +8,9 @@ import management.DataBaseBookcase;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna dialogowego edytowania regału
+ */
 public class EditBookcaseDialog extends JDialog implements LanguageChangeListener {
 
     private Bookcase result = null;

@@ -6,6 +6,9 @@ import app.Localization;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna logowania wypożyczającego
+ */
 public class BorrowerDialog extends JDialog implements LanguageChangeListener {
 
     private String id = null;

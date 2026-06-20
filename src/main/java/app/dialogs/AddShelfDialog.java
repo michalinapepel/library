@@ -8,6 +8,9 @@ import domain.Shelf;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna dialogowego dodawania półki
+ */
 public class AddShelfDialog extends JDialog implements LanguageChangeListener {
 
     private Shelf result = null;

@@ -14,6 +14,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klasa okna dialogowego edytowania książki
+ */
 public class EditBookDialog extends JDialog implements LanguageChangeListener {
 
     private Book result = null;

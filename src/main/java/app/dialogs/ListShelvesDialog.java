@@ -12,6 +12,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klasa okna dialogowego wypisywania półek
+ */
 public class ListShelvesDialog extends JDialog implements LanguageChangeListener {
 
      private final List<Shelf> shelves = new ArrayList<>();

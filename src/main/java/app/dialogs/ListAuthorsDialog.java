@@ -11,6 +11,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klasa okna dialogowego wypisywania autorów
+ */
 public class ListAuthorsDialog extends JDialog implements LanguageChangeListener {
 
     private final List<Author> authors = new ArrayList<>();

@@ -12,6 +12,9 @@ import management.DataBaseShelfs;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Okno do zarządzania biblioteką dla pracownika
+ */
 public class ManagementWindow extends JFrame implements LanguageChangeListener{
     private final ToolBar toolbar;
     private final DataBaseSections dbSections;

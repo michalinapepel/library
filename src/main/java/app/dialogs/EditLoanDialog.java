@@ -9,6 +9,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
 
+/**
+ * Klasa okna dialogowego edytowania wypożyczenia
+ */
 public class EditLoanDialog extends JDialog implements LanguageChangeListener {
 
     private Loan result = null;

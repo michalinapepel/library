@@ -13,6 +13,9 @@ import javax.swing.*;
  */
 public class LibraryApp {
 
+    /**
+     * Metoda wywołująca uruchomienie aplikacji
+     */
     public void startApp(){
         SwingUtilities.invokeLater(() -> {
             StartDialog start = new StartDialog(null);

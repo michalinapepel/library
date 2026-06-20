@@ -9,6 +9,9 @@ import management.DataBaseShelfs;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna dialogowego edytowania półki
+ */
 public class EditShelfDialog extends JDialog implements LanguageChangeListener {
 
     private Shelf result = null;

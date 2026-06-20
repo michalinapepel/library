@@ -8,6 +8,9 @@ import management.DataBaseAuthors;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna dialogowego edytowania autora
+ */
 public class EditAuthorDialog extends JDialog implements LanguageChangeListener {
 
     private Author result = null;

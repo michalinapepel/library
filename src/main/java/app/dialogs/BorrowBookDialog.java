@@ -12,6 +12,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klasa okna dialogowego wypożyczania książki
+ */
 public class BorrowBookDialog extends JDialog implements LanguageChangeListener {
 
     private final List<Book> books = new ArrayList<>();

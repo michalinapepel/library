@@ -7,6 +7,9 @@ import domain.Section;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna dialogowego dodawania działu (sekcji)
+ */
 public class AddSectionDialog extends JDialog implements LanguageChangeListener {
 
     private Section result = null;

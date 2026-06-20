@@ -7,6 +7,9 @@ import domain.Borrower;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna dialogowego dodawania wypożyczającego
+ */
 public class AddBorrowerDialog extends JDialog implements LanguageChangeListener {
 
     private Borrower result = null;

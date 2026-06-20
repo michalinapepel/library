@@ -12,6 +12,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klasa okna dialogowego wypisywania wypożyczających
+ */
 public class ListBorrowersDialog extends JDialog implements LanguageChangeListener {
 
      private final List<Borrower> borrowers = new ArrayList<>();

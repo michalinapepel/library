@@ -14,6 +14,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klasa okna dialogowego dodawania książki
+ */
 public class AddBookDialog extends JDialog implements LanguageChangeListener {
 
     private final Author[] authors;

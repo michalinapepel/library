@@ -7,6 +7,9 @@ import domain.Author;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna dialogowego dodawania autora
+ */
 public class AddAuthorDialog extends JDialog implements LanguageChangeListener {
 
     private Author result = null;

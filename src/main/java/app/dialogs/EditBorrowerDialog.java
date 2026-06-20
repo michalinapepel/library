@@ -8,6 +8,9 @@ import management.DataBaseBorrowers;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna dialogowego edytowania wypożyczającego
+ */
 public class EditBorrowerDialog extends JDialog implements LanguageChangeListener {
 
     private Borrower result = null;

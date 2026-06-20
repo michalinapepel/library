@@ -38,6 +38,9 @@ public class DatabaseConnection {
 		loadProperties();
 	}
 
+	/**
+	 * Pobiera dane połączenia do bazy z pliku database.properties
+	 */
 	private static void loadProperties() {
 		Properties props = new Properties();
 		try (InputStream input = DatabaseConnection.class.getClassLoader().getResourceAsStream(AppConfig.DB_PROPERTIES_FILE)) {
@@ -58,6 +61,11 @@ public class DatabaseConnection {
 		}
 	}
 
+	/**
+	 * Zwraca połączenie do bazy danych
+	 * @return
+	 * @throws SQLException
+	 */
 	public static Connection getConnection() throws SQLException {
 		return DriverManager.getConnection(url, uname, pass);
 	}

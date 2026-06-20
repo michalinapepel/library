@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Okno główne do obsługi dla wypożyczającego
+ */
 public class MainWindowBorrower extends JFrame implements LanguageChangeListener {
     private final ToolBar toolbar;
     private final JTable loansTable;

@@ -7,6 +7,9 @@ import domain.Bookcase;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa okna dialogowego dodawania regału
+ */
 public class AddBookcaseDialog extends JDialog implements LanguageChangeListener {
 
     private Bookcase result = null;
