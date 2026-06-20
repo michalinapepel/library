@@ -31,6 +31,11 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
     private final JPanel northPanel;
     private final JPanel centerPanel;
     private final JPanel southPanel;
+
+    /**
+     * Tworzy okno zarządzania biblioteką wraz z przyciskami obsługi
+     * działów, regałów i półek.
+     */
     public ManagementWindow() {
         Localization.addLanguageChangeListener(this);
 
@@ -104,12 +109,18 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
 
     }
 
+    /**
+     * Otwiera okno z listą działów.
+     */
     private void showListSectionsDialog() {
         ListSectionsDialog dialog = new ListSectionsDialog(this);
         dialog.setSections(dbSections.getAllSections());
         dialog.showDialog();
     }
 
+    /**
+     * Otwiera okno dodawania działu i zapisuje nowy dział do bazy danych.
+     */
     private void showAddSectionDialog() {
         AddSectionDialog dialog = new AddSectionDialog(this);
         Section newSection = dialog.showDialog();
@@ -120,12 +131,18 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
         }
     }
 
+    /**
+     * Otwiera okno z listą regałów.
+     */
     private void showListBookcasesDialog() {
         ListBookcasesDialog dialog = new ListBookcasesDialog(this);
         dialog.setBookcases(dbBookcases.getAllBookcases());
         dialog.showDialog();
     }
 
+    /**
+     * Otwiera okno dodawania regału i zapisuje nowy regał do bazy danych.
+     */
     private void showAddBookcaseDialog() {
         AddBookcaseDialog dialog = new AddBookcaseDialog(this);
         Bookcase newBookcase = dialog.showDialog();
@@ -136,6 +153,9 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
         }
     }
 
+    /**
+     * Otwiera okno z listą półek.
+     */
     private void showListShelvesDialog() {
         ListShelvesDialog dialog = new ListShelvesDialog(this);
         dialog.setBookcases(dbBookcases.getAllBookcases().toArray(new Bookcase[0]));
@@ -143,6 +163,9 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
         dialog.showDialog();
     }
 
+    /**
+     * Otwiera okno dodawania półki i zapisuje nową półkę do bazy danych.
+     */
     private void showAddShelfDialog() {
         AddShelfDialog dialog = new AddShelfDialog(this, dbBookcases.getAllBookcases().toArray(new Bookcase[0]));
         Shelf newShelf = dialog.showDialog();
@@ -153,6 +176,9 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
         }
     }
 
+    /**
+     * Aktualizuje teksty przycisków i tytuł okna po zmianie języka.
+     */
     @Override
     public void onLanguageChanged() {
         setTitle(Localization.get("app.title"));

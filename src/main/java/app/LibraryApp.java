@@ -63,6 +63,11 @@ public class LibraryApp {
         });
     }
 
+    /**
+     * Punkt wejścia aplikacji.
+     *
+     * @param args argumenty wiersza poleceń (nieużywane)
+     */
     public static void main(String[] args) {
         new LibraryApp().startApp();
     }

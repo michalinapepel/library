@@ -24,17 +24,28 @@ import java.util.stream.Collectors;
  * Okno główne do obsługi dla wypożyczającego
  */
 public class MainWindowBorrower extends JFrame implements LanguageChangeListener {
+    /** Pasek narzędziowy ze zmianą języka i wylogowaniem. */
     private final ToolBar toolbar;
+    /** Tabela prezentująca wypożyczenia czytelnika. */
     private final JTable loansTable;
+    /** Model danych tabeli wypożyczeń. */
     private final DefaultTableModel loansTableModel;
+    /** Przycisk otwierający okno wypożyczenia książki. */
     private final JButton borrowButton;
+    /** Etykieta z numerem karty bibliotecznej czytelnika. */
     private final JLabel cardLabel;
+    /** Zalogowany czytelnik, którego dane są wyświetlane w oknie. */
     private final Borrower borrower;
     private final DataBaseLoans dbLoans = new DataBaseLoans();
     private final DataBaseBooks dbBooks = new DataBaseBooks();
     private final DataBaseShelfs dbShelves = new DataBaseShelfs();
     private final DataBaseBookcase dbBookcase = new DataBaseBookcase();
 
+    /**
+     * Tworzy okno główne czytelnika i wczytuje jego wypożyczenia.
+     *
+     * @param borrower zalogowany czytelnik
+     */
     public MainWindowBorrower(Borrower borrower) {
         this.borrower = borrower;
         Localization.addLanguageChangeListener(this);
@@ -91,6 +102,9 @@ public class MainWindowBorrower extends JFrame implements LanguageChangeListener
         loadLoans();
     }
 
+    /**
+     * Odświeża tabelę wypożyczeń aktualnymi danymi czytelnika z bazy danych.
+     */
     private void loadLoans() {
         loansTableModel.setRowCount(0);
         List<Loan> loans = dbLoans.getAllLoansByBorrower(borrower.getId());
@@ -109,6 +123,10 @@ public class MainWindowBorrower extends JFrame implements LanguageChangeListener
         }
     }
 
+    /**
+     * Otwiera okno wypożyczenia książki i zapisuje nowe wypożyczenie,
+     * jeśli czytelnik wybierze dostępną książkę.
+     */
     private void showBorrowDialog() {
         Set<Integer> onLoan = dbLoans.getActiveLoanBookIds();
         List<Book> available = dbBooks.getAllBooks().stream()
@@ -133,6 +151,9 @@ public class MainWindowBorrower extends JFrame implements LanguageChangeListener
         }
     }
 
+    /**
+     * Aktualizuje teksty okna (tytuł, etykiety, nagłówki tabeli) po zmianie języka.
+     */
     @Override
     public void onLanguageChanged() {
         setTitle(Localization.get("app.title") + " — " + borrower.getFirstName() + " " + borrower.getLastName());

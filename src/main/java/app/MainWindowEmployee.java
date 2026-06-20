@@ -48,6 +48,10 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
     private final JPanel southPanel;
     private final JPanel managementPanel;
 
+    /**
+     * Tworzy okno główne pracownika wraz z przyciskami obsługi
+     * książek, autorów, czytelników i wypożyczeń.
+     */
     public MainWindowEmployee() {
         Localization.addLanguageChangeListener(this);
 
@@ -144,6 +148,9 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
         setLocationRelativeTo(null);
     }
 
+    /**
+     * Otwiera okno z listą książek.
+     */
     private void showListBooksDialog() {
         Shelf[] shelves = dbShelves.getAllShelves().toArray(new Shelf[0]);
         Bookcase[] bookcases = dbBookcase.getAllBookcases().toArray(new Bookcase[0]);
@@ -153,6 +160,9 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
         dialog.showDialog();
     }
 
+    /**
+     * Otwiera okno dodawania książki i zapisuje nową książkę do bazy danych.
+     */
     private void showAddBookDialog() {
         Shelf[] shelves = dbShelves.getAllShelves().toArray(new Shelf[0]);
         Bookcase[] bookcases = dbBookcase.getAllBookcases().toArray(new Bookcase[0]);
@@ -166,6 +176,9 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
         }
     }
 
+    /**
+     * Otwiera okno dodawania autora i zapisuje nowego autora do bazy danych.
+     */
     private void showAddAuthorDialog() {
         AddAuthorDialog dialog = new AddAuthorDialog(this);
         Author newAuthor = dialog.showDialog();
@@ -176,18 +189,27 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
         }
     }
 
+    /**
+     * Otwiera okno z listą autorów.
+     */
     private void showAuthorsDialog() {
         ListAuthorsDialog dialog = new ListAuthorsDialog(this);
         dialog.setAuthors(dbAuthors.getAllAuthors());
         dialog.showDialog();
     }
 
+    /**
+     * Otwiera okno z listą czytelników.
+     */
     private void showListBorrowersDialog() {
         ListBorrowersDialog dialog = new ListBorrowersDialog(this);
         dialog.setBorrowers(dbBorrowers.getAllBorrowers());
         dialog.showDialog();
     }
 
+    /**
+     * Otwiera okno dodawania czytelnika i zapisuje nowego czytelnika do bazy danych.
+     */
     private void showAddBorrowerDialog() {
         int nextCardNumber = dbBorrowers.getNextCardNumber();
         AddBorrowerDialog dialog = new AddBorrowerDialog(this, nextCardNumber);
@@ -199,12 +221,18 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
         }
     }
 
+    /**
+     * Otwiera okno z listą wypożyczeń.
+     */
     private void showListLoansDialog() {
         ListLoansDialog dialog = new ListLoansDialog(this);
         dialog.setLoans(dbLoans.getAllLoans());
         dialog.showDialog();
     }
 
+    /**
+     * Otwiera okno dodawania wypożyczenia i zapisuje nowe wypożyczenie do bazy danych.
+     */
     private void showAddLoanDialog() {
         java.util.Set<Integer> onLoan = dbLoans.getActiveLoanBookIds();
         Book[] books = dbBooks.getAllBooks().stream()
@@ -220,6 +248,9 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
         }
     }
 
+    /**
+     * Aktualizuje teksty przycisków i tytuł okna po zmianie języka.
+     */
     @Override
     public void onLanguageChanged() {
         setTitle(Localization.get("app.title"));
