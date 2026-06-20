@@ -137,7 +137,7 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
         add(managementPanel);
 
 
-        setSize(600, 300);
+        setSize(600, 350);
         setLocationRelativeTo(null);
     }
 
