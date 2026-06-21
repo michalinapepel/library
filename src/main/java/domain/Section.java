@@ -34,14 +34,6 @@ public class Section extends AbstractLocation {
         this.description = description;
     }
 
-    // DO USUNIĘCIA
-    public Section(int id, String key) {
-        this.id = id;
-        this.key = key;
-        this.description = description;
-    }
-
-
     /**
      * Zwraca klucz lokalizacji działu.
      *

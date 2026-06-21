@@ -47,7 +47,7 @@ class BookTest {
     void getSectionsAsString_jednaSekcja() {
         Book book = new Book();
         // Używamy klucza "-" żeby Section.getName() zwróciło klucz bezpośrednio (fallback)
-        book.setSections(List.of(new Section(1, "Fantastyka")));
+        book.setSections(List.of(new Section(1, "Fantastyka", "-")));
 
         assertTrue(book.getSectionsAsString().contains("Fantastyka"));
     }

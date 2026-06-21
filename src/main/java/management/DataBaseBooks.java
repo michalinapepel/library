@@ -98,7 +98,7 @@ public class DataBaseBooks {
                 ORDER BY ba.book_id, a.id
                 """;
         String sqlSections = """
-                SELECT bs.book_id, s.id, s.key
+                SELECT bs.book_id, s.id, s.key, s.description
                 FROM book_section bs
                 INNER JOIN section s ON s.id = bs.section_id
                 ORDER BY bs.book_id, s.id
@@ -136,7 +136,7 @@ public class DataBaseBooks {
                 while (rs.next()) {
                     int bookId = rs.getInt("book_id");
                     sectionsMap.computeIfAbsent(bookId, k -> new ArrayList<>())
-                               .add(new Section(rs.getInt("id"), rs.getString("key")));
+                               .add(new Section(rs.getInt("id"), rs.getString("key"), rs.getString("description")));
                 }
             }
 

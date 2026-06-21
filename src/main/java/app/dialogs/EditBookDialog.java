@@ -235,7 +235,7 @@ public class EditBookDialog extends JDialog implements LanguageChangeListener {
 
     private Section[] buildSectionsWithNone() {
         Section[] result = new Section[sections.length + 1];
-        result[0] = new Section(0, "-");
+        result[0] = new Section(0, "-", "-");
         System.arraycopy(sections, 0, result, 1, sections.length);
         return result;
     }
