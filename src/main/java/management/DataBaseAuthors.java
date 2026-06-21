@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.Debug;
+import app.Localization;
 import domain.Author;
 
 /**
@@ -44,7 +45,7 @@ public class DataBaseAuthors {
             }
         } catch (SQLException e) {
         	Debug.error("Błąd przy dodawaniu autora: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
     }
 
@@ -74,7 +75,7 @@ public class DataBaseAuthors {
             }
         } catch (SQLException e) {
         	Debug.error("Błąd przy zaciąganiu autorów: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
         return authors;
     }
@@ -103,11 +104,11 @@ public class DataBaseAuthors {
 			}
 
 			Debug.error("Błąd przy usuwaniu autora: " + authorId, e);
-			Debug.showErrorWindow("Wystąpił problem z bazą danych. Skontaktuj się z Administratorem");
+			Debug.showErrorWindow(Localization.get("error.database"));
         }
         } catch (SQLException e) {
             Debug.error("Błąd przy usuwaniu autora: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+            Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
     }
 
@@ -133,7 +134,7 @@ public class DataBaseAuthors {
             statement.executeUpdate();
         } catch (SQLException e) {
         	Debug.error("Błąd przy aktualizowaniu autora: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
     }
 }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.Debug;
+import app.Localization;
 import domain.Bookcase;
 
 /**
@@ -32,7 +33,7 @@ public class DataBaseBookcase {
             statement.executeUpdate();
         } catch (SQLException e) {
         	Debug.error("Błąd przy dodawaniu regału: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
     }
 
@@ -59,7 +60,7 @@ public class DataBaseBookcase {
             }
         } catch (SQLException e) {
         	Debug.error("Błąd przy zaciąganiu regałów: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
         return bookcases;
     }
@@ -84,7 +85,7 @@ public class DataBaseBookcase {
             }
         } catch (SQLException e) {
         	Debug.error("Błąd przy sprawdzaniu zawartości półki: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
         return false;
     }
@@ -115,11 +116,11 @@ public class DataBaseBookcase {
 			}
 
 			Debug.error("Błąd przy usuwaniu regału: " + bookcaseId, e);
-			Debug.showErrorWindow("Wystąpił problem z bazą danych. Skontaktuj się z Administratorem");
+			Debug.showErrorWindow(Localization.get("error.database"));
         }
         } catch (SQLException e) {
         	Debug.error("Błąd przy usuwaniu regału: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
     }
 
@@ -142,7 +143,7 @@ public class DataBaseBookcase {
             statement.executeUpdate();
         } catch (SQLException e) {
         	Debug.error("Błąd przy aktualizowaniu regału: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
     }
 }

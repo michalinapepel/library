@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.Debug;
+import app.Localization;
 import domain.Section;
 
 /**
@@ -32,7 +33,7 @@ public class DataBaseSections {
 			statement.executeUpdate();
 		} catch (SQLException e) {
 			Debug.error("Błąd przy dodawaniu działu: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+			Debug.showErrorWindow(Localization.get("error.database.connection"));
 		}
 	}
 
@@ -61,7 +62,7 @@ public class DataBaseSections {
             }
         } catch (SQLException e) {
         	Debug.error("Błąd przy zaciąganiu działów: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
         return sections;
     }
@@ -80,7 +81,7 @@ public class DataBaseSections {
 			statement.executeUpdate();
 		} catch (SQLException e) {
 			Debug.error("Błąd przy usuwaniu działu: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+			Debug.showErrorWindow(Localization.get("error.database.connection"));
 		}
 	}
 
@@ -106,7 +107,7 @@ public class DataBaseSections {
 			statement.executeUpdate();
 		} catch (SQLException e) {
 			Debug.error("Błąd przy aktualizowaniu działu: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+			Debug.showErrorWindow(Localization.get("error.database.connection"));
 		}
 	}
 }

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import app.Debug;
+import app.Localization;
 
 /**
  * Zapewnia dostęp do danych książek w bazie danych.
@@ -81,13 +82,13 @@ public class DataBaseBooks {
 				}
 
 				Debug.error("Błąd przy dodawaniu książki: " + book.getTitle(), e);
-				Debug.showErrorWindow("Wystąpił problem z bazą danych. Skontaktuj się z Administratorem");
+				Debug.showErrorWindow(Localization.get("error.database"));
 			}
 
 		} catch (SQLException e) {
 
 			Debug.error("Błąd przy dodawaniu książki: ", e);
-			Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+			Debug.showErrorWindow(Localization.get("error.database.connection"));
 		}
 	}
 
@@ -164,7 +165,7 @@ public class DataBaseBooks {
 
 		} catch (SQLException e) {
 			Debug.error("Błąd przy zaciąganiu książek: ", e);
-			Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+			Debug.showErrorWindow(Localization.get("error.database.connection"));
 		}
 		return books;
 	}
@@ -200,11 +201,11 @@ public class DataBaseBooks {
 				}
 
 				Debug.error("Błąd przy usuwaniu książki: " + bookId, e);
-				Debug.showErrorWindow("Wystąpił problem z bazą danych. Skontaktuj się z Administratorem");
+				Debug.showErrorWindow(Localization.get("error.database"));
 			}
 		} catch (SQLException e) {
 			Debug.error("Błąd przy usuwaniu książki: ", e);
-			Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+			Debug.showErrorWindow(Localization.get("error.database.connection"));
 		}
 	}
 	// Uwaga: przed wywołaniem tej metody należy usunąć powiązane wypożyczenia
@@ -285,11 +286,11 @@ public class DataBaseBooks {
 				}
 
 				Debug.error("Błąd przy aktualizowaniu książki: " + book.getTitle(), e);
-				Debug.showErrorWindow("Wystąpił problem z bazą danych. Skontaktuj się z Administratorem");
+				Debug.showErrorWindow(Localization.get("error.database"));
 			}
 		} catch (SQLException e) {
 			Debug.error("Błąd przy aktualizowaniu książki: ", e);
-			Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+			Debug.showErrorWindow(Localization.get("error.database.connection"));
 		}
 	}
 
@@ -321,7 +322,7 @@ public class DataBaseBooks {
 			}
 		} catch (SQLException e) {
 			Debug.error("Błąd przy zaciąganiu autorów książki: ", e);
-			Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+			Debug.showErrorWindow(Localization.get("error.database.connection"));
 		}
 		return authors;
 	}

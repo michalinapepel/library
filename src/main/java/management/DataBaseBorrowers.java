@@ -2,6 +2,7 @@ package management;
 
 import app.AppConfig;
 import app.Debug;
+import app.Localization;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -43,7 +44,7 @@ public class DataBaseBorrowers {
             statement.executeUpdate();
         } catch (SQLException e) {
         	Debug.error("Błąd przy dodawaniu wypożyczającego: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
     }
 
@@ -76,7 +77,7 @@ public class DataBaseBorrowers {
             }
         } catch (SQLException e) {
         	Debug.error("Błąd przy zaciąganiu wypożyczających: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
         return borrowers;
     }
@@ -95,7 +96,7 @@ public class DataBaseBorrowers {
             statement.executeUpdate();
         } catch (SQLException e) {
         	Debug.error("Błąd przy usuwaniu wypożyczającego: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
     }
 
@@ -125,7 +126,7 @@ public class DataBaseBorrowers {
             statement.executeUpdate();
         } catch (SQLException e) {
         	Debug.error("Błąd przy aktualizacji wypożyczającego: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
     }
 
@@ -153,7 +154,7 @@ public class DataBaseBorrowers {
             }
         } catch (SQLException e) {
         	Debug.error("Błąd przy ustalaniu kolejnego wolnego numeru karty: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
         return AppConfig.MIN_CARD_NUMBER;
     }
@@ -189,7 +190,7 @@ public class DataBaseBorrowers {
             }
         } catch (SQLException e) {
         	Debug.error("Błąd przy zaciąganiu wypożyczającego z użyciem numeru karty: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
         return null;
     }

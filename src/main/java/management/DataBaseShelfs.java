@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.Debug;
+import app.Localization;
 import domain.Shelf;
 
 /**
@@ -36,7 +37,7 @@ public class DataBaseShelfs {
             statement.executeUpdate();
         } catch (SQLException e) {
         	Debug.error("Błąd przy dodawaniu półki: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
     }
 
@@ -67,7 +68,7 @@ public class DataBaseShelfs {
             }
         } catch (SQLException e) {
         	Debug.error("Błąd przy zaciąganiu półek: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
         return shelves;
     }
@@ -88,7 +89,7 @@ public class DataBaseShelfs {
             }
         } catch (SQLException e) {
         	Debug.error("Błąd przy zaciąganiu książek z półki: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
         return false;
     }
@@ -106,7 +107,7 @@ public class DataBaseShelfs {
             statement.executeUpdate();
         } catch (SQLException e) {
         	Debug.error("Błąd przy usuwaniu półki: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
     }
 
@@ -130,7 +131,7 @@ public class DataBaseShelfs {
             statement.executeUpdate();
         } catch (SQLException e) {
         	Debug.error("Błąd przy aktualizowaniu półki: ", e);
-            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
+        	Debug.showErrorWindow(Localization.get("error.database.connection"));
         }
     }
 }

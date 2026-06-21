@@ -58,7 +58,7 @@ public class DatabaseConnection {
 			}
 		} catch (IOException ex) {
 			Debug.error("Błąd przy zaciąganiu pliku konfiguracyjnego połączenia z bazą danych: ", ex);
-            Debug.showErrorWindow("Wystąpił problem z plikiem konfiguracyjnym bazy danych. Skontaktuj się z Administratorem");
+			Debug.showErrorWindow(Localization.get("error.db.properties.loadError"));
 			throw new RuntimeException(Localization.get("error.db.properties.loadError"), ex);
 		}
 	}
