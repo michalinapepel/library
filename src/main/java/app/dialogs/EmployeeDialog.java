@@ -12,8 +12,8 @@ import java.awt.*;
 public class EmployeeDialog extends JDialog implements LanguageChangeListener {
 
     private String code = null;
-    private JButton ok;
-    private JButton cancel;
+    private final JButton ok;
+    private final JButton cancel;
 
     public EmployeeDialog(JFrame parent) {
         super(parent, Localization.get("dialog.employee.title"), true);

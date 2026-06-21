@@ -24,10 +24,6 @@ import java.util.stream.Collectors;
  * Okno główne do obsługi dla wypożyczającego
  */
 public class MainWindowBorrower extends JFrame implements LanguageChangeListener {
-    /** Pasek narzędziowy ze zmianą języka i wylogowaniem. */
-    private final ToolBar toolbar;
-    /** Tabela prezentująca wypożyczenia czytelnika. */
-    private final JTable loansTable;
     /** Model danych tabeli wypożyczeń. */
     private final DefaultTableModel loansTableModel;
     /** Przycisk otwierający okno wypożyczenia książki. */
@@ -54,7 +50,8 @@ public class MainWindowBorrower extends JFrame implements LanguageChangeListener
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        toolbar = new ToolBar(true);
+        /** Pasek narzędziowy ze zmianą języka i wylogowaniem. */
+        ToolBar toolbar = new ToolBar(true);
 
         // Borrower info — same row as toolbar icons
         JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 6));
@@ -84,7 +81,8 @@ public class MainWindowBorrower extends JFrame implements LanguageChangeListener
                 return false;
             }
         };
-        loansTable = new JTable(loansTableModel);
+        /** Tabela prezentująca wypożyczenia czytelnika. */
+        JTable loansTable = new JTable(loansTableModel);
         loansTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollPane = new JScrollPane(loansTable);
 

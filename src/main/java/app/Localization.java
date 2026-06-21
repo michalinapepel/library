@@ -63,15 +63,6 @@ public final class Localization {
     }
 
     /**
-     * Zwraca aktualnie wybrany język aplikacji.
-     *
-     * @return bieżący locale
-     */
-    public static Locale getCurrentLocale() {
-        return currentLocale;
-    }
-
-    /**
      * Rejestruje słuchacza, który będzie powiadamiany o zmianie języka.
      *
      * @param listener słuchacz do zarejestrowania
@@ -80,14 +71,6 @@ public final class Localization {
         listeners.add(listener);
     }
 
-    /**
-     * Wyrejestrowuje słuchacza zmiany języka.
-     *
-     * @param listener słuchacz do usunięcia
-     */
-    public static void removeLanguageChangeListener(LanguageChangeListener listener) {
-        listeners.remove(listener);
-    }
 }
 
 

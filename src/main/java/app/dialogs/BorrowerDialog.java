@@ -12,8 +12,8 @@ import java.awt.*;
 public class BorrowerDialog extends JDialog implements LanguageChangeListener {
 
     private String id = null;
-    private JButton ok;
-    private JButton cancel;
+    private final JButton ok;
+    private final JButton cancel;
 
     public BorrowerDialog(JFrame parent) {
         super(parent, Localization.get("dialog.borrower.title"), true);

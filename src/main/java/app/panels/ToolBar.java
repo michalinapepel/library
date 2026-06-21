@@ -1,7 +1,6 @@
 package app.panels;
 
 import app.*;
-import app.dialogs.StartDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,10 +24,8 @@ public class ToolBar extends JPanel implements LanguageChangeListener {
      */
     private final JButton enButton;
     private final JButton logoutButton;
-    private final boolean canLogout;
 
     public ToolBar(boolean canLogout) {
-        this.canLogout = canLogout;
         setLayout(new FlowLayout(FlowLayout.RIGHT));
 
 

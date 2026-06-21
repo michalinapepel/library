@@ -71,6 +71,7 @@ public class DataBaseAuthors {
                         resultSet.getString("nationality")));
             }
         } catch (SQLException e) {
+            //noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
         return authors;

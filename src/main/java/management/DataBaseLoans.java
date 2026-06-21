@@ -149,52 +149,6 @@ public class DataBaseLoans {
 
 
     /**
-     * Pobiera aktywne (niezwrócone) wypożyczenia danego czytelnika.
-     *
-     * @param borrowerId identyfikator czytelnika
-     * @return lista aktywnych wypożyczeń posortowana według planowanej daty zwrotu;
-     *         pusta lista, jeśli brak danych
-     */
-    public List<Loan> getActiveLoansByBorrower(int borrowerId) {
-        List<Loan> loans = new ArrayList<>();
-        String sql = """
-                SELECT l.id, l.loan_date, l.due_date,
-                       b.id AS book_id, b.title, b.publisher, b.publication_year, b.isbn, b.shelf_id,
-                       br.id AS borrower_id, br.first_name, br.last_name,
-                       br.addresscity, br.addressstreet, br.addressnumber, br.addresszip, br.card_number
-                FROM loan l
-                INNER JOIN book b ON l.book_id = b.id
-                INNER JOIN borrower br ON l.borrower_id = br.id
-                WHERE l.borrower_id = ? AND l.return_date IS NULL
-                ORDER BY l.due_date
-                """;
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, borrowerId);
-            try (ResultSet rs = statement.executeQuery()) {
-                while (rs.next()) {
-                    Book book = new Book(rs.getInt("book_id"), rs.getString("title"),
-                            rs.getString("publisher"), rs.getInt("publication_year"),
-                            rs.getString("isbn"),
-                            rs.getObject("shelf_id") == null ? null : rs.getInt("shelf_id"));
-                    Borrower borrower = new Borrower(rs.getInt("borrower_id"),
-                            rs.getString("first_name"), rs.getString("last_name"),
-                            rs.getString("addresscity"), rs.getString("addressstreet"),
-                            rs.getInt("addressnumber"), rs.getString("addresszip"),
-                            rs.getInt("card_number"));
-                    Loan loan = new Loan(rs.getInt("id"), book, borrower,
-                            rs.getDate("loan_date").toLocalDate(),
-                            rs.getDate("due_date").toLocalDate());
-                    loans.add(loan);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return loans;
-    }
-
-    /**
      * Aktualizuje dane istniejącego wypożyczenia.
      *
      * @param loan wypożyczenie z zaktualizowanymi danymi (musi zawierać poprawny identyfikator)
@@ -221,26 +175,6 @@ public class DataBaseLoans {
             }
 
             statement.setInt(6, loan.getId());
-            statement.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Oznacza wypożyczenie jako zwrócone, ustawiając datę zwrotu na bieżący dzień.
-     *
-     * @param loanId identyfikator wypożyczenia do zwrotu
-     */
-    public void returnBook(int loanId) {
-        String sql = "UPDATE loan SET return_date = ? WHERE id = ?";
-
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setDate(1, java.sql.Date.valueOf(LocalDate.now()));
-            statement.setInt(2, loanId);
             statement.executeUpdate();
 
         } catch (SQLException e) {

@@ -15,7 +15,7 @@ public class Section extends AbstractLocation {
      * Klucz lokalizacji działu używany do pobrania nazwy w bieżącym języku
      */
 
-    private String key;
+    private final String key;
 
     /**
      * Tworzy nowy obiekt działu z podanym identyfikatorem i kluczem lokalizacji.
@@ -34,13 +34,6 @@ public class Section extends AbstractLocation {
      * @return klucz lokalizacji
      */
     public String getKey() { return key; }
-
-    /**
-     * Ustawia klucz lokalizacji działu.
-     *
-     * @param key klucz lokalizacji
-     */
-    public void setKey(String key) { this.key = key; }
 
     /**
      * Zwraca nazwę działu przetłumaczoną na bieżący język.

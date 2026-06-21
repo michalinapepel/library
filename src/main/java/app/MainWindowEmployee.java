@@ -25,7 +25,6 @@ import java.awt.*;
  */
 public class MainWindowEmployee extends JFrame implements LanguageChangeListener {
 
-    private final ToolBar toolbar;
     private final DataBaseBooks dbBooks;
     private final DataBaseAuthors dbAuthors;
     private final DataBaseBorrowers dbBorrowers;
@@ -42,11 +41,6 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
     private final JButton loansButton;
     private final JButton addLoanButton;
     private final JButton managementButton;
-    private final JPanel northPanel;
-    private final JPanel centerPanel;
-    private final JPanel centerPanel2;
-    private final JPanel southPanel;
-    private final JPanel managementPanel;
 
     /**
      * Tworzy okno główne pracownika wraz z przyciskami obsługi
@@ -110,32 +104,32 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
         });
         managementButton.setPreferredSize(new Dimension(500, 50));
 
-        northPanel = new JPanel();
+        JPanel northPanel = new JPanel();
         northPanel.setLayout(new BorderLayout());
         northPanel.add(booksButton, BorderLayout.WEST);
         northPanel.add(addBookButton, BorderLayout.CENTER);
 
-        centerPanel = new JPanel();
+        JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BorderLayout());
         centerPanel.add(authorsButton, BorderLayout.WEST);
         centerPanel.add(addAuthorButton, BorderLayout.CENTER);
 
-        centerPanel2 = new JPanel();
+        JPanel centerPanel2 = new JPanel();
         centerPanel2.setLayout(new BorderLayout());
         centerPanel2.add(loansButton, BorderLayout.WEST);
         centerPanel2.add(addLoanButton, BorderLayout.CENTER);
 
-        southPanel = new JPanel();
+        JPanel southPanel = new JPanel();
         southPanel.setLayout(new BorderLayout());
         southPanel.add(borrowersButton, BorderLayout.WEST);
         southPanel.add(addBorrowerButton, BorderLayout.CENTER);
 
-        managementPanel = new JPanel();
+        JPanel managementPanel = new JPanel();
         managementPanel.setLayout(new BorderLayout());
         managementPanel.add(managementButton, BorderLayout.SOUTH);
 
 
-        toolbar = new ToolBar(true);
+        ToolBar toolbar = new ToolBar(true);
         add(toolbar);
         add(northPanel);
         add(centerPanel);

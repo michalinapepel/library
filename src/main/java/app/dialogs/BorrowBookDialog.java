@@ -20,7 +20,6 @@ public class BorrowBookDialog extends JDialog implements LanguageChangeListener 
     private final List<Book> books = new ArrayList<>();
     private final List<Book> availableBooks = new ArrayList<>();
     private final Shelf[] shelves;
-    private final Bookcase[] bookcases;
 
     private JTable booksTable;
     private JTextField searchField;
@@ -35,7 +34,6 @@ public class BorrowBookDialog extends JDialog implements LanguageChangeListener 
     public BorrowBookDialog(JFrame parent, Shelf[] shelves, Bookcase[] bookcases) {
         super(parent, Localization.get("dialog.add.loan.title"), true);
         this.shelves = shelves;
-        this.bookcases = bookcases;
         Localization.addLanguageChangeListener(this);
         initComponents();
         setSize(850, 500);

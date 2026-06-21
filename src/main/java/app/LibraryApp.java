@@ -48,7 +48,7 @@ public class LibraryApp {
                 EmployeeDialog e = new EmployeeDialog(null);
                 String code = e.showDialog();
                 if (code == null) return;
-                else if (code.equals("")) {
+                else if (code.isEmpty()) {
                     MainWindowEmployee window = new MainWindowEmployee();
                     window.setVisible(true);
                 }

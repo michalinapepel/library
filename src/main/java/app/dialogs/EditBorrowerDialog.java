@@ -139,7 +139,7 @@ public class EditBorrowerDialog extends JDialog implements LanguageChangeListene
             addressCityField.setText(originalBorrower.getAddressCity() != null ? originalBorrower.getAddressCity() : "");
             addressStreetField.setText(originalBorrower.getAddressStreet() != null ? originalBorrower.getAddressStreet() : "");
             if (originalBorrower.getAddressNumber() != null) {
-                addressNumberSpinner.setValue(originalBorrower.getAddressNumber().intValue());
+                addressNumberSpinner.setValue(originalBorrower.getAddressNumber());
             }
             addressZipField.setText(originalBorrower.getAddressZip() != null ? originalBorrower.getAddressZip() : "");
             cardNumberSpinner.setValue(originalBorrower.getCardNumber());

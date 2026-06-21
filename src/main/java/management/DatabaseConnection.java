@@ -63,9 +63,7 @@ public class DatabaseConnection {
 
 	/**
 	 * Zwraca połączenie do bazy danych
-	 * @return
-	 * @throws SQLException
-	 */
+     */
 	public static Connection getConnection() throws SQLException {
 		return DriverManager.getConnection(url, uname, pass);
 	}

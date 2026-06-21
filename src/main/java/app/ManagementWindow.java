@@ -16,7 +16,6 @@ import java.awt.*;
  * Okno do zarządzania biblioteką dla pracownika
  */
 public class ManagementWindow extends JFrame implements LanguageChangeListener{
-    private final ToolBar toolbar;
     private final DataBaseSections dbSections;
     private final DataBaseBookcase dbBookcases;
     private final DataBaseShelfs dbShelves;
@@ -27,10 +26,6 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
     private final JButton shelvesButton;
     private final JButton addShelfButton;
     private final JButton backButton;
-    private final JPanel menu;
-    private final JPanel northPanel;
-    private final JPanel centerPanel;
-    private final JPanel southPanel;
 
     /**
      * Tworzy okno zarządzania biblioteką wraz z przyciskami obsługi
@@ -74,26 +69,26 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
         addShelfButton.setForeground(new Color(0,153,76));
         addShelfButton.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 25));
 
-        toolbar = new ToolBar(false);
+        ToolBar toolbar = new ToolBar(false);
         backButton = new JButton(Localization.get("button.back"));
         backButton.addActionListener(e -> dispose());
 
-        menu = new JPanel();
+        JPanel menu = new JPanel();
         menu.setLayout(new BorderLayout());
         menu.add(toolbar, BorderLayout.EAST);
         menu.add(backButton, BorderLayout.WEST);
 
-        northPanel = new JPanel();
+        JPanel northPanel = new JPanel();
         northPanel.setLayout(new BorderLayout());
         northPanel.add(sectionsButton, BorderLayout.WEST);
         northPanel.add(addSectionButton, BorderLayout.CENTER);
 
-        centerPanel = new JPanel();
+        JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BorderLayout());
         centerPanel.add(bookcasesButton, BorderLayout.WEST);
         centerPanel.add(addBookcaseButton, BorderLayout.CENTER);
 
-        southPanel = new JPanel();
+        JPanel southPanel = new JPanel();
         southPanel.setLayout(new BorderLayout());
         southPanel.add(shelvesButton, BorderLayout.WEST);
         southPanel.add(addShelfButton, BorderLayout.CENTER);
