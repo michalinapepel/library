@@ -7,6 +7,7 @@ import management.DataBaseSections;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Dialog.ModalityType;
 
 /**
  * Klasa okna dialogowego edytowania działu (sekcji)
@@ -21,8 +22,8 @@ public class EditSectionDialog extends JDialog implements LanguageChangeListener
     private JButton ok;
     private JButton cancel;
 
-    public EditSectionDialog(JFrame parent, Section section) {
-        super(parent, Localization.get("dialog.edit.section.title"), true);
+    public EditSectionDialog(Window parent, Section section) {
+        super(parent, Localization.get("dialog.edit.section.title"), ModalityType.APPLICATION_MODAL);
         this.originalSection = section;
         this.dbSections = new DataBaseSections();
         Localization.addLanguageChangeListener(this);

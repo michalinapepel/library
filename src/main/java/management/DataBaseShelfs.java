@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.Debug;
 import domain.Shelf;
 
 /**
@@ -34,7 +35,8 @@ public class DataBaseShelfs {
             statement.setString(2, shelf.getName());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy dodawaniu półki: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
     }
 
@@ -64,7 +66,8 @@ public class DataBaseShelfs {
                 shelves.add(shelf);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy zaciąganiu półek: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
         return shelves;
     }
@@ -84,7 +87,8 @@ public class DataBaseShelfs {
                 if (rs.next()) return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy zaciąganiu książek z półki: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
         return false;
     }
@@ -101,7 +105,8 @@ public class DataBaseShelfs {
             statement.setInt(1, shelfId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy usuwaniu półki: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
     }
 
@@ -124,7 +129,8 @@ public class DataBaseShelfs {
             statement.setInt(3, shelf.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy aktualizowaniu półki: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
     }
 }

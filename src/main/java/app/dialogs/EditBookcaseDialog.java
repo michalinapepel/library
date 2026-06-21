@@ -7,6 +7,7 @@ import management.DataBaseBookcase;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Dialog.ModalityType;
 
 /**
  * Klasa okna dialogowego edytowania regału
@@ -20,8 +21,8 @@ public class EditBookcaseDialog extends JDialog implements LanguageChangeListene
     private JButton ok;
     private JButton cancel;
 
-    public EditBookcaseDialog(JFrame parent, Bookcase bookcase) {
-        super(parent, Localization.get("dialog.edit.bookcase.title"), true);
+    public EditBookcaseDialog(Window parent, Bookcase bookcase) {
+        super(parent, Localization.get("dialog.edit.bookcase.title"), ModalityType.APPLICATION_MODAL);
         this.originalBookcase = bookcase;
         this.dbBookcase = new DataBaseBookcase();
         Localization.addLanguageChangeListener(this);

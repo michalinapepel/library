@@ -100,7 +100,7 @@ public class ListBookcasesDialog extends JDialog implements LanguageChangeListen
          }
 
           Bookcase selectedBookcase = filteredBookcases.get(selectedRow);
-          EditBookcaseDialog dialog = new EditBookcaseDialog((JFrame) SwingUtilities.getWindowAncestor(this), selectedBookcase);
+          EditBookcaseDialog dialog = new EditBookcaseDialog( SwingUtilities.getWindowAncestor(this), selectedBookcase);
           Bookcase editedBookcase = dialog.showDialog();
 
           if (editedBookcase != null) {

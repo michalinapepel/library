@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.Debug;
 import domain.Author;
 
 /**
@@ -42,7 +43,8 @@ public class DataBaseAuthors {
                 if (keys.next()) author.setId(keys.getInt(1));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy dodawaniu autora: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
     }
 
@@ -71,8 +73,8 @@ public class DataBaseAuthors {
                         resultSet.getString("nationality")));
             }
         } catch (SQLException e) {
-            //noinspection CallToPrintStackTrace
-            e.printStackTrace();
+        	Debug.error("Błąd przy zaciąganiu autorów: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
         return authors;
     }
@@ -85,7 +87,7 @@ public class DataBaseAuthors {
     public void deleteAuthor(int authorId) {
         String deleteRelations = "DELETE FROM book_author WHERE author_id = ?";
         String deleteAuthor = "DELETE FROM authors WHERE id = ?";
-        try (Connection connection = DatabaseConnection.getConnection();
+        try (Connection connection = DatabaseConnection.getConnection()){try(
              PreparedStatement stmt1 = connection.prepareStatement(deleteRelations);
              PreparedStatement stmt2 = connection.prepareStatement(deleteAuthor)) {
 
@@ -93,8 +95,19 @@ public class DataBaseAuthors {
             stmt1.executeUpdate();
             stmt2.setInt(1, authorId);
             stmt2.executeUpdate();
+        }catch (SQLException e) {
+        	try {
+				connection.rollback();
+			} catch (SQLException rollbackException) {
+				Debug.error("Błąd podczas rollback przy usuwaniu autora.", rollbackException);
+			}
+
+			Debug.error("Błąd przy usuwaniu autora: " + authorId, e);
+			Debug.showErrorWindow("Wystąpił problem z bazą danych. Skontaktuj się z Administratorem");
+        }
         } catch (SQLException e) {
-            e.printStackTrace();
+            Debug.error("Błąd przy usuwaniu autora: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
     }
 
@@ -119,7 +132,8 @@ public class DataBaseAuthors {
             statement.setInt(5, author.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy aktualizowaniu autora: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
     }
 }

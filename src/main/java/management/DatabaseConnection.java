@@ -1,6 +1,7 @@
 package management;
 
 import app.AppConfig;
+import app.Debug;
 import app.Localization;
 
 import java.sql.Connection;
@@ -56,7 +57,8 @@ public class DatabaseConnection {
 				throw new RuntimeException(Localization.get("error.db.properties.missing"));
 			}
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			Debug.error("Błąd przy zaciąganiu pliku konfiguracyjnego połączenia z bazą danych: ", ex);
+            Debug.showErrorWindow("Wystąpił problem z plikiem konfiguracyjnym bazy danych. Skontaktuj się z Administratorem");
 			throw new RuntimeException(Localization.get("error.db.properties.loadError"), ex);
 		}
 	}

@@ -92,7 +92,7 @@ public class ListShelvesDialog extends JDialog implements LanguageChangeListener
          }
 
          Shelf selectedShelf = filteredShelves.get(selectedRow);
-          EditShelfDialog dialog = new EditShelfDialog((JFrame) SwingUtilities.getWindowAncestor(this), selectedShelf, bookcases);
+          EditShelfDialog dialog = new EditShelfDialog(SwingUtilities.getWindowAncestor(this), selectedShelf, bookcases);
           Shelf editedShelf = dialog.showDialog();
 
           if (editedShelf != null) {

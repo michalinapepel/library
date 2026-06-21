@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.Debug;
 import domain.Bookcase;
 
 /**
@@ -30,7 +31,8 @@ public class DataBaseBookcase {
             statement.setString(1, bookcase.getName());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy dodawaniu regału: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
     }
 
@@ -56,7 +58,8 @@ public class DataBaseBookcase {
                         resultSet.getString("name")));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy zaciąganiu regałów: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
         return bookcases;
     }
@@ -80,7 +83,8 @@ public class DataBaseBookcase {
                 if (rs.next()) return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy sprawdzaniu zawartości półki: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
         return false;
     }
@@ -95,7 +99,7 @@ public class DataBaseBookcase {
     public void deleteBookcase(int bookcaseId) {
         String deleteShelves = "DELETE FROM shelfs WHERE bookcase_id = ?";
         String deleteBookcase = "DELETE FROM bookcase WHERE id = ?";
-        try (Connection connection = DatabaseConnection.getConnection();
+        try (Connection connection = DatabaseConnection.getConnection()){try(
              PreparedStatement stmt1 = connection.prepareStatement(deleteShelves);
              PreparedStatement stmt2 = connection.prepareStatement(deleteBookcase)) {
 
@@ -103,8 +107,19 @@ public class DataBaseBookcase {
             stmt1.executeUpdate();
             stmt2.setInt(1, bookcaseId);
             stmt2.executeUpdate();
+        }catch(SQLException e) {
+        	try {
+				connection.rollback();
+			} catch (SQLException rollbackException) {
+				Debug.error("Błąd podczas rollback przy usuwaniu regału", rollbackException);
+			}
+
+			Debug.error("Błąd przy usuwaniu regału: " + bookcaseId, e);
+			Debug.showErrorWindow("Wystąpił problem z bazą danych. Skontaktuj się z Administratorem");
+        }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy usuwaniu regału: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
     }
 
@@ -126,7 +141,8 @@ public class DataBaseBookcase {
             statement.setInt(2, bookcase.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy aktualizowaniu regału: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
     }
 }

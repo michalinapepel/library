@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.Debug;
+
 /**
  * Zapewnia dostęp do danych wypożyczeń w bazie danych.
  * <p>
@@ -46,7 +48,8 @@ public class DataBaseLoans {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy dodawaniu wypożyczenia: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
     }
 
@@ -93,7 +96,8 @@ public class DataBaseLoans {
                 loans.add(loan);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy zaciąganiu wypożyczeń: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
         return loans;
     }
@@ -142,7 +146,8 @@ public class DataBaseLoans {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy zaciąganiu wypożyczenia za pomocą id wypożyczającego: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
         return loans;
     }
@@ -178,7 +183,8 @@ public class DataBaseLoans {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy aktualizowaniu wypożyczenia: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
     }
 
@@ -197,7 +203,8 @@ public class DataBaseLoans {
                 if (rs.next()) return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy sprawdzaniu, czy wypożyczający ma aktywne wypożyczenia: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
         return false;
     }
@@ -217,7 +224,8 @@ public class DataBaseLoans {
                 if (rs.next()) return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy sprawdzaniu, czy wypożyczający ma jakieś wypożyczenia: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
         return false;
     }
@@ -237,7 +245,8 @@ public class DataBaseLoans {
             statement.setInt(1, borrowerId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy usuwaniu wypożyczeń wypożyczającego: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
     }
 
@@ -256,7 +265,8 @@ public class DataBaseLoans {
                 if (rs.next()) return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy sprawdzaniu wypożyczeń książki: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
         return false;
     }
@@ -276,7 +286,8 @@ public class DataBaseLoans {
             statement.setInt(1, bookId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy usuwaniu wypożyczeń książki: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
     }
 
@@ -295,7 +306,8 @@ public class DataBaseLoans {
                 if (rs.next()) return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy sprawdzaniu, czy książka jest wypożyczona: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
         return false;
     }
@@ -313,7 +325,8 @@ public class DataBaseLoans {
              ResultSet rs = statement.executeQuery()) {
             while (rs.next()) ids.add(rs.getInt("book_id"));
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy zaciąganiu wypożyczonych książek: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
         return ids;
     }
@@ -333,7 +346,8 @@ public class DataBaseLoans {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+        	Debug.error("Błąd przy usuwaniu wypożyczenia: ", e);
+            Debug.showErrorWindow("Wystąpił problem z połączeniem z bazą danych. Skontaktuj się z Administratorem");
         }
     }
 }

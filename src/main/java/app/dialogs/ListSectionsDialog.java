@@ -90,7 +90,7 @@ public class ListSectionsDialog extends JDialog implements LanguageChangeListene
          }
 
          Section selectedSection = filteredSections.get(selectedRow);
-          EditSectionDialog dialog = new EditSectionDialog((JFrame) SwingUtilities.getWindowAncestor(this), selectedSection);
+          EditSectionDialog dialog = new EditSectionDialog(SwingUtilities.getWindowAncestor(this), selectedSection);
           Section editedSection = dialog.showDialog();
 
           if (editedSection != null) {

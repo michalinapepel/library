@@ -8,6 +8,7 @@ import management.DataBaseShelfs;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Dialog.ModalityType;
 
 /**
  * Klasa okna dialogowego edytowania półki
@@ -23,8 +24,8 @@ public class EditShelfDialog extends JDialog implements LanguageChangeListener {
     private JButton ok;
     private JButton cancel;
 
-    public EditShelfDialog(JFrame parent, Shelf shelf, Bookcase[] bookcases) {
-        super(parent, Localization.get("dialog.edit.shelf.title"), true);
+    public EditShelfDialog(Window parent, Shelf shelf, Bookcase[] bookcases) {
+        super(parent, Localization.get("dialog.edit.shelf.title"), ModalityType.APPLICATION_MODAL);
         this.originalShelf = shelf;
         this.bookcases = bookcases;
         this.dbShelves = new DataBaseShelfs();
