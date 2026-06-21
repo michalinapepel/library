@@ -14,6 +14,7 @@ public class AddSectionDialog extends JDialog implements LanguageChangeListener 
 
     private Section result = null;
     private JTextField nameField;
+    private JTextField descriptionField;
     private JButton ok;
     private JButton cancel;
 
@@ -21,7 +22,7 @@ public class AddSectionDialog extends JDialog implements LanguageChangeListener 
         super(parent, Localization.get("dialog.add.section.title"), true);
         Localization.addLanguageChangeListener(this);
         initComponents();
-        setSize(400, 150);
+        setSize(400, 180);
         setLocationRelativeTo(parent);
     }
 
@@ -39,9 +40,17 @@ public class AddSectionDialog extends JDialog implements LanguageChangeListener 
         nameField = new JTextField(20);
         add(nameField, gbc);
 
-        // Buttons
+        // Description
         gbc.gridx = 0;
         gbc.gridy = 1;
+        add(new JLabel(Localization.get("label.description")), gbc);
+        gbc.gridx = 1;
+        descriptionField = new JTextField(20);
+        add(descriptionField, gbc);
+
+        // Buttons
+        gbc.gridx = 0;
+        gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -52,6 +61,7 @@ public class AddSectionDialog extends JDialog implements LanguageChangeListener 
 
         ok.addActionListener(e -> {
             String sectionKey = nameField.getText().trim();
+            String sectionDescription = descriptionField.getText().trim();
 
             if (sectionKey.isEmpty()) {
                 JOptionPane.showMessageDialog(this, Localization.get("validation.name.required"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
@@ -61,8 +71,12 @@ public class AddSectionDialog extends JDialog implements LanguageChangeListener 
                 JOptionPane.showMessageDialog(this, Localization.get("validation.name.maxLength"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
+            if (sectionDescription.length() > 100) {
+                JOptionPane.showMessageDialog(this, Localization.get("validation.name.maxLength"), Localization.get("message.validation.error"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-            result = new Section(0, sectionKey);
+            result = new Section(0, sectionKey, sectionDescription);
             dispose();
         });
 

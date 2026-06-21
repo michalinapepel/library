@@ -17,6 +17,7 @@ public class EditSectionDialog extends JDialog implements LanguageChangeListener
     private final Section originalSection;
     private final DataBaseSections dbSections;
     private JTextField nameField;
+    private JTextField descriptionField;
     private JButton ok;
     private JButton cancel;
 
@@ -27,7 +28,7 @@ public class EditSectionDialog extends JDialog implements LanguageChangeListener
         Localization.addLanguageChangeListener(this);
         initComponents();
         loadSectionData();
-        setSize(400, 150);
+        setSize(400, 180);
         setLocationRelativeTo(parent);
     }
 
@@ -45,9 +46,17 @@ public class EditSectionDialog extends JDialog implements LanguageChangeListener
         nameField = new JTextField(20);
         add(nameField, gbc);
 
-        // Buttons
+        // Description
         gbc.gridx = 0;
         gbc.gridy = 1;
+        add(new JLabel(Localization.get("label.description")), gbc);
+        gbc.gridx = 1;
+        descriptionField = new JTextField(20);
+        add(descriptionField, gbc);
+
+        // Buttons
+        gbc.gridx = 0;
+        gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -56,7 +65,7 @@ public class EditSectionDialog extends JDialog implements LanguageChangeListener
         ok = new JButton(Localization.get("button.ok"));
         cancel = new JButton(Localization.get("button.cancel"));
         ok.addActionListener(e -> {
-            result = new Section(originalSection.getId(), nameField.getText().trim());
+            result = new Section(originalSection.getId(), nameField.getText().trim(), descriptionField.getText().trim());
             dbSections.updateSection(result);
             dispose();
         });
@@ -74,6 +83,7 @@ public class EditSectionDialog extends JDialog implements LanguageChangeListener
     private void loadSectionData() {
         if (originalSection != null) {
             nameField.setText(originalSection.getKey() != null ? originalSection.getKey() : "");
+            descriptionField.setText(originalSection.getDescription() != null ? originalSection.getDescription() : "");
         }
     }
 

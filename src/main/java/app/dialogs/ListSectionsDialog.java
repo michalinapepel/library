@@ -48,7 +48,8 @@ public class ListSectionsDialog extends JDialog implements LanguageChangeListene
 
         // Table
         String[] columnNames = {
-            Localization.get("label.name")
+            Localization.get("label.name"),
+                Localization.get("label.description")
         };
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -143,7 +144,8 @@ public class ListSectionsDialog extends JDialog implements LanguageChangeListene
 
          for (Section section : filteredSections) {
              Object[] row = {
-                 section.getName()
+                 section.getName(),
+                     section.getDescription()
              };
              model.addRow(row);
          }

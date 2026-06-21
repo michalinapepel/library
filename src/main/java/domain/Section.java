@@ -14,8 +14,12 @@ public class Section extends AbstractLocation {
     /**
      * Klucz lokalizacji działu używany do pobrania nazwy w bieżącym języku
      */
-
     private final String key;
+
+    /**
+     * Opis działu
+     */
+    private String description;
 
     /**
      * Tworzy nowy obiekt działu z podanym identyfikatorem i kluczem lokalizacji.
@@ -23,10 +27,19 @@ public class Section extends AbstractLocation {
      * @param id  unikalny identyfikator działu
      * @param key klucz lokalizacji działu
      */
+    public Section(int id, String key, String description) {
+        this.id = id;
+        this.key = key;
+        this.description = description;
+    }
+
+    // DO USUNIĘCIA
     public Section(int id, String key) {
         this.id = id;
         this.key = key;
+        this.description = description;
     }
+
 
     /**
      * Zwraca klucz lokalizacji działu.
@@ -56,6 +69,20 @@ public class Section extends AbstractLocation {
      * @param id unikalny identyfikator działu
      */
     public void setId(int id) { this.id = id; }
+
+    /**
+     * Zwraca opis działu.
+     *
+     * @return opis działu
+     */
+    public String getDescription() { return description; }
+
+    /**
+     * Ustawia opis działu.
+     *
+     * @param description opis działu
+     */
+    public void setDescription(String description) { this.description = description; }
 
     /**
      * Zwraca tekstową reprezentację działu, czyli jego nazwę w bieżącym języku.
