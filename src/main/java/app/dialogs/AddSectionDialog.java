@@ -18,8 +18,8 @@ public class AddSectionDialog extends JDialog implements LanguageChangeListener 
     private JButton ok;
     private JButton cancel;
 
-    public AddSectionDialog(JFrame parent) {
-        super(parent, Localization.get("dialog.add.section.title"), true);
+    public AddSectionDialog(Window parent) {
+        super(parent, Localization.get("dialog.add.section.title"), ModalityType.APPLICATION_MODAL);
         Localization.addLanguageChangeListener(this);
         initComponents();
         setSize(400, 180);

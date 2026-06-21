@@ -15,7 +15,7 @@ import java.awt.*;
 /**
  * Okno do zarządzania biblioteką dla pracownika
  */
-public class ManagementWindow extends JFrame implements LanguageChangeListener{
+public class ManagementWindow extends JDialog implements LanguageChangeListener{
     private final DataBaseSections dbSections;
     private final DataBaseBookcase dbBookcases;
     private final DataBaseShelfs dbShelves;
@@ -31,7 +31,8 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
      * Tworzy okno zarządzania biblioteką wraz z przyciskami obsługi
      * działów, regałów i półek.
      */
-    public ManagementWindow() {
+    public ManagementWindow(Window parent) {
+    	super(parent, Localization.get("app.title"), ModalityType.APPLICATION_MODAL);
         Localization.addLanguageChangeListener(this);
 
         dbSections = new DataBaseSections();
@@ -39,7 +40,7 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
         dbShelves = new DataBaseShelfs();
 
         setTitle(Localization.get("app.title"));
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new GridLayout(5, 1, 50, 10));
 
         sectionsButton = new JButton(Localization.get("button.sections"));
@@ -100,7 +101,7 @@ public class ManagementWindow extends JFrame implements LanguageChangeListener{
         add(southPanel);
 
         setSize(600, 300);
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(parent);
 
     }
 

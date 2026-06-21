@@ -28,8 +28,8 @@ public class ListShelvesDialog extends JDialog implements LanguageChangeListener
      private JButton edit;
      private JButton delete;
 
-    public ListShelvesDialog(JFrame parent) {
-        super(parent, Localization.get("dialog.list.shelves.title"), true);
+    public ListShelvesDialog(Window parent) {
+        super(parent, Localization.get("dialog.list.shelves.title"), ModalityType.APPLICATION_MODAL);
         Localization.addLanguageChangeListener(this);
         initComponents();
         setSize(600, 400);

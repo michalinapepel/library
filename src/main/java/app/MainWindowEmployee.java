@@ -99,7 +99,7 @@ public class MainWindowEmployee extends JFrame implements LanguageChangeListener
 
         managementButton = new JButton(Localization.get("button.management"));
         managementButton.addActionListener(e -> {
-            ManagementWindow window = new ManagementWindow();
+            ManagementWindow window = new ManagementWindow(this);
             window.setVisible(true);
         });
         managementButton.setPreferredSize(new Dimension(500, 50));

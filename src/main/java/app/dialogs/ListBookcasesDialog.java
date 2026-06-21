@@ -29,8 +29,8 @@ public class ListBookcasesDialog extends JDialog implements LanguageChangeListen
      private JButton edit;
      private JButton delete;
 
-    public ListBookcasesDialog(JFrame parent) {
-        super(parent, Localization.get("dialog.list.bookcases.title"), true);
+    public ListBookcasesDialog(Window parent) {
+        super(parent, Localization.get("dialog.list.bookcases.title"), ModalityType.APPLICATION_MODAL);
         Localization.addLanguageChangeListener(this);
         initComponents();
         setSize(600, 400);

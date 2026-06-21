@@ -20,8 +20,8 @@ public class AddShelfDialog extends JDialog implements LanguageChangeListener {
     private JButton ok;
     private JButton cancel;
 
-    public AddShelfDialog(JFrame parent, Bookcase[] bookcases) {
-        super(parent, Localization.get("dialog.add.shelf.title"), true);
+    public AddShelfDialog(Window parent, Bookcase[] bookcases) {
+        super(parent, Localization.get("dialog.add.shelf.title"), ModalityType.APPLICATION_MODAL);
         this.bookcases = bookcases;
         Localization.addLanguageChangeListener(this);
         initComponents();

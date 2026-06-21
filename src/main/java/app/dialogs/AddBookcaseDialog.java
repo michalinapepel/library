@@ -17,8 +17,8 @@ public class AddBookcaseDialog extends JDialog implements LanguageChangeListener
     private JButton ok;
     private JButton cancel;
 
-    public AddBookcaseDialog(JFrame parent) {
-        super(parent, Localization.get("dialog.add.bookcase.title"), true);
+    public AddBookcaseDialog(Window parent) {
+        super(parent, Localization.get("dialog.add.bookcase.title"), ModalityType.APPLICATION_MODAL);
         Localization.addLanguageChangeListener(this);
         initComponents();
         setSize(400, 150);

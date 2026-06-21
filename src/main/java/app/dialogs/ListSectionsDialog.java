@@ -26,8 +26,8 @@ public class ListSectionsDialog extends JDialog implements LanguageChangeListene
      private JButton edit;
      private JButton delete;
 
-    public ListSectionsDialog(JFrame parent) {
-        super(parent, Localization.get("dialog.list.sections.title"), true);
+    public ListSectionsDialog(Window parent) {
+        super(parent, Localization.get("dialog.list.sections.title"), ModalityType.APPLICATION_MODAL);
         Localization.addLanguageChangeListener(this);
         initComponents();
         setSize(600, 400);
