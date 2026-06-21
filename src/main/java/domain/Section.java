@@ -26,6 +26,7 @@ public class Section extends AbstractLocation {
      *
      * @param id  unikalny identyfikator działu
      * @param key klucz lokalizacji działu
+     * @param description opis działu
      */
     public Section(int id, String key, String description) {
         this.id = id;
