@@ -5,7 +5,7 @@ import java.awt.Window;
 import javax.swing.JOptionPane;
 
 public class Debug {
-	public static final boolean ENABLED = true;
+	public static final boolean ENABLED = false;
 
 	public static void log(String message) {
 		if (ENABLED) System.out.println("[DEBUG] " + message);
